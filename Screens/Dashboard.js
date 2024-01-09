@@ -1,0 +1,286 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Card, Title } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Sidebar from './Sidebar/Sidebar';
+import FIcon from 'react-native-vector-icons/FontAwesome6';
+import ReportIcon from 'react-native-vector-icons/Octicons'
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { encode } from 'base-64';
+
+const Dashboard = ({ navigation }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [inStoreCount, setInStoreCount] = useState('Loading...');
+  const [allocatedAssetCount,setAllocatedAssetCount] = useState('Loading...')
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleMenuIconPress}
+          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          <Icon name="menu" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
+  const handleMenuIconPress = () => {
+    setSidebarOpen((prevState) => !prevState);
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false);
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={{ position: 'absolute', top: '30%', left: '20%', zIndex: 1 }}>
+          <Icon name="arrow-back" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  })
+  const handleBackPress = () => {
+    navigation.navigate('Dashboard')
+  };
+  const handleEmployee = () => {
+    navigation.navigate('Employee')
+  };
+  const fetchInStoreCount = async () => {
+    try {
+      const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+    const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
+  
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Count_Asset/Instore', {
+        method: 'GET',
+        headers: {
+          Authorization: basicAuth,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      if (data && Array.isArray(data.data)) {
+        const inStoreAsset = data.data[0]?.In_store_Asset;
+        setInStoreCount(inStoreAsset || 'N/A');
+      }
+      console.log(inStoreCount,'innnnnnn')
+    } catch (error) {
+      console.error('Error fetching in-store count:', error);
+      // Handle error, e.g., show an error message
+      setInStoreCount('Error');
+    }
+  };
+  const fetchAllocatedAssetCount = async () => {
+    try {
+      const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+    const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
+  
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Count_Asset/Allocated_Asset', {
+        method: 'GET',
+        headers: {
+          Authorization: basicAuth,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      if (data && Array.isArray(data.data)) {
+        const allocatedAssetCount = data.data[0]?.Allocated_Asset;
+        setAllocatedAssetCount(allocatedAssetCount || 'N/A');
+      }
+      console.log(allocatedAssetCount,'innnnnnn')
+    } catch (error) {
+      console.error('Error fetching in-store count:', error);
+      // Handle error, e.g., show an error message
+      setAllocatedAssetCount('Error');
+    }
+  };
+  useEffect(() => {
+  console.log('Fetching data...');
+  fetchInStoreCount();
+  fetchAllocatedAssetCount();
+}, []);
+  
+
+  return (
+    <View style={styles.container}>
+    <TouchableOpacity style={{width:'100%'}} onPress={handleEmployee}>
+      <Card style={{...styles.card,backgroundColor:'orange'}}>
+        <Card.Content>
+        <Title>
+              <FIcon name="user-plus" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title style={{color:'white',marginTop:'2%'}}>{allocatedAssetCount}</Title>
+          <Text style={{color:'white',marginTop:'2%'}}>Allocated to Employee</Text>
+        </Card.Content>
+      </Card></TouchableOpacity>
+      {/* <Card style={{...styles.card,backgroundColor:'green'}}>
+        <Card.Content>
+          <Title>
+              <Icon name="design-services" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>0</Title>
+          <Text>Under Service</Text>
+        </Card.Content>
+      </Card>
+      <Card style={{...styles.card,backgroundColor:'blue'}}>
+        <Card.Content>
+          <Title>
+              <Icon name="work-off" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>0</Title>
+          <Text>Not Working</Text>
+        </Card.Content>
+      </Card> */}
+
+      <Card style={{...styles.card,backgroundColor:'purple'}}>
+        <Card.Content>
+        <Title>
+              <Icon name="view-list" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title style={{color:'white',marginTop:'2%'}}>{inStoreCount}</Title>
+          <Text style={{color:'white',marginTop:'2%'}}>In Store</Text>
+        </Card.Content>
+      </Card>
+      <Card style={{...styles.card,backgroundColor:'#ff4d00'}}>
+        <Card.Content>
+        <Title>
+              <ReportIcon name="report" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title style={{color:'white',marginTop:'2%'}}>Damaged Assets</Title>
+          <Text style={{color:'white',marginTop:'2%'}}>Damaged Assets</Text>
+        </Card.Content>
+      </Card>
+      {/* <Card style={{...styles.card,backgroundColor:'violet'}}>
+        <Card.Content>
+          <Title>
+              <Icon name="notification-add" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>0</Title>
+          <Text>Temporary Laptop</Text>
+        </Card.Content>
+      </Card>
+      <Card style={{...styles.card,backgroundColor:'red'}}>
+        <Card.Content>
+          <Title>
+              <Icon name="shopping-bag" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>0</Title>
+          <Text>Buy Back</Text>
+        </Card.Content>
+      </Card> */}
+
+      {/* <Card style={{...styles.card,backgroundColor:'blue'}}>
+        <Card.Content>
+          <Title>
+          <MIcon name="home-map-marker" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>1</Title>
+          <Text>Physical Damage (Major)</Text>
+        </Card.Content>
+      </Card>
+      <Card style={{...styles.card,backgroundColor:'purple'}}>
+        <Card.Content>
+          <Title>
+           
+              <FIcon name="car-on" size={24} color="gray" style={styles.ficon} />
+            
+          </Title>
+          <Title>1</Title>
+          <Text>Physical Damage (Minor)</Text>
+        </Card.Content>
+      </Card>
+      <Card style={{...styles.card,backgroundColor:'orange'}}>
+        <Card.Content>
+          <Title>
+              <FIcon name="hashtag" size={24} color="gray" style={styles.ficon} />
+          </Title>
+          <Title>0</Title>
+          <Text>Scraped / Disposed</Text>
+        </Card.Content>
+      </Card> */}
+
+      {sidebarOpen && (
+        <View style={styles.sidebar}>
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding:'5%',
+    alignContent:'center'
+  },
+  iconContainer: {
+  },
+  icon: {
+    position: 'absolute',
+    top: '23%',
+    left: '80%',
+    zIndex: 1,
+  },
+  ficon: {
+    color:'#f0f0f0',
+    textAlign:'center'
+  },
+  content: {
+    flex: 1,
+    padding: '5%',
+    paddingTop: '5%',
+    justifyContent: 'center',
+  },
+  card: {
+    width: '80%',
+    height:150,
+    margin: '1%',
+    backgroundColor: '#cccfff',
+    borderRadius: 10,
+    overflow: 'hidden',
+    alignContent:'center',
+    marginLeft:'10%'
+  },
+  label: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  value: {
+    marginBottom: 10,
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#ccc',
+    padding: '5%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+  },
+});
+
+export default Dashboard;

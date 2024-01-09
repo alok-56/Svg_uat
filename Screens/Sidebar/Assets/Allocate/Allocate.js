@@ -1,0 +1,420 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert } from 'react-native';
+import { Card, Title } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Sidebar from '../../Sidebar';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { ScrollView } from 'react-native-gesture-handler';
+import { encode as base64Encode } from 'base-64';
+
+const Allocate = ({ navigation }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loginType, setLoginType] = useState('');
+  const [assignType, setAssignType] = useState('');
+  const [dateTo, setToDate] = useState('');
+  const [showDropdownAndInput, setShowDropdownAndInput] = useState(false);
+  const [textValue, setTextValue] = useState('');
+  const [showToDatepicker, setShowToDatepicker] = useState(false);
+  const [employeeDropdownData, setEmployeeDropdownData] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [deviceStatus,setDeviceStatus] = useState('');
+  const [selectedAsset, setSelectedAsset] = useState({
+    id_wh: '',
+    nm_prod: '',
+    serial_no: '',
+    id_wh_dyn: '',
+    device_status: '',
+  });
+  const fetchEmployeeDropdownData = async () => {
+    const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+
+    const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
+
+    try {
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/emp_dropdown', {
+        method: 'GET',
+        headers: {
+          Authorization: basicAuth,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && Array.isArray(data.data)) {
+        setEmployeeDropdownData(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching employee dropdown data:', error);
+    }
+  };
+  const [assetDropdownData, setAssetDropdownData] = useState([]);
+
+  const fetchAssetDropdownData = async () => {
+    const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+
+    const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
+
+    try {
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/asset_dropdown', {
+        method: 'GET',
+        headers: {
+          Authorization: basicAuth,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && Array.isArray(data.data)) {
+        setAssetDropdownData(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching asset dropdown data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchAssetDropdownData();
+    fetchEmployeeDropdownData();
+  }, []);
+  const handleToDateChange = (event, selectedDate) => {
+    setShowToDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0'); // Adding 1 as months are zero-based
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setToDate(formattedDate);
+    }
+  };
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleMenuIconPress}
+          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          <Icon name="menu" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+  const handleMenuIconPress = () => {
+    setSidebarOpen((prevState) => !prevState);
+  };
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false);
+  };
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={{ position: 'absolute', top: '30%', left: '20%', zIndex: 1 }}>
+          <Icon name="arrow-back" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  });
+  const handleBackPress = () => {
+    if (showDropdownAndInput) {
+  setShowDropdownAndInput(false);
+    } else {
+      navigation.navigate('Dashboard');
+    }
+  };
+  const handleAllocate = () => {
+    setShowDropdownAndInput(true);
+  };
+  const handleAllocateAsset = async () => {
+    if (selectedAsset.id_wh === '' || assignType === '' || dateTo === '' || textValue === '' || deviceStatus === '') {
+      Alert.alert('Validation Error', 'Please fill in all required fields.', [
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+      return;
+    }
+    try {
+      const Username = 'SVVG'; // Replace with your actual username
+      const Password = 'Pass@123'; // Replace with your actual password
+      const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
+
+      const requestBody = {
+        data: [
+          {
+            InstallAssetID: selectedAsset.id_wh,
+            to_assign: assignType,
+            installRmk: textValue,
+            dt_allocate: dateTo,
+            device_status: deviceStatus,
+          },
+        ],
+      };
+      console.log(requestBody,"req")
+
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/allocate_emp', {
+        method: 'POST',
+        headers: {
+          Authorization: basicAuth,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([requestBody]),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const responseData = await response.json();
+
+      // Handle success, e.g., show a success message or navigate to a different screen
+      console.log('Allocation successful!');
+      Alert.alert('Success', `Asset allocated successfully`, [
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+
+    } catch (error) {
+      console.error('Error allocating asset:', error);
+      // Handle error, e.g., show an error message
+      Alert.alert('Error', 'Failed to allocate asset. Please try again.', [
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+    }
+  };
+  const handleEmployeeChange = (itemValue) => {
+    const selectedEmp = employeeDropdownData.find((emp) => emp.id_emp_user === itemValue);
+    setSelectedEmployee(selectedEmp);
+    setAssignType(itemValue);
+  };
+
+  const handleAssetChange = (itemValue) => {
+    const selectedAssetData = assetDropdownData.find((asset) => asset.id_wh_dyn === itemValue);
+    setSelectedAsset({
+      id_wh_dyn: selectedAssetData?.id_wh_dyn || '',
+      nm_prod: selectedAssetData?.nm_prod || '',
+      serial_no: selectedAssetData?.serial_no || '',
+      id_wh: selectedAssetData?.id_wh || '',
+      device_status: selectedAssetData?.device_status || '',
+    });
+    setLoginType(itemValue); 
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        {showDropdownAndInput ? (
+          <View style={styles.dropdownContainer}>
+            <Card style={styles.card}>
+              <Card.Content>
+                <View style={styles.labelValueContainer}>
+                  <Text style={styles.label}>Asset ID</Text>
+                  <Text style={styles.value}>{selectedAsset.id_wh_dyn}</Text>
+                </View>
+                <View style={styles.labelValueContainer}>
+                  <Text style={styles.label}>Asset Name </Text>
+                  <Text style={styles.value}>{selectedAsset.nm_prod}</Text>
+                </View>
+                <View style={styles.labelValueContainer}>
+                  <Text style={styles.label}>Serial No</Text>
+                  <Text style={styles.value}>{selectedAsset.serial_no}</Text>
+                </View>
+                {/* <View style={styles.labelValueContainer}>
+                  <Text style={styles.label}>Install</Text>
+                  <Text style={styles.value}>{selectedAsset.id_wh}</Text>
+                </View> */}
+              </Card.Content>
+            </Card>
+            <View
+              style={{
+                backgroundColor: '#052d6e',
+                alignItems: 'center',
+                paddingVertical: '2%',
+                borderRadius: 5,
+                marginBottom: '4%',
+              }}>
+              <Text style={{ fontWeight: 'bold', color: 'white' }}>Assign To </Text>
+            </View>
+            <Picker
+              selectedValue={assignType}
+              onValueChange={(itemValue) => setAssignType(itemValue)}
+              style={styles.picker}
+              placeholder="Select Employee"
+              onValueChange={handleEmployeeChange}
+            >
+              {employeeDropdownData.map((item) => (
+                <Picker.Item key={item.id_emp_user} label={item.nm_emp} value={item.id_emp_user} />
+              ))}
+            </Picker>
+            <View style={styles.filterContainer}>
+              <TextInput
+                style={styles.dateInput}
+                placeholder="Allocate Date"
+                placeholderTextColor="gray"
+                value={dateTo}
+                onFocus={() => setShowToDatepicker(true)}
+              />
+              {showToDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleToDateChange}
+                />
+              )}
+              <View style={{width:'50%'}}>
+              <Picker
+              selectedValue={deviceStatus}
+              onValueChange={(itemValue) => setDeviceStatus(itemValue)}
+              style={styles.picker}
+              placeholder='Select Asset'
+            >
+              <Picker.Item label="Permanent" value="allct_to_emp" />
+              <Picker.Item label="Temporary" value="allct_to_emp_temp" />
+            </Picker>
+            </View>
+            </View>
+            <TextInput
+              style={styles.remarks}
+              onChangeText={(value) => setTextValue(value)}
+              value={textValue}
+              placeholder="Enter Remarks"
+              placeholderTextColor="gray"
+            />
+            <View style={styles.button}>
+              <TouchableOpacity onPress={handleAllocateAsset}>
+                <Text style={styles.buttonText}>Allocate</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.content}>
+            <View
+              style={{ display: 'flex', alignSelf: 'center', padding: 10, margin: 10 }}>
+              <Icon name="add-shopping-cart" color="gray" size={60} />
+            </View>
+            <Picker
+              selectedValue={loginType}
+              onValueChange={(itemValue) => setLoginType(itemValue)}
+              style={styles.picker}
+              placeholder="Select Asset"
+              onValueChange={handleAssetChange}>
+              {assetDropdownData.map((item) => (
+                <Picker.Item key={item.id_wh_dyn} label={item.id_wh_dyn} value={item.id_wh_dyn} />
+              ))}
+            </Picker>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={handleAllocate}>
+                <Text style={styles.buttonText}>Allocate</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </View>
+      {sidebarOpen && (
+        <View style={styles.sidebar}>
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+        </View>
+      )}
+    </ScrollView>
+  );
+};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: '100%'
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    justifyContent: 'space-evenly',
+  },
+  dateInput: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    color: 'black',
+    width: '47%',
+    height:'90%'
+  },
+  card: {
+    marginBottom: '5%',
+    backgroundColor: '#052d6e',
+  },
+  picker: {
+    width: '100%',
+    marginBottom: '4%',
+    backgroundColor: '#ccc',
+    borderRadius: 10,
+    borderColor: 'black',
+    padding: '10px',
+    color: 'black'
+  },
+  labelValueContainer: {
+    width: '100%',
+    marginBottom: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  content: {
+    flex: 1,
+    padding: '5%',
+    paddingTop: '5%',
+    height: '100%'
+  },
+  dropdownContainer: {
+    marginVertical: 10,
+  },
+  button: {
+    backgroundColor: '#052d6e',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    width: '35%',
+    alignSelf: 'center',
+    margin: '5%'
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  label: {
+    fontWeight: 'bold',
+    color: 'white',
+    width: '35%'
+  },
+  value: {
+    color: 'white',
+    width: '65%'
+  },
+  remarks: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    color: 'black',
+    width: '100%',
+    padding: 10,
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#ccc',
+    padding: '5%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+  },
+
+});
+export default Allocate;
+
