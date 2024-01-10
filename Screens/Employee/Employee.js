@@ -12,7 +12,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Employee = () => {
   const[apiData,setApiData] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
   const tableHeadings = [
     'Asset Id',
     'Serial No',
@@ -38,8 +39,8 @@ const Employee = () => {
             />
             {data && data.map && (
               <Rows
-                data={data}
-                style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
+                data={data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                 style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
                 textStyle={{
                   textAlign: 'center',
                   color: 'black',
@@ -100,7 +101,7 @@ const Employee = () => {
       backgroundColor: '#052d6e',
       padding: 10,
       alignItems: 'center',
-      borderRadius: 5,
+      border:"none",
       width: '40%',
       alignSelf: 'center',
       margin: '5%'
@@ -108,6 +109,31 @@ const Employee = () => {
     buttonText: {
       color: 'white',
       fontSize: 18,
+    },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginVertical: 10,
+    },
+    paginationButton: {
+      padding: 8,
+      marginHorizontal: 5,
+      border:"none",
+      color:"white"
+    },
+    activePaginationButton: {
+      backgroundColor: '#052d6e',
+      color:"white"
+    },
+    paginationButtonText: {
+      color: 'black',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    exportButtonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginBottom: 10,
     },
   })
 
@@ -178,15 +204,64 @@ const Employee = () => {
         Alert.alert('Excel Export', 'Failed to export Excel!');
       });
   };
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+  const renderPaginationButtons = () => {
+    const totalItems = apiData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Display up to 5 pagination buttons, along with previous and next arrows
+    const visiblePages = 5;
+    const startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+    return (
+      <View style={styles.paginationContainer}>
+        {currentPage > 1 && (
+          <TouchableOpacity
+            style={styles.paginationButton}
+            onPress={() => handlePageChange(currentPage - 1)}>
+            <Text style={styles.paginationButtonText}>{"<"}</Text>
+          </TouchableOpacity>
+        )}
+
+        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+          <TouchableOpacity
+            key={startPage + index}
+            style={[
+              styles.paginationButton,
+              currentPage === startPage + index && styles.activePaginationButton,
+            ]}
+            onPress={() => handlePageChange(startPage + index)}>
+            <Text style={styles.paginationButtonText}>{startPage + index}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {currentPage < totalPages && (
+          <TouchableOpacity
+            style={styles.paginationButton}
+            onPress={() => handlePageChange(currentPage + 1)}>
+            <Text style={styles.paginationButtonText}>{">"}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
   return (
     <ScrollView>
     <View>
-       {apiData && apiData.length > 0 ? (
-        <MyTable data={apiData} headings={tableHeadings} />
-      ) : (
-        <Text>Loading data...</Text>
-      )}
-      <View style={{ flexDirection: 'row' }}>
+    {apiData && apiData.length > 0 ? (
+          <>
+            <MyTable data={apiData} headings={tableHeadings} />
+            {renderPaginationButtons()}
+          </>
+        ) : (
+          <Text>Loading data...</Text>
+        )}
+     
+        <View style={styles.exportButtonsContainer}>
         <View style={styles.button}>
           <TouchableOpacity
             onPress={generatePDF}>
