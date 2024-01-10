@@ -1,4 +1,3 @@
-// ExportTable.js
 import React ,{useEffect,useState}from 'react';
 import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -8,20 +7,18 @@ import XLSX from 'xlsx';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { encode } from 'base-64';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Employee = () => {
+const Instore = () => {
   const[apiData,setApiData] = useState([]);
 
   const tableHeadings = [
     'Asset Id',
-    'Serial No',
+    'PO No',
     'Invoice No',
-    'Location',
   ];
 
   const MyTable = ({ data, headings }) => {
-    const cellWidths = [150,130, 80,120];
+    const cellWidths = [150,130, 150];
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ marginTop: '10%', marginBottom: '10%' }}>
@@ -65,7 +62,7 @@ const Employee = () => {
       const Password = 'Pass@123';
   
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=all', {
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=in_store', {
         headers: {
           Authorization: `Basic ${credentials}`,
         },
@@ -76,9 +73,8 @@ const Employee = () => {
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
-          item.SerialNo,
+          item.PONo,
           item.InvoiceNo,
-          item.Location,
         ]);
         setApiData(mappedData);
       } else {
@@ -206,4 +202,4 @@ const Employee = () => {
 };
 
 
-export default Employee;
+export default Instore;

@@ -1,4 +1,3 @@
-// ExportTable.js
 import React ,{useEffect,useState}from 'react';
 import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -8,16 +7,15 @@ import XLSX from 'xlsx';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { encode } from 'base-64';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Employee = () => {
+const DamagedAssets = () => {
   const[apiData,setApiData] = useState([]);
 
   const tableHeadings = [
     'Asset Id',
-    'Serial No',
+    'Damage Status',
     'Invoice No',
-    'Location',
+    "Approved By"
   ];
 
   const MyTable = ({ data, headings }) => {
@@ -65,7 +63,7 @@ const Employee = () => {
       const Password = 'Pass@123';
   
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=all', {
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=allDamage', {
         headers: {
           Authorization: `Basic ${credentials}`,
         },
@@ -76,9 +74,9 @@ const Employee = () => {
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
-          item.SerialNo,
+          item.Status,
           item.InvoiceNo,
-          item.Location,
+          item.AssignTo,
         ]);
         setApiData(mappedData);
       } else {
@@ -206,4 +204,4 @@ const Employee = () => {
 };
 
 
-export default Employee;
+export default DamagedAssets;

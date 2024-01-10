@@ -13,7 +13,9 @@ import Allocate from '../Screens/Sidebar/Assets/Allocate/Allocate';
 import DAllocate from '../Screens/Sidebar/Assets/DAllocate/DAllocate';
 import Link from '../Screens/Sidebar/Assets/Link/Link';
 import DLink from '../Screens/Sidebar/Assets/DLink/DLink';
-import Employee from '../Screens/Employee/Employee'
+import Employee from '../Screens/Employee/Employee';
+import DamagedAssets from '../Screens/DamagedAssets/DamagedAssets';
+import Instore from '../Screens/Instore/Instore';
 import ApproveNewAsset from '../Screens/Sidebar/ApproveNewAsset/ApproveNewAsset';
 import ApproveForm from '../Screens/Sidebar/ApproveNewAsset/ApproveForm';
 import SerialNo from '../Screens/Sidebar/Assets/AddToStore/SerialNo';
@@ -119,6 +121,22 @@ const Routes = () => {
                     component={Employee}
                     options={{
                         headerTitle: 'Allocated to Employee',
+                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerTitleAlign: 'center',
+                        headerTintColor:'white',
+                    }}/>
+                    <Stack.Screen name="DamagedAssets"
+                    component={DamagedAssets}
+                    options={{
+                        headerTitle: 'Damaged Assets',
+                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerTitleAlign: 'center',
+                        headerTintColor:'white',
+                    }}/>
+                    <Stack.Screen name="Instore"
+                    component={Instore}
+                    options={{
+                        headerTitle: 'In Store',
                         headerStyle: { backgroundColor: '#ff8a3d' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
