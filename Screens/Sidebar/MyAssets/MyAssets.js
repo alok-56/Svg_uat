@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
 import { encode } from 'base-64';
 
-const MyAssets = ({ navigation }) => {
+const MyAssets = ({ navigation,route }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { userId } = route && route.params ? route.params : { userId: '' };
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -51,7 +52,7 @@ const MyAssets = ({ navigation }) => {
       const Password = 'Pass@123';
       
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/myasset?searchword=1', {
+      const response = await fetch(`http://13.235.186.102/SVVG-API/webapi/myasset?searchword=${userId}`, {
         headers: {
           Authorization: `Basic ${credentials}`,
         },

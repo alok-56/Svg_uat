@@ -7,14 +7,83 @@ import {
   StyleSheet,
   Image,
   Text,
+  Alert,
 } from 'react-native';
+import { encode } from 'base-64';
 const Login = ({ navigation }) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
  
   const handleLogin = async () => {
-    navigation.navigate('Dashboard');
+    try {
+      const basicAuthCredentials = 'SVVG:Pass@123';
+      const base64Credentials = encode(basicAuthCredentials);
+
+      const loginApiCredentials = `${name}:${password}`;
+      const base64LoginApiCredentials = encode(loginApiCredentials);
+
+      const response = await fetch(
+        `http://13.235.186.102/SVVG-API/webapi/Login/UsersLogin?username=${name}&password=${password}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${base64Credentials}`,
+          },
+          body: JSON.stringify({
+            username: name,
+            password: password,
+          }),
+        }
+      );
+
+      const responseText = await response.text();
+      console.log('Response Text:', responseText);
+
+      const responseMatch = responseText.match(/\{.*\}/); // Extracting the JSON part
+
+      if (responseMatch) {
+        const jsonResponse = JSON.parse(responseMatch[0]);
+
+        console.log('Response JSON:', jsonResponse);
+
+        if (jsonResponse.data && jsonResponse.data.length > 0) {
+          const user = jsonResponse.data[0]; // Storing the user object
+
+          const userType = user.type_user;
+          const userIdType = user.id_usertype;
+          const userId = user.id_emp_user;
+
+          console.log('User Type:', userType);
+          console.log('User ID Type:', userIdType);
+          console.log('User ID:', userId);
+
+          Alert.alert('Login', 'Login successful');
+
+          navigation.navigate('Dashboard', { userId });
+          return; 
+        } else {
+          
+          Alert.alert('Login Failed', 'Invalid username or password');
+        }
+      } else {
+        console.log('Could not find JSON in the response.');
+      }
+
+      if (!response.ok) {
+        console.error('Failed to log in:', response.status);
+        Alert.alert('Login Failed', `Failed to log in. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Error', 'An error occurred during login.');
+    }
   };
+  
+  
+  
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/login.jpeg')} style={styles.logo} />

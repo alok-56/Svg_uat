@@ -13,6 +13,7 @@ const Dashboard = ({ navigation }) => {
   const [inStoreCount, setInStoreCount] = useState('Loading...');
   const [allocatedAssetCount,setAllocatedAssetCount] = useState('Loading...')
 
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (

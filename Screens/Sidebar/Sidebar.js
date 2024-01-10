@@ -6,9 +6,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, route }) => {
   const navigation = useNavigation();
   const [isAssetsClicked, setIsAssetsClicked] = useState(false);
+  const { userId } = route && route.params ? route.params : {};
 
   const handleItemClick = screen => {
     if (screen === 'Assets') {
@@ -42,7 +43,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => handleItemClick('MyAssets')}
+        onPress={() => handleItemClick('MyAssets', { userId })}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
           name='web-asset'
