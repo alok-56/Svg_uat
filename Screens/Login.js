@@ -10,10 +10,16 @@ import {
   Alert,
 } from 'react-native';
 import { encode } from 'base-64';
+
+
 const Login = ({ navigation }) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
  
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleLogin = async () => {
     try {
       const basicAuthCredentials = 'SVVG:Pass@123';
@@ -41,7 +47,7 @@ const Login = ({ navigation }) => {
       const responseText = await response.text();
       console.log('Response Text:', responseText);
 
-      const responseMatch = responseText.match(/\{.*\}/); // Extracting the JSON part
+      const responseMatch = responseText.match(/\{.*\}/); 
 
       if (responseMatch) {
         const jsonResponse = JSON.parse(responseMatch[0]);
@@ -49,7 +55,7 @@ const Login = ({ navigation }) => {
         console.log('Response JSON:', jsonResponse);
 
         if (jsonResponse.data && jsonResponse.data.length > 0) {
-          const user = jsonResponse.data[0]; // Storing the user object
+          const user = jsonResponse.data[0];
 
           const userType = user.type_user;
           const userIdType = user.id_usertype;
@@ -108,8 +114,19 @@ const Login = ({ navigation }) => {
           placeholderTextColor="gray"
           value={password}
           onChangeText={setPassword}
+          secureTextEntry={!showPassword}
           style={styles.input}
-        />
+          />
+          <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={togglePasswordVisibility}>
+          <Icon
+            name={showPassword ? 'eye' : 'eye-slash'}
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+        
       </View>
       {/* <TouchableOpacity
         style={styles.resetbutton}
@@ -192,6 +209,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginTop: '2%',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    top: '30%',
+    right: '4%',
   },
 });
 

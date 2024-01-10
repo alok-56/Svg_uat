@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from './Sidebar/Sidebar';
 import FIcon from 'react-native-vector-icons/FontAwesome6';
 import ReportIcon from 'react-native-vector-icons/Octicons'
-import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { encode } from 'base-64';
 
 const Dashboard = ({ navigation }) => {
@@ -51,6 +50,12 @@ const Dashboard = ({ navigation }) => {
   const handleEmployee = () => {
     navigation.navigate('Employee')
   };
+  const handleInstore = () =>{
+    navigation.navigate("Instore")
+  }
+  const handleDamagedAssets = ()=>{
+    navigation.navigate("DamagedAssets")
+  }
   const fetchInStoreCount = async () => {
     try {
       const Username = 'SVVG'; // Replace with your actual username
@@ -75,7 +80,7 @@ const Dashboard = ({ navigation }) => {
         const inStoreAsset = data.data[0]?.In_store_Asset;
         setInStoreCount(inStoreAsset || 'N/A');
       }
-      console.log(inStoreCount,'innnnnnn')
+      console.log(inStoreCount,'instoreeee')
     } catch (error) {
       console.error('Error fetching in-store count:', error);
       // Handle error, e.g., show an error message
@@ -150,7 +155,7 @@ const Dashboard = ({ navigation }) => {
           <Text>Not Working</Text>
         </Card.Content>
       </Card> */}
-
+      <TouchableOpacity style={{width:'100%'}} onPress={handleInstore}>
       <Card style={{...styles.card,backgroundColor:'purple'}}>
         <Card.Content>
         <Title>
@@ -159,7 +164,8 @@ const Dashboard = ({ navigation }) => {
           <Title style={{color:'white',marginTop:'2%'}}>{inStoreCount}</Title>
           <Text style={{color:'white',marginTop:'2%'}}>In Store</Text>
         </Card.Content>
-      </Card>
+      </Card></TouchableOpacity>
+      <TouchableOpacity style={{width:'100%'}} onPress={handleDamagedAssets}>
       <Card style={{...styles.card,backgroundColor:'#ff4d00'}}>
         <Card.Content>
         <Title>
@@ -168,7 +174,7 @@ const Dashboard = ({ navigation }) => {
           <Title style={{color:'white',marginTop:'2%'}}>Damaged Assets</Title>
           <Text style={{color:'white',marginTop:'2%'}}>Damaged Assets</Text>
         </Card.Content>
-      </Card>
+      </Card></TouchableOpacity>
       {/* <Card style={{...styles.card,backgroundColor:'violet'}}>
         <Card.Content>
           <Title>

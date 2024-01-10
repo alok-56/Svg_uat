@@ -1,4 +1,3 @@
-// ExportTable.js
 import React ,{useEffect,useState}from 'react';
 import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -8,21 +7,19 @@ import XLSX from 'xlsx';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { encode } from 'base-64';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Employee = () => {
+const Instore = () => {
   const[apiData,setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const tableHeadings = [
     'Asset Id',
-    'Serial No',
+    'PO No',
     'Invoice No',
-    'Location',
   ];
 
   const MyTable = ({ data, headings }) => {
-    const cellWidths = [150,130, 80,120];
+    const cellWidths = [150,150, 150];
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ marginTop: '10%', marginBottom: '10%' }}>
@@ -40,7 +37,7 @@ const Employee = () => {
             {data && data.map && (
               <Rows
                 data={data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
-                 style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
+                style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
                 textStyle={{
                   textAlign: 'center',
                   color: 'black',
@@ -66,7 +63,7 @@ const Employee = () => {
       const Password = 'Pass@123';
   
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=all', {
+      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=in_store', {
         headers: {
           Authorization: `Basic ${credentials}`,
         },
@@ -77,9 +74,8 @@ const Employee = () => {
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
-          item.SerialNo,
+          item.PONo,
           item.InvoiceNo,
-          item.Location,
         ]);
         setApiData(mappedData);
       } else {
@@ -101,7 +97,7 @@ const Employee = () => {
       backgroundColor: '#052d6e',
       padding: 10,
       alignItems: 'center',
-      border:"none",
+      borderRadius: 5,
       width: '40%',
       alignSelf: 'center',
       margin: '5%'
@@ -130,11 +126,11 @@ const Employee = () => {
       textAlign: 'center',
       fontWeight: 'bold',
     },
-    exportButtonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
-    },
+      exportButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
+      },
   })
 
   const generatePDF = async () => {
@@ -261,7 +257,7 @@ const Employee = () => {
           <Text>Loading data...</Text>
         )}
      
-        <View style={styles.exportButtonsContainer}>
+      <View style={styles.exportButtonsContainer}>
         <View style={styles.button}>
           <TouchableOpacity
             onPress={generatePDF}>
@@ -281,4 +277,4 @@ const Employee = () => {
 };
 
 
-export default Employee;
+export default Instore;
