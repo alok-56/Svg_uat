@@ -8,10 +8,15 @@ import {
   Image,
   Text,
 } from 'react-native';
+
 const Login = ({ navigation }) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
  
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleLogin = async () => {
     navigation.navigate('Dashboard');
   };
@@ -39,8 +44,19 @@ const Login = ({ navigation }) => {
           placeholderTextColor="gray"
           value={password}
           onChangeText={setPassword}
+          secureTextEntry={!showPassword}
           style={styles.input}
-        />
+          />
+          <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={togglePasswordVisibility}>
+          <Icon
+            name={showPassword ? 'eye' : 'eye-slash'}
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+        
       </View>
       {/* <TouchableOpacity
         style={styles.resetbutton}
@@ -123,6 +139,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginTop: '2%',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    top: '30%',
+    right: '4%',
   },
 });
 
