@@ -109,9 +109,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   loginButton: {
-    backgroundColor: '#406792',
+    backgroundColor: '#ff8a3d',
     borderWidth: 1,
-    borderColor: '#406792',
+    borderColor: '#ff8a3d',
     padding: 12,
     alignItems: 'center',
     marginHorizontal: '30%',

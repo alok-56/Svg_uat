@@ -190,18 +190,18 @@ const uploadDocument = async () => {
           <View style={{marginTop:'3%'}}>
           <Text style={styles.headings}>Upload Scan File (.txt)</Text>
       <TouchableOpacity onPress={pickDocument}>
-        <Text style={{textAlign:'center',backgroundColor:'#052d6e',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>Select Document</Text>
+        <Text style={{textAlign:'center',backgroundColor:'#ff8a3d',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>Select Document</Text>
       </TouchableOpacity>
 
       {selectedDocument && (
         <View>
-          {/* <Text style={{textAlign:'center',backgroundColor:'#052d6e',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>{selectedDocument.name}</Text>
-          <Text style={{textAlign:'center',backgroundColor:'#052d6e',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>{selectedDocument.type}</Text> */}
+          {/* <Text style={{textAlign:'center',backgroundColor:'#ff8a3d',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>{selectedDocument.name}</Text>
+          <Text style={{textAlign:'center',backgroundColor:'#ff8a3d',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>{selectedDocument.type}</Text> */}
         </View>
       )}
 
       <TouchableOpacity onPress={uploadDocument}>
-        <Text style={{textAlign:'center',backgroundColor:'#052d6e',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>Upload Document</Text>
+        <Text style={{textAlign:'center',backgroundColor:'#ff8a3d',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>Upload Document</Text>
       </TouchableOpacity>
     </View>
 

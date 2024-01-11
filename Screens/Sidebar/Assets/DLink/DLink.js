@@ -69,9 +69,7 @@ const DLink = ({ navigation }) => {
   const handleLink = () => {
     setShowDropdownAndInput(true);
   };
-  const handleLinkAccessories = () => {
-    navigation.navigate('DLink')
-  }
+ 
 
   const fetchAssetDropdownData = async () => {
     const Username = 'SVVG'; // Replace with your actual username
@@ -172,6 +170,8 @@ const DLink = ({ navigation }) => {
   
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
+      }else{
+        navigation.navigate("Dashboard")
       }
   
       const responseText = await response.text();
@@ -212,11 +212,11 @@ const DLink = ({ navigation }) => {
             <Card style={styles.card}>
               <Card.Content >
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Asset ID :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset ID :</Text>
                   <Text style={styles.cardvalue}> {selectedAsset.asset_id}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Asset Name :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset Name :</Text>
                   <Text style={styles.cardvalue}> {selectedAsset.asset_nm}</Text>
                 </View>
               </Card.Content>
@@ -227,23 +227,23 @@ const DLink = ({ navigation }) => {
                 <Card.Content >
                 <Checkbox status={checkBoxChecked ? 'checked' : 'unchecked'} onPress={() => setCheckBoxChecked(!checkBoxChecked)}/>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Accessories Id :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Id :</Text>
                   <Text style={styles.cardvalue}>{selectedAsset.accessory_id}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Accessories Name :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Name :</Text>
                   <Text style={styles.cardvalue}>{selectedAsset.nm_accessory}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Serial No:</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Serial No:</Text>
                   <Text style={styles.cardvalue}>{selectedAsset.serial_num}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Linked Date :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Linked Date :</Text>
                   <Text style={styles.value}>{selectedAsset.Link_date}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Acc ID :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Acc ID :</Text>
                   <Text style={styles.value}>{selectedAsset.accessory_id_wh}</Text>
                 </View>
                   
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

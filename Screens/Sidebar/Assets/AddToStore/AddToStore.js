@@ -353,7 +353,7 @@ console.log('Server Response:', responseText);
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={{ backgroundColor: '#052d6e' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
+        <View style={{ backgroundColor: '#ff8a3d' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>Item/Model Name</Text>
           <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
@@ -553,7 +553,7 @@ console.log('Server Response:', responseText);
           />
         </View>
 
-        <View style={{ backgroundColor: '#052d6e', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
+        <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>PO Number</Text>
           <TextInput
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

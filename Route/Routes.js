@@ -32,7 +32,7 @@ const Routes = () => {
                     component={Login}
                     options={{
                         headerTitle: 'Welcome to AMS',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: "#052d6e" },
                         headerTitleAlign: 'center',
                         headerTintColor: 'white',
                     }} />
@@ -40,7 +40,7 @@ const Routes = () => {
                     component={Signup}
                     options={{
                         headerTitle: 'Sign up',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor: 'white',
                     }} />
@@ -48,7 +48,7 @@ const Routes = () => {
                     component={ForgotPassword}
                     options={{
                         headerTitle: 'Forgot Password',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor: 'white',
                     }} />
@@ -57,7 +57,7 @@ const Routes = () => {
                     component={Dashboard}
                     options={{
                         headerTitle: 'Dashboard',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -65,7 +65,7 @@ const Routes = () => {
                     component={MyAssets}
                     options={{
                         headerTitle: 'My Assets',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -73,7 +73,7 @@ const Routes = () => {
                     component={Scan}
                     options={{
                         headerTitle: 'Scan',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -81,7 +81,7 @@ const Routes = () => {
                     component={Allocate}
                     options={{
                         headerTitle: 'Allocate Asset',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTintColor:'white',
                         headerTitleAlign: 'center',
                     }}/>
@@ -89,7 +89,7 @@ const Routes = () => {
                     component={DAllocate}
                     options={{
                         headerTitle: 'De - Allocate Asset',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -97,7 +97,7 @@ const Routes = () => {
                     component={Link}
                     options={{
                         headerTitle: 'Link Accessories',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -105,7 +105,7 @@ const Routes = () => {
                     component={DLink}
                     options={{
                         headerTitle: 'DLink Accessories',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -113,7 +113,7 @@ const Routes = () => {
                     component={AddToStore}
                     options={{
                         headerTitle: 'Add To Store',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -121,7 +121,7 @@ const Routes = () => {
                     component={Employee}
                     options={{
                         headerTitle: 'Allocated to Employee',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -129,7 +129,7 @@ const Routes = () => {
                     component={DamagedAssets}
                     options={{
                         headerTitle: 'Damaged Assets',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -137,7 +137,7 @@ const Routes = () => {
                     component={Instore}
                     options={{
                         headerTitle: 'In Store',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -145,7 +145,7 @@ const Routes = () => {
                     component={ApproveNewAsset}
                     options={{
                         headerTitle: 'Approve New Asset',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -153,7 +153,7 @@ const Routes = () => {
                     component={ApproveForm}
                     options={{
                         headerTitle: 'Approve New Asset',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>
@@ -161,7 +161,7 @@ const Routes = () => {
                     component={SerialNo}
                     options={{
                         headerTitle: 'Add Serial No.',
-                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',
                     }}/>

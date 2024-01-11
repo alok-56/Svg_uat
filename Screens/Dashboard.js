@@ -1,116 +1,126 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Card, Title } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {Card, Title} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from './Sidebar/Sidebar';
 import FIcon from 'react-native-vector-icons/FontAwesome6';
-import ReportIcon from 'react-native-vector-icons/Octicons'
-import { encode } from 'base-64';
+import ReportIcon from 'react-native-vector-icons/Octicons';
+import {encode} from 'base-64';
 
-const Dashboard = ({ navigation }) => {
+const Dashboard = ({navigation}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [inStoreCount, setInStoreCount] = useState('Loading...');
-  const [allocatedAssetCount,setAllocatedAssetCount] = useState('Loading...')
+  const [allocatedAssetCount, setAllocatedAssetCount] = useState('Loading...');
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          onPress={handleMenuIconPress}
-          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
-          <Icon name="menu" color="white" size={25} />
+          onPress={handleLogout}
+          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
+          <Icon name="logout" color="white" size={25} />
         </TouchableOpacity>
       ),
     });
   }, []);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleMenuIconPress}
+          style={{position: 'absolute', top: '30%', left: '20%', zIndex: 1}}>
+          <Icon name="menu" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  });
+
   const handleMenuIconPress = () => {
-    setSidebarOpen((prevState) => !prevState);
+    setSidebarOpen(prevState => !prevState);
   };
 
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
   };
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          onPress={handleBackPress}
-          style={{ position: 'absolute', top: '30%', left: '20%', zIndex: 1 }}>
-          <Icon name="arrow-back" color="white" size={25} />
-        </TouchableOpacity>
-      ),
+  const handleLogout = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Login'}],
     });
-  })
-  const handleBackPress = () => {
-    navigation.navigate('Dashboard')
   };
   const handleEmployee = () => {
-    navigation.navigate('Employee')
+    navigation.navigate('Employee');
   };
-  const handleInstore = () =>{
-    navigation.navigate("Instore")
-  }
-  const handleDamagedAssets = ()=>{
-    navigation.navigate("DamagedAssets")
-  }
+  const handleInstore = () => {
+    navigation.navigate('Instore');
+  };
+  const handleDamagedAssets = () => {
+    navigation.navigate('DamagedAssets');
+  };
   const fetchInStoreCount = async () => {
     try {
       const Username = 'SVVG'; // Replace with your actual username
-    const Password = 'Pass@123'; // Replace with your actual password
-    const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
-  
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Count_Asset/Instore', {
-        method: 'GET',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
+      const Password = 'Pass@123'; // Replace with your actual password
+      const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
+
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Count_Asset/Instore',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
         },
-      });
-  
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-  
+
       if (data && Array.isArray(data.data)) {
         const inStoreAsset = data.data[0]?.In_store_Asset;
         setInStoreCount(inStoreAsset || 'N/A');
       }
-      console.log(inStoreCount,'instoreeee')
+      console.log(inStoreCount, 'instoreeee');
     } catch (error) {
       console.error('Error fetching in-store count:', error);
       // Handle error, e.g., show an error message
       setInStoreCount('Error');
     }
   };
+
   const fetchAllocatedAssetCount = async () => {
     try {
       const Username = 'SVVG'; // Replace with your actual username
-    const Password = 'Pass@123'; // Replace with your actual password
-    const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
-  
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Count_Asset/Allocated_Asset', {
-        method: 'GET',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
+      const Password = 'Pass@123'; // Replace with your actual password
+      const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
+
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Count_Asset/Allocated_Asset',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
         },
-      });
-  
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-  
+
       if (data && Array.isArray(data.data)) {
         const allocatedAssetCount = data.data[0]?.Allocated_Asset;
         setAllocatedAssetCount(allocatedAssetCount || 'N/A');
       }
-      console.log(allocatedAssetCount,'innnnnnn')
+      console.log(allocatedAssetCount, 'innnnnnn');
     } catch (error) {
       console.error('Error fetching in-store count:', error);
       // Handle error, e.g., show an error message
@@ -118,24 +128,33 @@ const Dashboard = ({ navigation }) => {
     }
   };
   useEffect(() => {
-  console.log('Fetching data...');
-  fetchInStoreCount();
-  fetchAllocatedAssetCount();
-}, []);
-  
+    console.log('Fetching data...');
+    fetchInStoreCount();
+    fetchAllocatedAssetCount();
+  }, []);
 
   return (
     <View style={styles.container}>
-    <TouchableOpacity style={{width:'100%'}} onPress={handleEmployee}>
-      <Card style={{...styles.card,backgroundColor:'orange'}}>
-        <Card.Content>
-        <Title>
-              <FIcon name="user-plus" size={24} color="gray" style={styles.ficon} />
-          </Title>
-          <Title style={{color:'white',marginTop:'2%'}}>{allocatedAssetCount}</Title>
-          <Text style={{color:'white',marginTop:'2%'}}>Allocated to Employee</Text>
-        </Card.Content>
-      </Card></TouchableOpacity>
+      <TouchableOpacity style={{width: '100%'}} onPress={handleEmployee}>
+        <Card style={{...styles.card, backgroundColor: 'orange'}}>
+          <Card.Content>
+            <Title>
+              <FIcon
+                name="user-plus"
+                size={24}
+                color="gray"
+                style={styles.ficon}
+              />
+            </Title>
+            <Title style={{color: 'white', marginTop: '2%'}}>
+              {allocatedAssetCount}
+            </Title>
+            <Text style={{color: 'white', marginTop: '2%'}}>
+              Allocated to Employee
+            </Text>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
       {/* <Card style={{...styles.card,backgroundColor:'green'}}>
         <Card.Content>
           <Title>
@@ -154,26 +173,44 @@ const Dashboard = ({ navigation }) => {
           <Text>Not Working</Text>
         </Card.Content>
       </Card> */}
-      <TouchableOpacity style={{width:'100%'}} onPress={handleInstore}>
-      <Card style={{...styles.card,backgroundColor:'purple'}}>
-        <Card.Content>
-        <Title>
-              <Icon name="view-list" size={24} color="gray" style={styles.ficon} />
-          </Title>
-          <Title style={{color:'white',marginTop:'2%'}}>{inStoreCount}</Title>
-          <Text style={{color:'white',marginTop:'2%'}}>In Store</Text>
-        </Card.Content>
-      </Card></TouchableOpacity>
-      <TouchableOpacity style={{width:'100%'}} onPress={handleDamagedAssets}>
-      <Card style={{...styles.card,backgroundColor:'#ff4d00'}}>
-        <Card.Content>
-        <Title>
-              <ReportIcon name="report" size={24} color="gray" style={styles.ficon} />
-          </Title>
-          <Title style={{color:'white',marginTop:'2%'}}>Damaged Assets</Title>
-          <Text style={{color:'white',marginTop:'2%'}}>Damaged Assets</Text>
-        </Card.Content>
-      </Card></TouchableOpacity>
+      <TouchableOpacity style={{width: '100%'}} onPress={handleInstore}>
+        <Card style={{...styles.card, backgroundColor: 'purple'}}>
+          <Card.Content>
+            <Title>
+              <Icon
+                name="view-list"
+                size={24}
+                color="gray"
+                style={styles.ficon}
+              />
+            </Title>
+            <Title style={{color: 'white', marginTop: '2%'}}>
+              {inStoreCount}
+            </Title>
+            <Text style={{color: 'white', marginTop: '2%'}}>In Store</Text>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+      <TouchableOpacity style={{width: '100%'}} onPress={handleDamagedAssets}>
+        <Card style={{...styles.card, backgroundColor: '#ff4d00'}}>
+          <Card.Content>
+            <Title>
+              <ReportIcon
+                name="report"
+                size={24}
+                color="gray"
+                style={styles.ficon}
+              />
+            </Title>
+            <Title style={{color: 'white', marginTop: '2%'}}>
+              Damaged Assets
+            </Title>
+            <Text style={{color: 'white', marginTop: '2%'}}>
+              Damaged Assets
+            </Text>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
       {/* <Card style={{...styles.card,backgroundColor:'violet'}}>
         <Card.Content>
           <Title>
@@ -237,11 +274,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding:'5%',
-    alignContent:'center'
+    padding: '5%',
+    alignContent: 'center',
   },
-  iconContainer: {
-  },
+  iconContainer: {},
   icon: {
     position: 'absolute',
     top: '23%',
@@ -249,8 +285,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   ficon: {
-    color:'#f0f0f0',
-    textAlign:'center'
+    color: '#f0f0f0',
+    textAlign: 'center',
   },
   content: {
     flex: 1,
@@ -260,13 +296,13 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '80%',
-    height:150,
+    height: 150,
     margin: '1%',
     backgroundColor: '#cccfff',
     borderRadius: 10,
     overflow: 'hidden',
-    alignContent:'center',
-    marginLeft:'10%'
+    alignContent: 'center',
+    marginLeft: '10%',
   },
   label: {
     fontWeight: 'bold',

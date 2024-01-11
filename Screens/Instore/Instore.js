@@ -28,7 +28,7 @@ const Instore = () => {
               data={headings}
               style={{
                 height: 40,
-                backgroundColor: '#052d6e',
+                backgroundColor: '#ff8a3d',
                 width: '100%', 
               }}
               textStyle={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}
@@ -94,7 +94,7 @@ const Instore = () => {
   }, []); 
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       padding: 10,
       alignItems: 'center',
       borderRadius: 5,
@@ -118,7 +118,7 @@ const Instore = () => {
       color:"white"
     },
     activePaginationButton: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       color:"white"
     },
     paginationButtonText: {

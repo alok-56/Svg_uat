@@ -31,7 +31,7 @@ const Employee = () => {
               data={headings}
               style={{
                 height: 40,
-                backgroundColor: '#052d6e',
+                backgroundColor: '#ff8a3d',
                 width: '100%', 
               }}
               textStyle={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}
@@ -98,7 +98,7 @@ const Employee = () => {
   }, []); 
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       padding: 10,
       alignItems: 'center',
       border:"none",
@@ -122,7 +122,7 @@ const Employee = () => {
       color:"white"
     },
     activePaginationButton: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       color:"white"
     },
     paginationButtonText: {
@@ -136,7 +136,7 @@ const Employee = () => {
       marginBottom: 10,
     },
   })
-
+/*
   const generatePDF = async () => {
     // Check if WRITE_EXTERNAL_STORAGE permission is granted
     const permissionResult = await check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
@@ -178,6 +178,65 @@ const Employee = () => {
       }
     }
   };
+*/
+const generatePDF = async () => {
+  // Check if WRITE_EXTERNAL_STORAGE permission is granted
+  const permissionResult = await check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+  console.log('Permission Result:', permissionResult);
+
+  if (permissionResult === RESULTS.GRANTED) {
+    // Permission is already granted, proceed with PDF generation and export
+    const htmlContent = generateTableHTML({ data: apiData, headings: tableHeadings });
+    const pdfFileName = 'table-export.pdf';
+    const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
+    const options = {
+      html: htmlContent,
+      fileName: pdfFileName,
+      directory: downloadsPath,
+    };
+
+    const pdf = await RNHTMLtoPDF.convert(options);
+    console.log(pdf.filePath);
+
+    // Move the downloaded PDF file to the correct path
+    try {
+      await RNFS.moveFile(pdf.filePath, pdfFilePath);
+      console.log('PDF file moved to:', pdfFilePath);
+      Alert.alert('PDF Export', 'Successfully exported PDF!');
+    } catch (moveError) {
+      console.error('Error moving PDF file:', moveError);
+      Alert.alert('PDF Export', 'Failed to export PDF!');
+    }
+  } else if (permissionResult === RESULTS.DENIED) {
+    // Permission is not granted, request it from the user
+    const requestResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+
+    if (requestResult === RESULTS.GRANTED) {
+      // Permission granted, call the generatePDF function again
+      generatePDF();
+    } else {
+      // Permission denied, inform the user
+      Alert.alert('Permission Denied', 'You need to grant storage permission to export files.');
+    }
+  } else {
+    // Permission blocked, inform the user and provide a link to app settings
+    Alert.alert(
+      'Permission Blocked',
+      'You have blocked storage permission. Please enable it in the app settings.',
+      [
+        {
+          text: 'Open Settings',
+          onPress: () => Linking.openSettings(),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
+  }
+};
+
 
   const downloadsPath = RNFS.DownloadDirectoryPath;
   const generateExcel = () => {

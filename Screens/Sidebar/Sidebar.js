@@ -150,7 +150,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         onPress={() =>handleItemClick('ApproveNewAsset')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name='logout'
+          name='web-asset'
           size={30}
           color="gray"
           style={{ marginHorizontal: '5%' }}
