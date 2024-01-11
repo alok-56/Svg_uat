@@ -19,7 +19,7 @@ import Instore from '../Screens/Instore/Instore';
 import ApproveNewAsset from '../Screens/Sidebar/ApproveNewAsset/ApproveNewAsset';
 import ApproveForm from '../Screens/Sidebar/ApproveNewAsset/ApproveForm';
 import SerialNo from '../Screens/Sidebar/Assets/AddToStore/SerialNo';
-
+import WelcomeScreen from "../Screens/WelcomeScreen";
 
 
 const Stack = createStackNavigator();
@@ -28,10 +28,14 @@ const Routes = () => {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={'white'} />
             <Stack.Navigator>
+
+            <Stack.Screen name="WelcomeScreen"
+                    component={WelcomeScreen}
+                    options={{headerShown:false}} />
                 <Stack.Screen name="Login"
                     component={Login}
                     options={{
-                        headerTitle: 'Welcome to AMS',
+                        headerTitle: 'Login Here',
                         headerStyle: { backgroundColor: "#052d6e" },
                         headerTitleAlign: 'center',
                         headerTintColor: 'white',
