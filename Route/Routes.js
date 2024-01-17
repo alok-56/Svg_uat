@@ -19,6 +19,7 @@ import Instore from '../Screens/Instore/Instore';
 import ApproveNewAsset from '../Screens/Sidebar/ApproveNewAsset/ApproveNewAsset';
 import ApproveForm from '../Screens/Sidebar/ApproveNewAsset/ApproveForm';
 import SerialNo from '../Screens/Sidebar/Assets/AddToStore/SerialNo';
+import ScanFirst from '../Screens/Sidebar/Scan/ScanFirst';
 
 
 
@@ -27,7 +28,7 @@ const Routes = () => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={'white'} />
-            <Stack.Navigator>
+            <Stack.Navigator >
                 <Stack.Screen name="Login"
                     component={Login}
                     options={{
@@ -161,6 +162,14 @@ const Routes = () => {
                     component={SerialNo}
                     options={{
                         headerTitle: 'Add Serial No.',
+                        headerStyle: { backgroundColor: '#ff8a3d' },
+                        headerTitleAlign: 'center',
+                        headerTintColor:'white',
+                    }}/>
+                    <Stack.Screen name="ScanFirst"
+                    component={ScanFirst}
+                    options={{
+                        headerTitle: 'Scan',
                         headerStyle: { backgroundColor: '#ff8a3d' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',

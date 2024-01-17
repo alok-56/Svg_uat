@@ -9,7 +9,7 @@ import FIcon from 'react-native-vector-icons/FontAwesome';
 const Sidebar = ({ isOpen, onClose, route }) => {
   const navigation = useNavigation();
   const [isAssetsClicked, setIsAssetsClicked] = useState(false);
-  const { userId } = route && route.params ? route.params : {};
+  const { params: { userId } = {} } = route || {};
 
   const handleItemClick = screen => {
     if (screen === 'Assets') {
@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, onClose, route }) => {
 
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => handleItemClick('MyAssets', { userId })}
+        onPress={() => handleItemClick('MyAssets', { userId})}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
           name='web-asset'
@@ -55,7 +55,7 @@ const Sidebar = ({ isOpen, onClose, route }) => {
 
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => handleItemClick('Scan')}
+        onPress={() => handleItemClick('ScanFirst')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <MIcon
           name='barcode-scan'

@@ -5,9 +5,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
 import { encode } from 'base-64';
 
-const MyAssets = ({ navigation,route }) => {
+const MyAssets = ({ navigation, route }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { userId } = route && route.params ? route.params : { userId: '' };
+  const userId = route.params?.userId;
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -19,12 +20,15 @@ const MyAssets = ({ navigation,route }) => {
       ),
     });
   }, []);
+
   const handleMenuIconPress = () => {
-    setSidebarOpen(prevState => !prevState);
+    setSidebarOpen((prevState) => !prevState);
   };
+
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
   };
+
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -35,77 +39,81 @@ const MyAssets = ({ navigation,route }) => {
         </TouchableOpacity>
       ),
     });
-  })
+  }, []);
+
   const handleBackPress = () => {
-    navigation.navigate('Dashboard')
+    navigation.navigate('Dashboard');
   };
+
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
-    // Fetch data from the API when the component mounts
-    fetchDepartments();
-  }, []);
+    if (userId) {
+      // Fetch data from the API when the component mounts and userId is available
+      fetchDepartments();
+    }
+  }, [userId]);
 
   const fetchDepartments = async () => {
+    console.log(userId,"idddddddddddddddddddddddd")
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
-      
+
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch(`http://13.235.186.102/SVVG-API/webapi/myasset?searchword=${userId}`, {
-        headers: {
-          Authorization: `Basic ${credentials}`,
-        },
-      });
-      
+      const response = await fetch(
+        `http://13.235.186.102/SVVG-API/webapi/myasset?searchword=${userId}`,
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      setDepartments(data.data);
+      setDepartments(data.data || []); // Provide a default empty array
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
   };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {/* Display departments here using the state variable 'departments' */}
-        {departments.map((department) => (
+      {departments && departments.map((department) => (
           <Card key={department.id_dept} style={styles.card}>
-          <Card.Content >
-            <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Asset Name :</Text>
-              <Text style={styles.value}>{department.des}</Text>
-            </View>
-            <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Asset ID:</Text>
-              <Text style={styles.value}>{department.assetid}</Text>
-            </View>
-            {/* <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Type:</Text>
-              <Text style={styles.value}>Type Value</Text>
-            </View> */}
-            <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Serial No:</Text>
-              <Text style={styles.value}>{department.serial}</Text>
-            </View>
-            <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Asset Ref No:</Text>
-              <Text style={styles.value}>{department.appno}</Text>
-            </View>
-            <View style={styles.labelValueContainer}>
-              <Text style={styles.label}>Remarks:</Text>
-              <Text style={styles.value}>{department.remark}</Text>
-            </View>
-          </Card.Content>
+            <Card.Content>
+              <View style={styles.labelValueContainer}>
+                <Text style={styles.label}>Asset Name :</Text>
+                <Text style={styles.value}>{department.des}</Text>
+              </View>
+              <View style={styles.labelValueContainer}>
+                <Text style={styles.label}>Asset ID:</Text>
+                <Text style={styles.value}>{department.assetid}</Text>
+              </View>
+              <View style={styles.labelValueContainer}>
+                <Text style={styles.label}>Serial No:</Text>
+                <Text style={styles.value}>{department.serial}</Text>
+              </View>
+              <View style={styles.labelValueContainer}>
+                <Text style={styles.label}>Asset Ref No:</Text>
+                <Text style={styles.value}>{department.appno}</Text>
+              </View>
+              <View style={styles.labelValueContainer}>
+                <Text style={styles.label}>Remarks:</Text>
+                <Text style={styles.value}>{department.remark}</Text>
+              </View>
+            </Card.Content>
           </Card>
         ))}
       </View>
       {sidebarOpen && (
         <View style={styles.sidebar}>
-          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} userId={userId}/>
         </View>
       )}
     </ScrollView>
