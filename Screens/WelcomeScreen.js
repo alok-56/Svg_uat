@@ -18,11 +18,12 @@ const WelcomeScreen = ({navigation}) => {
 
       <LottieView
         style={{
-          height: "20%",
-          width: "75%",
+          height: '20%',
+          width: '75%',
           position: 'relative',
-          marginTop: '15%',
-          marginLeft: "10%",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
         source={require('../Lottie/welcome.json')}
         autoPlay
@@ -46,21 +47,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    height: "25%",
-    width: "75%",
+    height: '25%',
+    width: '75%',
     position: 'relative',
-    marginTop: '15%',
-    marginLeft: "10%",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#052d6e',
-    marginTop: '15%',
+    marginTop: '10%',
     height: '8%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: "80%",
-    marginLeft: '7%',
+    width: '80%',
     borderRadius: 15,
     position: 'relative',
   },
