@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import LottieView from 'lottie-react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const WelcomeScreen = ({navigation}) => {
   const handleStart = () => {
@@ -33,7 +34,9 @@ const WelcomeScreen = ({navigation}) => {
       <Image source={require('../assets/login.jpeg')} style={styles.logo} />
 
       <TouchableOpacity style={styles.button} onPress={handleStart}>
-        <Text style={styles.buttonText}>Let's Get Started ➡</Text>
+        <Text style={styles.buttonText}>
+        Let's Get Started ➡
+        </Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,10 +1,11 @@
-import { View, Text ,TouchableOpacity,StyleSheet,TextInput} from 'react-native'
-import React,{useState} from 'react'
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { ScrollView } from 'react-native-gesture-handler';
+import { encode } from 'base-64';
 
-const ApproveForm = () => {
-    const [poNumber, setPoNumber] = useState('');
+const ApproveForm = ({ route }) => {
+  const [apiData, setApiData] = useState([]);
+  const [poNumber, setPoNumber] = useState('');
   const [poDate, setPoDate] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [invoiceDate, setInvoiceDate] = useState('');
@@ -14,8 +15,8 @@ const ApproveForm = () => {
   const [dcDate, setDcDate] = useState('');
   const [vendor, setVendor] = useState('');
   const [modalName, setModalName] = useState('');
-  const [category,setCategory] = useState('');
-  const [subCategory,setSubCategory] = useState('');
+  const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
   const [assetType, setAssetType] = useState('');
   const [quantity, setQuantity] = useState('');
   const [unitPrice, setUnitPrice] = useState('');
@@ -24,11 +25,173 @@ const ApproveForm = () => {
   const [center, setCenter] = useState('');
   const [description, setDescription] = useState('');
   const [remarks, setRemarks] = useState('');
+  const [idInv,setIdInv]=useState(0)
+  const [idInvM,setIdInvM]=useState(0)
+  useEffect(() => {
+    const id_inv_m = route.params?.id_inv_m;
+    const id_inv = route.params?.id_inv_m;
+    setIdInvM(id_inv_m);
+    setIdInv(id_inv);
+    fetchData(id_inv_m, id_inv);
+  }, [route.params?.id_inv_m, route.params?.id_inv]);
 
+  const fetchData = async (id_inv_m, id_inv) => {
+    try {
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
+      const credentials = encode(`${Username}:${Password}`);
+      const response = await fetch(
+        `http://13.235.186.102/SVVG-API/webapi/Store_Approver/SelectedItemDetails?id_inv_m=${id_inv_m}&id_inv=${id_inv}`,
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (Array.isArray(responseData.data) && responseData.data.length > 0) {
+        const itemDetails = responseData.data[0];
+        setApiData(itemDetails);
+        // Populate form fields
+        setPoNumber(itemDetails.PONumber);
+        setPoDate(itemDetails.PODate);
+        setInvoiceNumber(itemDetails.InvoiceNO);
+        setInvoiceDate(itemDetails.InvoiceDate);
+        setGrnNumber(itemDetails.GRN);
+        setGrnDate(itemDetails.GRNdate);
+        setDcNumber(itemDetails.DCNum);
+        setDcDate(itemDetails.DCDate);
+        setVendor(itemDetails.Vendor);
+        setModalName(itemDetails.Item);
+        setCategory(itemDetails.Category);
+        setSubCategory(itemDetails.SubCategory);
+        setAssetType(itemDetails.AssetType);
+        setQuantity(itemDetails.Quantity);
+        setUnitPrice(itemDetails.Price);
+        setLocation(itemDetails.Location);
+        setDepartment(itemDetails.Department);
+        setCenter(itemDetails.CostCenter);
+        setDescription(itemDetails.st_config);
+        setRemarks(itemDetails.Remarks || '');
+      } else {
+        console.error('Error fetching data: Data is not an array or is empty');
+        setApiData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setApiData([]);
+    }
+  };
+ 
+  const handleAcceptReject = async (status) => {
+    if (!remarks.trim()) {
+      Alert.alert('Validation Error', 'Remarks is required.');
+      return;
+    }
+  
+    const currentDate = new Date().toISOString().split('T')[0];
+  
+    const postData = {
+      data: [
+        {
+          id_emp_user: "111",
+          id_inv: idInv,
+          id_inv_m: idInvM,
+          dt_approv: currentDate,
+          dt_inv: apiData.InvoiceDate,
+          id_loc: "1",
+          id_sgrp: "203",
+          id_grp: "3",
+          status: status,
+          rmk_asst: remarks,
+        },
+      ],
+    };
+  
+    console.log('postData-->', postData);
+  
+    try {
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
+      const credentials = encode(`${Username}:${Password}`);
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Store_Approver/UpdateStatusApprove',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${credentials}`,
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+    
+      // Check if the response is successful (status 2xx)
+      if (response.ok) {
+        const responseData = await response.text(); // Get the raw response as text
+    
+        // Display different alerts based on status
+        if (status === 'Accepted') {
+          Alert.alert('Success', 'Record has been updated successfully');
+        } else if (status === 'Rejected') {
+          Alert.alert('Success', 'Record has been Rejected successfully');
+        } else {
+          // Handle other status cases if needed
+          Alert.alert('Success', responseData);
+        }
+  
+        // You might want to navigate back or perform other actions here
+      } else {
+        // Handle error case
+        console.error('Error in API response:', response.status);
+        Alert.alert('Error', 'Failed to communicate with the server');
+      }
+    } catch (error) {
+      console.error('Error in API call:', error);
+      Alert.alert('Error', 'Failed to communicate with the server');
+    }
+  };
+
+  const styles = StyleSheet.create({
+    headings: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      color: 'black',
+      marginLeft: '3%',
+      marginBottom: '1%',
+    },
+    textinputs: {
+      borderWidth: 1,
+      borderColor: 'black',
+      color: 'black',
+      width: '95%',
+      padding: 10,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      borderRadius: 5,
+    },
+    button: {
+      backgroundColor: '#ff8a3d',
+      padding: 10,
+      alignItems: 'center',
+      borderRadius: 5,
+      width: '100%',
+      alignSelf: 'center',
+      margin: '5%',
+      marginTop: '30%',
+      marginBottom: '10%',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 18,
+    },
+  });
   return (
     <ScrollView>
-    <View>
-    <View style={{ backgroundColor: '#ff8a3d' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
+      <View>
+        <View style={{ backgroundColor: '#ff8a3d' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
         <View style={{ marginTop: '5%' }}>
           <Text style={styles.headings}>Item/Model Name</Text>
           <TextInput
@@ -129,7 +292,7 @@ const ApproveForm = () => {
             value={remarks}
           />
         </View>
-       <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
+        <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>PO Number</Text>
           <TextInput
@@ -204,69 +367,31 @@ const ApproveForm = () => {
         </View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>Vendor</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
-            <Picker
-              selectedValue={vendor}
-              onValueChange={(itemValue) => setVendor(itemValue)}
-              style={styles.picker}
-              placeholder='Select Asset'
-              editable={false}
-            >
-              <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} />
-              <Picker.Item label="option 1" value="1" />
-              <Picker.Item label="option 2" value="2" />
-              <Picker.Item label="option 3" value="3" />
-              <Picker.Item label="option 4" value="4" />
-            </Picker>
-          </View>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={(value) => setVendor(value)}
+            value={vendor}
+            editable={false}
+          />
         </View>
-        <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
-        <TouchableOpacity>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Accept</Text>
-          </View></TouchableOpacity>
-          <TouchableOpacity>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Reject</Text>
-          </View></TouchableOpacity>
-          </View>
-    </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+          <TouchableOpacity onPress={() => handleAcceptReject('Accepted')}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Accept</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => handleAcceptReject('Rejected')}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Reject</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-    headings: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: 'black',
-        marginLeft: '3%',
-        marginBottom: '1%'
-      },
-      textinputs: {
-        borderWidth: 1,
-        borderColor: 'black',
-        color: 'black',
-        width: '95%',
-        padding: 10,
-        justifyContent: 'center',
-        alignSelf: 'center',
-        borderRadius: 5,
-      },
-      button: {
-        backgroundColor: '#ff8a3d',
-        padding: 10,
-        alignItems: 'center',
-        borderRadius: 5,
-        width: '100%',
-        alignSelf: 'center',
-        margin: '5%',
-        marginTop: '30%',
-        marginBottom:'10%'
-      },
-      buttonText: {
-        color: 'white',
-        fontSize: 18,
-      },
-})
+
 
 export default ApproveForm
+
