@@ -86,7 +86,7 @@ const ModifyAssetForm = ({ route }) => {
     }
   };
  
-  const handleAcceptReject = async (status) => {
+  const handleUpdate = async (status) => {
     if (!remarks.trim()) {
       Alert.alert("Alert",'Please enter all the details');
       return;
@@ -134,11 +134,9 @@ const ModifyAssetForm = ({ route }) => {
         const responseData = await response.text(); // Get the raw response as text
     
         // Display different alerts based on status
-        if (status === 'Accepted') {
-          Alert.alert('Accepted', 'Record has been Accepted successfully');
-        } else if (status === 'Rejected') {
-          Alert.alert('Rejected', 'Record has been Rejected successfully');
-        } else {
+        if (status === 'Updated') {
+          Alert.alert('Updated', 'Record has been Updated successfully');
+        }  else {
           // Handle other status cases if needed
           Alert.alert('Success', responseData);
         }
@@ -192,7 +190,12 @@ const ModifyAssetForm = ({ route }) => {
   return (
     <ScrollView>
       <View>
-        <View style={{ backgroundColor: '#ff8a3d' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
+        <View style={{ backgroundColor: '#ff8a3d' }}>
+        <Text 
+        style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+        Item/Model Details
+        </Text>
+        </View>
         <View style={{ marginTop: '5%' }}>
           <Text style={styles.headings}>Item/Model Name</Text>
           <TextInput
@@ -293,7 +296,11 @@ const ModifyAssetForm = ({ route }) => {
             value={remarks}
           />
         </View>
-        <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
+        <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}>
+        <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+        Invoice Details
+        </Text>
+        </View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>PO Number</Text>
           <TextInput
@@ -376,7 +383,7 @@ const ModifyAssetForm = ({ route }) => {
           />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          <TouchableOpacity onPress={() => handleAcceptReject('Accepted')}>
+          <TouchableOpacity onPress={() => handleUpdate('Updated')}>
             <View style={styles.button}>
               <Text style={styles.buttonText}>Update</Text>
             </View>
