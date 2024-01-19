@@ -1,9 +1,10 @@
+
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { ScrollView } from 'react-native-gesture-handler';
 import { encode } from 'base-64';
 
-const ApproveForm = ({ route }) => {
+const ModifyAssetForm = ({ route }) => {
   const [apiData, setApiData] = useState([]);
   const [poNumber, setPoNumber] = useState('');
   const [poDate, setPoDate] = useState('');
@@ -393,5 +394,5 @@ const ApproveForm = ({ route }) => {
 }
 
 
-export default ApproveForm
+export default ModifyAssetForm
 

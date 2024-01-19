@@ -1,7 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Text, View } from 'react-native'
 import Login from '../Screens/Login';
 import Signup from '../Screens/Signup';
 import ForgotPassword from '../Screens/ForgotPassword';
@@ -20,6 +19,8 @@ import ApproveNewAsset from '../Screens/Sidebar/ApproveNewAsset/ApproveNewAsset'
 import ApproveForm from '../Screens/Sidebar/ApproveNewAsset/ApproveForm';
 import SerialNo from '../Screens/Sidebar/Assets/AddToStore/SerialNo';
 import WelcomeScreen from "../Screens/WelcomeScreen";
+import ModifyAsset from '../Screens/Sidebar/ModifyAsset/ModifyAsset';
+import ModifyAssetForm from '../Screens/Sidebar/ModifyAsset/ModifyAssetForm';
 
 
 const Stack = createStackNavigator();
@@ -55,8 +56,7 @@ const Routes = () => {
                         headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor: 'white',
-                    }} />
-              
+                    }} />     
                 <Stack.Screen name="Dashboard"
                     component={Dashboard}
                     options={{
@@ -157,6 +157,22 @@ const Routes = () => {
                     component={ApproveForm}
                     options={{
                         headerTitle: 'Approve New Asset',
+                        headerStyle: { backgroundColor: '#052d6e' },
+                        headerTitleAlign: 'center',
+                        headerTintColor:'white',
+                    }}/>
+                    <Stack.Screen name="ModifyAsset"
+                    component={ModifyAsset}
+                    options={{
+                        headerTitle: 'Modify Asset',
+                        headerStyle: { backgroundColor: '#052d6e' },
+                        headerTitleAlign: 'center',
+                        headerTintColor:'white',
+                    }}/>
+                    <Stack.Screen name="ModifyAssetForm"
+                    component={ModifyAssetForm}
+                    options={{
+                        headerTitle: 'Modify Asset Form',
                         headerStyle: { backgroundColor: '#052d6e' },
                         headerTitleAlign: 'center',
                         headerTintColor:'white',

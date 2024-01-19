@@ -18,9 +18,6 @@ const Sidebar = ({ isOpen, onClose }) => {
       navigation.navigate(screen);
     }
   };
-  // const handleOutforDelivery = () => {
-    // handleItemClick('OutForDelivery')
-  // }
   const handleLogout = () => {
     navigation.reset({
       index: 0,
@@ -147,10 +144,21 @@ const Sidebar = ({ isOpen, onClose }) => {
         </View>
       )}
       <TouchableOpacity
+        onPress={() =>handleItemClick('ModifyAsset')}
+        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
+        <Icon
+          name='change-circle'
+          size={30}
+          color="gray"
+          style={{ marginHorizontal: '5%' }}
+        />
+        <Text style={styles.sidebarItem}>Modify Asset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         onPress={() =>handleItemClick('ApproveNewAsset')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name='web-asset'
+          name='add-card'
           size={30}
           color="gray"
           style={{ marginHorizontal: '5%' }}
