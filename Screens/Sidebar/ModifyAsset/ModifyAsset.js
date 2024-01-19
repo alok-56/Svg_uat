@@ -110,7 +110,7 @@ const ModifyAsset = ({ navigation }) => {
       const userType = 'Super';
       const credentials = encode(`${Username}:${Password}`);
       const response = await fetch(
-        `http://13.235.186.102/SVVG-API/webapi/Store_Approver/dropdownlist?id_emp_user=${idEmpUser}&userType=${userType}&searchWord`,
+        `http://13.235.186.102/SVVG-API/webapi/Store_Rejectlist/dropdownlist?id_emp_user=${idEmpUser}&userType=${userType}&searchWord`,
         {
           headers: {
             Authorization: `Basic ${credentials}`,

@@ -378,15 +378,10 @@ const ModifyAssetForm = ({ route }) => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
           <TouchableOpacity onPress={() => handleAcceptReject('Accepted')}>
             <View style={styles.button}>
-              <Text style={styles.buttonText}>Accept</Text>
+              <Text style={styles.buttonText}>Update</Text>
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => handleAcceptReject('Rejected')}>
-            <View style={styles.button}>
-              <Text style={styles.buttonText}>Reject</Text>
-            </View>
-          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
