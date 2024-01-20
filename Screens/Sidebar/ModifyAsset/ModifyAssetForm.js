@@ -94,31 +94,67 @@ const ModifyAssetForm = ({ route }) => {
   
     const currentDate = new Date().toISOString().split('T')[0];
   
-    const postData = {
-      data: [
-        {
-          id_emp_user: "1",
-          id_inv: idInv,
-          id_inv_m: idInvM,
-          dt_approv: currentDate,
-          dt_inv: apiData.InvoiceDate,
-          id_loc: "1",
-          id_sgrp: "203",
-          id_grp: "3",
-          status: status,
-          rmk_asst: remarks,
-        },
-      ],
-    };
-  
+    const postData = 
+    { 
+        data: [ 
+            { 
+                nm_model: "CANON (LASERJET)", 
+                id_model: "3", 
+                id_grp: '3', 
+                id_sgrp: '203', 
+                typ_asst: 'IT', 
+                qty_asst: '10', 
+                id_emp_user:'1', 
+                val_asst: '12', 
+                tag: 'Yes', 
+                warr_amc: 'A', 
+                dt_amc_start: "2023-12-31", 
+                dt_amc_exp: "2023-12-31", 
+                st_lease: 'UL', 
+                typ_proc: 'OP', 
+                std_lease: "2023-12-31", 
+                endt_lease: "2023-12-31", 
+                id_flr: '1', 
+                id_dept: '8', 
+                id_cc: '1', 
+                item_description: "CANON(LASERJET)", 
+                rmk_asst: "", 
+                no_po: "PO/001/2023", 
+                dt_po: "2023-12-31", 
+                no_inv: "INV/01/2023", 
+                dt_inv: "2023-12-31", 
+                no_grn: "GRN/01/2023", 
+                dt_grn: "2023-12-31", 
+                no_dc: "DC/01/2023", 
+                dt_dc: "2023-12-31", 
+                id_ven: '1', 
+                storeage_typ: '1TB', 
+                ram_typ: '6GB', 
+                process_typ: 'OS', 
+                st_config: 'Yes', 
+                id_loc: '1', 
+                id_subl: '1', 
+                id_building: '1', 
+                ds_pro: "CANON (LASERJET)", 
+                ds_asst: "CANON (LASERJET)", 
+                id_inv_m:"" , 
+                id_inv:"" , 
+                no_model: "CANON (LASERJET)", 
+                cst_asst: "", 
+                tt_un_prc: "", 
+                invoice_file:" Screenshot (7)_1703670462550.png", 
+                SerialVal: "NA63,NA64", 
+                sapno: "NA63,NA64", 
+            } 
+        ] 
+    } ;
     console.log('postData-->', postData);
-  
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
       const credentials = encode(`${Username}:${Password}`);
       const response = await fetch(
-        'http://13.235.186.102/SVVG-API/webapi/Store_Approver/UpdateStatusApprove',
+        'http://13.235.186.102/SVVG-API/webapi/Store_Rejectlist/UpdateAddToStore',
         {
           method: 'POST',
           headers: {
