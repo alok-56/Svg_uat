@@ -6,6 +6,7 @@ import Sidebar from '../../Sidebar';
 import { Picker } from '@react-native-picker/picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { encode } from 'base-64';
 
 const AddToStore = ({ navigation }) => {
@@ -365,7 +366,6 @@ console.log('Server Response:', responseText);
               }}
               style={styles.picker}
               placeholder='Select Asset'
-
             >
               <Picker.Item label="Select an option" value=""  />
               {models.map((dept) => (
