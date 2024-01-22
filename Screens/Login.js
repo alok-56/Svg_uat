@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
   TextInput,
@@ -10,7 +11,6 @@ import {
   Alert,
 } from 'react-native';
 import {encode} from 'base-64';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {encode as base64Encode} from 'base-64';
 
 const Login = ({navigation}) => {
@@ -55,6 +55,15 @@ const Login = ({navigation}) => {
       console.error('Error fetching employee dropdown data:', error);
     }
   };
+  const storeData = async newData => {
+    try {
+      await AsyncStorage.setItem('userId', newData);
+
+      console.log('Data stored successfully!');
+    } catch (error) {
+      console.error('Error storing data:', error);
+    }
+  };
   const handleLogin = async () => {
     try {
       console.log('hello');
@@ -97,6 +106,7 @@ const Login = ({navigation}) => {
           const userIdType = user.id_usertype;
           const userId = user.id_emp_user;
           fetchEmployeeDropdownData(userId);
+          storeData(userId);
           console.log('User Type:', userType);
           console.log('User ID Type:', userIdType);
           console.log('User ID:', userId);

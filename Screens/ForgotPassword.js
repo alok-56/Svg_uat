@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     Resetbutton: {
-        backgroundColor: '#16314e',
+        backgroundColor: '#ff8a3d',
         padding: 12,
         alignItems: 'center',
         marginHorizontal: '30%',

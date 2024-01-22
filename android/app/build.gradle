@@ -11,6 +11,7 @@ android {
     namespace "com.ams"
     defaultConfig {
         applicationId "com.ams"
+    missingDimensionStrategy 'react-native-camera', 'general' 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -539,20 +539,21 @@ const Scan = ({navigation}) => {
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
+  centerText: {
     flex: 1,
+    fontSize: 18,
+    padding: 32,
+    color: '#777',
   },
-  icon: {
-    position: 'absolute',
-    top: '23%',
-    left: '80%',
-    zIndex: 1,
+  textBold: {
+    fontWeight: '500',
+    color: '#000',
   },
-  content: {
-    flex: 1,
-    padding: '5%',
-    paddingTop: '10%',
+  buttonText: {
+    fontSize: 21,
+    color: 'rgb(0,122,255)',
   },
   card: {
     marginBottom: '5%',

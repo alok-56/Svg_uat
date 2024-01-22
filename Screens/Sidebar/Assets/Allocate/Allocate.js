@@ -135,6 +135,7 @@ const Allocate = ({ navigation }) => {
   };
   const handleAllocate = () => {
     setShowDropdownAndInput(true);
+    
   };
   const handleAllocateAsset = async () => {
     if (selectedAsset.id_wh === '' || assignType === '' || dateTo === '' || textValue === '' || deviceStatus === '') {
@@ -172,6 +173,8 @@ const Allocate = ({ navigation }) => {
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
+      }else{
+        navigation.navigate("Dashboard")
       }
       const responseData = await response.json();
 
@@ -180,7 +183,7 @@ const Allocate = ({ navigation }) => {
       Alert.alert('Success', `Asset allocated successfully`, [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
-
+      // navigation.navigate('Dashboard');
     } catch (error) {
       console.error('Error allocating asset:', error);
       // Handle error, e.g., show an error message
@@ -234,7 +237,7 @@ const Allocate = ({ navigation }) => {
             </Card>
             <View
               style={{
-                backgroundColor: '#052d6e',
+                backgroundColor: '#ff8a3d',
                 alignItems: 'center',
                 paddingVertical: '2%',
                 borderRadius: 5,
@@ -276,6 +279,7 @@ const Allocate = ({ navigation }) => {
               style={styles.picker}
               placeholder='Select Asset'
             >
+            <Picker.Item label="Select Status"/>
               <Picker.Item label="Permanent" value="allct_to_emp" />
               <Picker.Item label="Temporary" value="allct_to_emp_temp" />
             </Picker>
@@ -345,7 +349,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: '5%',
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
   },
   picker: {
     width: '100%',
@@ -372,7 +376,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

@@ -1,44 +1,55 @@
-import React ,{useEffect,useState}from 'react';
-import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+import React, {useEffect, useState} from 'react';
+import {View, Alert, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {Table, Row, Rows} from 'react-native-table-component';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import XLSX from 'xlsx';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import { encode } from 'base-64';
-import { ScrollView } from 'react-native-gesture-handler';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {encode} from 'base-64';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const DamagedAssets = () => {
-  const[apiData,setApiData] = useState([]);
+  const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const tableHeadings = [
     'Asset Id',
     'Damage Status',
     'Invoice No',
-    "Approved By"
+    'Approved By',
   ];
 
-  const MyTable = ({ data, headings }) => {
-    const cellWidths = [150,130, 80,120];
+  const MyTable = ({data, headings}) => {
+    const cellWidths = [150, 130, 80, 120];
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: '10%', marginBottom: '10%' }}>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
             <Row
               data={headings}
               style={{
                 height: 40,
                 backgroundColor: '#052d6e',
-                width: '100%', 
+                width: '100%',
               }}
-              textStyle={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}
+              textStyle={{
+                color: 'white',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
               widthArr={cellWidths}
             />
             {data && data.map && (
               <Rows
-                data={data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
-                 style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
+                data={data.slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage,
+                )}
+                style={{
+                  height: 35,
+                  justifyContent: 'space-evenly',
+                  color: 'black',
+                }}
                 textStyle={{
                   textAlign: 'center',
                   color: 'black',
@@ -46,32 +57,34 @@ const DamagedAssets = () => {
                 widthArr={cellWidths}
                 onPress={(rowData, rowIndex) => {
                   if (rowIndex === data.length - 1) {
-                    handleAddToStorePress(rowData[0]); 
+                    handleAddToStorePress(rowData[0]);
                   }
                 }}
               />
             )}
           </Table>
-          
         </View>
       </ScrollView>
     );
   };
-  
+
   const fetchData = async () => {
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
-  
+
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=allDamage', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=allDamage',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
-  
+      );
+
       const responseData = await response.json();
-  
+
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
@@ -89,11 +102,10 @@ const DamagedAssets = () => {
       setApiData([]);
     }
   };
-  
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, []);
   const styles = StyleSheet.create({
     button: {
       backgroundColor: '#052d6e',
@@ -102,7 +114,7 @@ const DamagedAssets = () => {
       borderRadius: 5,
       width: '40%',
       alignSelf: 'center',
-      margin: '5%'
+      margin: '5%',
     },
     buttonText: {
       color: 'white',
@@ -116,12 +128,12 @@ const DamagedAssets = () => {
     paginationButton: {
       padding: 8,
       marginHorizontal: 5,
-      border:"none",
-      color:"white"
+      border: 'none',
+      color: 'white',
     },
     activePaginationButton: {
       backgroundColor: '#052d6e',
-      color:"white"
+      color: 'white',
     },
     paginationButtonText: {
       color: 'black',
@@ -133,76 +145,84 @@ const DamagedAssets = () => {
       justifyContent: 'space-around',
       marginBottom: 10,
     },
-  })
+  });
 
+  const generateTableHTML = ({data, headings}) => {
+    const tableRows = data.map(
+      rowData => `<tr>${rowData.map(cell => `<td>${cell}</td>`).join('')}</tr>`,
+    );
+    const tableHTML = `
+      <table>
+        <thead>
+          <tr>${headings.map(heading => `<th>${heading}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${tableRows.join('')}
+        </tbody>
+      </table>
+    `;
+    return tableHTML;
+  };
+  const ensureDirectoryExists = async directoryPath => {
+    const directoryExists = await RNFS.exists(directoryPath);
+    if (!directoryExists) {
+      await RNFS.mkdir(directoryPath);
+    }
+  };
   const generatePDF = async () => {
-    // Check if WRITE_EXTERNAL_STORAGE permission is granted
-    const permissionResult = await check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-    console.log('Permission Result:', permissionResult);
-    
-    if (permissionResult === RESULTS.GRANTED) {
-      // Permission is already granted, proceed with PDF generation and export
-      const htmlContent = generateTableHTML({ data: tableData, headings: tableHeadings });
-      const pdfFileName = 'table-export.pdf';
-      const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
-      const options = {
-        html: htmlContent,
-        fileName: pdfFileName,
-        directory: downloadsPath,
-      };
+    const htmlContent = generateTableHTML({
+      data: apiData,
+      headings: tableHeadings,
+    });
+    const pdfFileName = 'table-export.pdf';
+    const downloadsPath = RNFS.DocumentDirectoryPath;
+    const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
+    await ensureDirectoryExists(downloadsPath);
+    const options = {
+      html: htmlContent,
+      fileName: pdfFileName,
+      directory: downloadsPath,
+    };
 
+    try {
       const pdf = await RNHTMLtoPDF.convert(options);
-      console.log(pdf.filePath);
+      console.log('PDF Conversion Result:', pdf);
 
-      // Move the downloaded PDF file to the correct path
-      try {
+      if (pdf.filePath) {
+        // Move the downloaded PDF file to the correct path
         await RNFS.moveFile(pdf.filePath, pdfFilePath);
         console.log('PDF file moved to:', pdfFilePath);
         Alert.alert('PDF Export', 'Successfully exported PDF!');
-      } catch (moveError) {
-        console.error('Error moving PDF file:', moveError);
+      } else {
+        console.error('PDF conversion failed. No file path received.');
         Alert.alert('PDF Export', 'Failed to export PDF!');
       }
-    } else {
-      // Request permission from the user
-      const requestResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-      
-      if (requestResult === RESULTS.GRANTED) {
-        // Permission granted, call the generatePDF function again
-        generatePDF();
-      } else {
-        // Permission denied, handle accordingly (e.g., show an alert)
-        Alert.alert('Permission Denied', 'You need to grant storage permission to export files.');
-      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      Alert.alert('PDF Export', 'Failed to export PDF!');
     }
   };
 
-  const downloadsPath = RNFS.DownloadDirectoryPath;
-  const generateExcel = () => {
-    // Convert the data to worksheet
-    const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...tableData]);
-
-    // Create a new workbook
+  const generateExcel = async () => {
+    const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...apiData]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    // Convert the workbook to binary Excel format
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+    const excelFileName = 'table-export.xlsx';
+    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
 
-    // Save the Excel file with the correct extension (.xlsx)
-    const path = `${downloadsPath}/table-export.xlsx`;
-
-    RNFS.writeFile(path, excelBuffer, 'base64')
-      .then(() => {
-        console.log('Excel file created:', path);
-        Alert.alert('Excel Export', 'Successfully exported Excel!');
-      })
-      .catch(error => {
-        console.error('Error creating Excel file:', error);
-        Alert.alert('Excel Export', 'Failed to export Excel!');
-      });
+    try {
+      await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
+      console.log('Excel file created:', excelFilePath);
+      Alert.alert('Excel Export', 'Successfully exported Excel!');
+    } catch (error) {
+      console.error('Error creating Excel file:', error);
+      Alert.alert('Excel Export', 'Failed to export Excel!');
+    }
   };
-  const handlePageChange = (newPage) => {
+
+  const handlePageChange = newPage => {
     setCurrentPage(newPage);
   };
   const renderPaginationButtons = () => {
@@ -220,16 +240,17 @@ const DamagedAssets = () => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage - 1)}>
-            <Text style={styles.paginationButtonText}>{"<"}</Text>
+            <Text style={styles.paginationButtonText}>{'<'}</Text>
           </TouchableOpacity>
         )}
 
-        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+        {[...Array(endPage - startPage + 1).keys()].map(index => (
           <TouchableOpacity
             key={startPage + index}
             style={[
               styles.paginationButton,
-              currentPage === startPage + index && styles.activePaginationButton,
+              currentPage === startPage + index &&
+                styles.activePaginationButton,
             ]}
             onPress={() => handlePageChange(startPage + index)}>
             <Text style={styles.paginationButtonText}>{startPage + index}</Text>
@@ -240,7 +261,7 @@ const DamagedAssets = () => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage + 1)}>
-            <Text style={styles.paginationButtonText}>{">"}</Text>
+            <Text style={styles.paginationButtonText}>{'>'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -249,8 +270,8 @@ const DamagedAssets = () => {
 
   return (
     <ScrollView>
-    <View>
-    {apiData && apiData.length > 0 ? (
+      <View>
+        {apiData && apiData.length > 0 ? (
           <>
             <MyTable data={apiData} headings={tableHeadings} />
             {renderPaginationButtons()}
@@ -258,25 +279,22 @@ const DamagedAssets = () => {
         ) : (
           <Text>Loading data...</Text>
         )}
-     
+
         <View style={styles.exportButtonsContainer}>
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={generatePDF}>
-            <Text style={styles.buttonText}>Export to PDF</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={generateExcel}>
-            <Text style={styles.buttonText}>Export to Excel</Text>
-          </TouchableOpacity>
+          <View style={styles.button}>
+            <TouchableOpacity onPress={generatePDF}>
+              <Text style={styles.buttonText}>Export to PDF</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.button}>
+            <TouchableOpacity onPress={generateExcel}>
+              <Text style={styles.buttonText}>Export to Excel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </ScrollView>
-  ); 
+  );
 };
-
 
 export default DamagedAssets;

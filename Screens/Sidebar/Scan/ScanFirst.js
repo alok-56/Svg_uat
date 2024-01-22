@@ -5,8 +5,8 @@ import {Table, Row, Rows} from 'react-native-table-component';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNFS from 'react-native-fs';
-import ReactNativeBlobUtil from 'react-native-blob-util';
-import RNFetchBlob from 'rn-fetch-blob';
+// import ReactNativeBlobUtil from 'react-native-blob-util';
+// import RNFetchBlob from 'rn-fetch-blob';
 
 const ScanFirst = ({navigation}) => {
   const [tableData, setTableData] = useState([]);

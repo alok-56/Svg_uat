@@ -15,6 +15,7 @@ const Sidebar = ({isOpen, onClose, route}) => {
       await AsyncStorage.removeItem('AssestData');
       await AsyncStorage.removeItem('userDetails');
       await AsyncStorage.removeItem('userId');
+
       console.log('Data CLeared');
     } catch (err) {
       console.log('error', err);
@@ -151,10 +152,21 @@ const Sidebar = ({isOpen, onClose, route}) => {
         </View>
       )}
       <TouchableOpacity
+        onPress={() => handleItemClick('ModifyAsset')}
+        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
+        <Icon
+          name="change-circle"
+          size={30}
+          color="gray"
+          style={{marginHorizontal: '5%'}}
+        />
+        <Text style={styles.sidebarItem}>Modify Asset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         onPress={() => handleItemClick('ApproveNewAsset')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name="logout"
+          name="add-card"
           size={30}
           color="gray"
           style={{marginHorizontal: '5%'}}
