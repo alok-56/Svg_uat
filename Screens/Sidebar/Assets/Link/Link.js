@@ -168,7 +168,6 @@ const handleCheckboxSelect = (itemId) => {
         setAssetIdValue(assetInfo.AssetID);
         setAssetValue(assetInfo.Asset_Subcategry);
         setShowDropdownAndInput(true);
-        
       } else {
         // Handle the case where the response is empty
         alert('No data found for the selected asset');
@@ -304,6 +303,8 @@ const handleCheckboxSelect = (itemId) => {
   
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
+      }else{
+        navigation.navigate("Dashboard")
       }
   
       const responseText = await response.text();
@@ -363,18 +364,18 @@ const handleCheckboxSelect = (itemId) => {
             <Card style={styles.card}>
               <Card.Content >
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Asset ID :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset ID :</Text>
                   <Text style={styles.value}>{assetIdValue}</Text>
                 </View>
                 <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#052d6e' }}>Asset Name :</Text>
+                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset Name :</Text>
                   <Text style={styles.value}>{assetValue}</Text>
                 </View>
               </Card.Content>
             </Card>
 
             {additionalData.map((item) => (<View key={item.id_wh}><Card 
-            style={{ ...styles.card, backgroundColor: '#ff8a3d' }}>
+            style={{ ...styles.card, backgroundColor: '#052d6e' }}>
                 <Card.Content >
                   <View style={styles.labelContainer}>
 
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

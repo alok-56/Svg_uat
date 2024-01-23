@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -10,19 +10,63 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import { encode } from 'base-64';
+import {encode} from 'base-64';
+import {encode as base64Encode} from 'base-64';
 
-
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
- 
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const fetchEmployeeDropdownData = async id => {
+    const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+
+    const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
+
+    try {
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/install/emp_dropdown',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && Array.isArray(data.data)) {
+        await AsyncStorage.setItem('userDetails', JSON.stringify(data.data));
+        await AsyncStorage.setItem('userId', JSON.stringify(id));
+        console.log(data);
+      }
+    } catch (error) {
+      console.error('Error fetching employee dropdown data:', error);
+    }
+  };
+  const storeData = async newData => {
+    try {
+      await AsyncStorage.setItem('userId', newData);
+
+      console.log('Data stored successfully!');
+    } catch (error) {
+      console.error('Error storing data:', error);
+    }
+  };
   const handleLogin = async () => {
     try {
+      console.log('hello');
       const basicAuthCredentials = 'SVVG:Pass@123';
       const base64Credentials = encode(basicAuthCredentials);
 
@@ -42,13 +86,13 @@ const Login = ({ navigation }) => {
             username: name,
             password: password,
           }),
-        }
+        },
       );
 
       const responseText = await response.text();
       console.log('Response Text:', responseText);
 
-      const responseMatch = responseText.match(/\{.*\}/); 
+      const responseMatch = responseText.match(/\{.*\}/);
 
       if (responseMatch) {
         const jsonResponse = JSON.parse(responseMatch[0]);
@@ -61,17 +105,23 @@ const Login = ({ navigation }) => {
           const userType = user.type_user;
           const userIdType = user.id_usertype;
           const userId = user.id_emp_user;
-
+          fetchEmployeeDropdownData(userId);
+          storeData(userId);
           console.log('User Type:', userType);
           console.log('User ID Type:', userIdType);
           console.log('User ID:', userId);
 
           Alert.alert('Login', 'Login successful');
+<<<<<<< HEAD
           storeData(userId)
           navigation.navigate('Dashboard', { userId });
           return; 
+=======
+
+          navigation.navigate('Dashboard', {userId});
+          return;
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         } else {
-          
           Alert.alert('Login Failed', 'Invalid username or password');
         }
       } else {
@@ -80,13 +130,17 @@ const Login = ({ navigation }) => {
 
       if (!response.ok) {
         console.error('Failed to log in:', response.status);
-        Alert.alert('Login Failed', `Failed to log in. Status: ${response.status}`);
+        Alert.alert(
+          'Login Failed',
+          `Failed to log in. Status: ${response.status}`,
+        );
       }
     } catch (error) {
       console.error('Error during login:', error);
       Alert.alert('Error', 'An error occurred during login.');
     }
   };
+<<<<<<< HEAD
 
   const storeData = async newData => {
     try {
@@ -101,6 +155,8 @@ const Login = ({ navigation }) => {
   
   
   
+=======
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   return (
     <View style={styles.container}>
@@ -128,8 +184,8 @@ const Login = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
           style={styles.input}
-          />
-          <TouchableOpacity
+        />
+        <TouchableOpacity
           style={styles.eyeIcon}
           onPress={togglePasswordVisibility}>
           <Icon
@@ -138,7 +194,6 @@ const Login = ({ navigation }) => {
             color="black"
           />
         </TouchableOpacity>
-        
       </View>
       {/* <TouchableOpacity
         style={styles.resetbutton}
@@ -177,7 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     marginLeft: '5%',
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   iconContainer: {
     padding: 10,
@@ -199,12 +254,12 @@ const styles = StyleSheet.create({
     marginHorizontal: '30%',
     borderRadius: 20,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 8,
     marginBottom: 10,
-    marginTop:'15%',
+    marginTop: '15%',
   },
   loginButtonText: {
     color: 'white',
@@ -230,4 +285,3 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
-

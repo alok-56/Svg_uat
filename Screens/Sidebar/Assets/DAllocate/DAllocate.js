@@ -112,6 +112,8 @@ const DAllocate = ({ navigation }) => {
   
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
+      }else{
+        navigation.navigate("Dashboard")
       }
   
       // Handle success, e.g., show a success message or navigate to a different screen
@@ -168,7 +170,6 @@ const DAllocate = ({ navigation }) => {
     setEmployeeName(selectedData.nm_emp || '');
     setEmployeeCode(selectedData.cd_emp || '');
     setAllocatedDate(selectedData.dt_allocate || '');
-
     setShowDropdownAndInput(true);
   };
   return (
@@ -208,7 +209,7 @@ const DAllocate = ({ navigation }) => {
                 </View>
               </Card.Content>
             </Card>
-            <View style={{ backgroundColor: '#052d6e', alignItems: 'center', paddingVertical: '2%', borderRadius: 5, marginBottom: '4%', }}>
+            <View style={{ backgroundColor: '#ff8a3d', alignItems: 'center', paddingVertical: '2%', borderRadius: 5, marginBottom: '4%', }}>
               <Text style={{ fontWeight: 'bold', color: 'white' }}>Assign To </Text>
             </View>
             {/* <Picker
@@ -244,6 +245,7 @@ const DAllocate = ({ navigation }) => {
               style={styles.picker}
               placeholder='Select Asset'
             >
+            <Picker.Item label="Select Status"/>
               <Picker.Item label="Working" value="working" />
               <Picker.Item label="Physical Damage Major" value="physical_dmg_mjr" />
               <Picker.Item label="Physical Damage Minor " value="physical_dmg_mnr" />
@@ -318,7 +320,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: '5%',
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
   },
   picker: {
     width: '100%',
@@ -345,7 +347,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

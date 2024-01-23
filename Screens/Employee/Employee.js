@@ -1,45 +1,57 @@
+<<<<<<< HEAD
 import React ,{useEffect,useState}from 'react';
 import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
+=======
+import React, {useEffect, useState} from 'react';
+import {View, Alert, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {Table, Row, Rows} from 'react-native-table-component';
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import XLSX from 'xlsx';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import { encode } from 'base-64';
-import { ScrollView } from 'react-native-gesture-handler';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {encode} from 'base-64';
+import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Employee = () => {
-  const[apiData,setApiData] = useState([]);
+  const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
-  const tableHeadings = [
-    'Asset Id',
-    'Serial No',
-    'Invoice No',
-    'Location',
-  ];
+  const tableHeadings = ['Asset Id', 'Serial No', 'Invoice No', 'Location'];
 
-  const MyTable = ({ data, headings }) => {
-    const cellWidths = [150,130, 80,120];
+  const MyTable = ({data, headings}) => {
+    const cellWidths = [150, 130, 80, 120];
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: '10%', marginBottom: '10%' }}>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
             <Row
               data={headings}
               style={{
                 height: 40,
                 backgroundColor: '#052d6e',
-                width: '100%', 
+                width: '100%',
               }}
-              textStyle={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}
+              textStyle={{
+                color: 'white',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
               widthArr={cellWidths}
             />
             {data && data.map && (
               <Rows
-                data={data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
-                 style={{ height: 35, justifyContent: 'space-evenly', color: 'black' }}
+                data={data.slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage,
+                )}
+                style={{
+                  height: 35,
+                  justifyContent: 'space-evenly',
+                  color: 'black',
+                }}
                 textStyle={{
                   textAlign: 'center',
                   color: 'black',
@@ -47,13 +59,12 @@ const Employee = () => {
                 widthArr={cellWidths}
                 onPress={(rowData, rowIndex) => {
                   if (rowIndex === data.length - 1) {
-                    handleAddToStorePress(rowData[0]); 
+                    handleAddToStorePress(rowData[0]);
                   }
                 }}
               />
             )}
           </Table>
-          
         </View>
       </ScrollView>
     );
@@ -65,7 +76,13 @@ const Employee = () => {
       generatePDF();
     } else {
       // Permission not granted, request it
+<<<<<<< HEAD
       const permissionResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+=======
+      const permissionResult = await request(
+        PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+      );
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
       if (permissionResult === RESULTS.GRANTED) {
         // Permission granted, proceed with generating PDF
         generatePDF();
@@ -75,22 +92,29 @@ const Employee = () => {
       }
     }
   };
+<<<<<<< HEAD
   
   
+=======
+
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const fetchData = async () => {
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
-  
+
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=all', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/reportAPI/assetstatusreport?searchword=all',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
-  
+      );
+
       const responseData = await response.json();
-  
+
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
@@ -108,20 +132,19 @@ const Employee = () => {
       setApiData([]);
     }
   };
-  
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, []);
   const styles = StyleSheet.create({
     button: {
       backgroundColor: '#052d6e',
       padding: 10,
       alignItems: 'center',
-      border:"none",
+      border: 'none',
       width: '40%',
       alignSelf: 'center',
-      margin: '5%'
+      margin: '5%',
     },
     buttonText: {
       color: 'white',
@@ -135,12 +158,12 @@ const Employee = () => {
     paginationButton: {
       padding: 8,
       marginHorizontal: 5,
-      border:"none",
-      color:"white"
+      border: 'none',
+      color: 'white',
     },
     activePaginationButton: {
       backgroundColor: '#052d6e',
-      color:"white"
+      color: 'white',
     },
     paginationButtonText: {
       color: 'black',
@@ -152,16 +175,27 @@ const Employee = () => {
       justifyContent: 'space-around',
       marginBottom: 10,
     },
+<<<<<<< HEAD
   })
   const generateTableHTML = ({ data, headings }) => {
     const tableRows = data.map(
       (rowData) =>
         `<tr>${rowData.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
+=======
+  });
+  const generateTableHTML = ({data, headings}) => {
+    const tableRows = data.map(
+      rowData => `<tr>${rowData.map(cell => `<td>${cell}</td>`).join('')}</tr>`,
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     );
     const tableHTML = `
       <table>
         <thead>
+<<<<<<< HEAD
           <tr>${headings.map((heading) => `<th>${heading}</th>`).join('')}</tr>
+=======
+          <tr>${headings.map(heading => `<th>${heading}</th>`).join('')}</tr>
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         </thead>
         <tbody>
           ${tableRows.join('')}
@@ -170,14 +204,25 @@ const Employee = () => {
     `;
     return tableHTML;
   };
+<<<<<<< HEAD
   const ensureDirectoryExists = async (directoryPath) => {
+=======
+  const ensureDirectoryExists = async directoryPath => {
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     const directoryExists = await RNFS.exists(directoryPath);
     if (!directoryExists) {
       await RNFS.mkdir(directoryPath);
     }
   };
   const generatePDF = async () => {
+<<<<<<< HEAD
     const htmlContent = generateTableHTML({ data: apiData, headings: tableHeadings });
+=======
+    const htmlContent = generateTableHTML({
+      data: apiData,
+      headings: tableHeadings,
+    });
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     const pdfFileName = 'table-export.pdf';
     const downloadsPath = RNFS.DocumentDirectoryPath;
     const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
@@ -187,11 +232,19 @@ const Employee = () => {
       fileName: pdfFileName,
       directory: downloadsPath,
     };
+<<<<<<< HEAD
   
     try {
       const pdf = await RNHTMLtoPDF.convert(options);
       console.log('PDF Conversion Result:', pdf);
   
+=======
+
+    try {
+      const pdf = await RNHTMLtoPDF.convert(options);
+      console.log('PDF Conversion Result:', pdf);
+
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
       if (pdf.filePath) {
         // Move the downloaded PDF file to the correct path
         await RNFS.moveFile(pdf.filePath, pdfFilePath);
@@ -212,11 +265,19 @@ const Employee = () => {
     const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...apiData]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+<<<<<<< HEAD
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
   
     const excelFileName = 'table-export.xlsx';
     const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
   
+=======
+    const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
+
+    const excelFileName = 'table-export.xlsx';
+    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
+
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);
@@ -226,9 +287,14 @@ const Employee = () => {
       Alert.alert('Excel Export', 'Failed to export Excel!');
     }
   };
+<<<<<<< HEAD
   
 
   const handlePageChange = (newPage) => {
+=======
+
+  const handlePageChange = newPage => {
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     setCurrentPage(newPage);
   };
 
@@ -245,16 +311,17 @@ const Employee = () => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage - 1)}>
-            <Text style={styles.paginationButtonText}>{"<"}</Text>
+            <Text style={styles.paginationButtonText}>{'<'}</Text>
           </TouchableOpacity>
         )}
 
-        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+        {[...Array(endPage - startPage + 1).keys()].map(index => (
           <TouchableOpacity
             key={startPage + index}
             style={[
               styles.paginationButton,
-              currentPage === startPage + index && styles.activePaginationButton,
+              currentPage === startPage + index &&
+                styles.activePaginationButton,
             ]}
             onPress={() => handlePageChange(startPage + index)}>
             <Text style={styles.paginationButtonText}>{startPage + index}</Text>
@@ -265,7 +332,7 @@ const Employee = () => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage + 1)}>
-            <Text style={styles.paginationButtonText}>{">"}</Text>
+            <Text style={styles.paginationButtonText}>{'>'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -301,4 +368,8 @@ const Employee = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Employee;
+=======
+export default Employee;
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52

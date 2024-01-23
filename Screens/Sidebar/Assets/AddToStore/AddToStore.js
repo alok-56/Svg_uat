@@ -1,15 +1,33 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, TextInput ,Alert,Button} from 'react-native';
 import { Card, Title } from 'react-native-paper';
+=======
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  Alert,
+  Button,
+} from 'react-native';
+import {Card, Title} from 'react-native-paper';
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
-import { Picker } from '@react-native-picker/picker';
-import { ScrollView } from 'react-native-gesture-handler';
+import {Picker} from '@react-native-picker/picker';
+import {ScrollView} from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { encode } from 'base-64';
+import {encode} from 'base-64';
 
+<<<<<<< HEAD
 
 const AddToStore = ({ navigation }) => {
+=======
+const AddToStore = ({navigation}) => {
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalName, setModalName] = useState('');
   const [modalNm, setModalNm] = useState('');
@@ -29,11 +47,16 @@ const AddToStore = ({ navigation }) => {
   const [grnDate, setGrnDate] = useState('');
   const [dcNumber, setDcNumber] = useState('');
   const [dcDate, setDcDate] = useState('');
-  const [invoiceDate,setInvoiceDate] = useState('');
+  const [invoiceDate, setInvoiceDate] = useState('');
   const [vendor, setVendor] = useState('');
   const [showStartDatepicker, setShowStartDatepicker] = useState(false);
   const [showEndDatepicker, setShowEndDatepicker] = useState(false);
+<<<<<<< HEAD
   const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] = useState(false);
+=======
+  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =
+    useState(false);
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
   const [showPoDatepicker, setShowPoDatepicker] = useState(false);
   const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
@@ -43,7 +66,11 @@ const AddToStore = ({ navigation }) => {
   const [endDate, setEndDate] = useState('');
   const [leaseStartDate, setLeaseStartDate] = useState('');
   const [leaseEndDate, setLeaseEndDate] = useState('');
+<<<<<<< HEAD
   const [poDate,setPoDate] = useState('');
+=======
+  const [poDate, setPoDate] = useState('');
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [showDateInputs, setShowDateInputs] = useState(false);
   const [showLeaseDateInputs, setShowLeaseDateInputs] = useState(false);
   const [departments, setDepartments] = useState([]);
@@ -63,15 +90,18 @@ const AddToStore = ({ navigation }) => {
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [ram, setRam] = useState('');
   const [refreshData, setRefreshData] = useState(false);
+<<<<<<< HEAD
  
 
+=======
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={handleMenuIconPress}
-          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
           <Icon name="menu" color="white" size={25} />
         </TouchableOpacity>
       ),
@@ -84,19 +114,28 @@ const AddToStore = ({ navigation }) => {
     setSidebarOpen(false);
   };
   const handleBackPress = () => {
+<<<<<<< HEAD
     navigation.navigate('AddToStore')
   }
+=======
+    navigation.navigate('AddToStore');
+  };
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
           onPress={handleBackPress}
-          style={{ position: 'absolute', top: '30%', left: '20%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '20%', zIndex: 1}}>
           <Icon name="arrow-back" color="white" size={25} />
         </TouchableOpacity>
       ),
     });
+<<<<<<< HEAD
   })
+=======
+  });
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   useEffect(() => {
     if (refreshData) {
       // Reset the state values or trigger any necessary updates
@@ -108,9 +147,38 @@ const AddToStore = ({ navigation }) => {
       setRefreshData(false);
     }
   }, [refreshData]);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const handleSerialNo = () => {
-    if (!modalName || !quantity || !unitPrice || !taggable || !warranty || !leaseStatus || !department || !typeOfProcurement || !location || !costCenter || !itemDescription || !poNumber || !poDate || !invoiceNumber || !invoiceDate || !grnNumber || !grnDate || !dcNumber || !dcDate || !vendor || !diskSpace || !ram || !operatingSystem || !osServiceType) {
+    if (
+      !modalName ||
+      !quantity ||
+      !unitPrice ||
+      !taggable ||
+      !warranty ||
+      !leaseStatus ||
+      !department ||
+      !typeOfProcurement ||
+      !location ||
+      !costCenter ||
+      !itemDescription ||
+      !poNumber ||
+      !poDate ||
+      !invoiceNumber ||
+      !invoiceDate ||
+      !grnNumber ||
+      !grnDate ||
+      !dcNumber ||
+      !dcDate ||
+      !vendor ||
+      !diskSpace ||
+      !ram ||
+      !operatingSystem ||
+      !osServiceType
+    ) {
       Alert.alert('Validation Error', 'Please fill in all required fields.');
       return;
     }
@@ -153,7 +221,7 @@ const AddToStore = ({ navigation }) => {
       selectedDepartmentId,
     });
   };
-  const handleWarrantyChange = (itemValue) => {
+  const handleWarrantyChange = itemValue => {
     setWarranty(itemValue);
     setShowDateInputs(itemValue === 'AMC' || itemValue === 'Warranty');
   };
@@ -243,11 +311,14 @@ const AddToStore = ({ navigation }) => {
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_department', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_department',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -265,11 +336,14 @@ const AddToStore = ({ navigation }) => {
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/vendor_dropdownlist', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/vendor_dropdownlist',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -287,11 +361,14 @@ const AddToStore = ({ navigation }) => {
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_CC', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_CC',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -309,11 +386,14 @@ const AddToStore = ({ navigation }) => {
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Loc', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Loc',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -331,11 +411,14 @@ const AddToStore = ({ navigation }) => {
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Model', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Model',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -355,109 +438,160 @@ const AddToStore = ({ navigation }) => {
     fetchModels();
     setRefreshData(false);
   }, [refreshData]);
+<<<<<<< HEAD
  
   const getModalDetails = (e) => {
     const selectedModel = models.find((item) => item?.nm_model === e);
   
+=======
+
+  const getModalDetails = e => {
+    const selectedModel = models.find(item => item?.nm_model === e);
+
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     if (selectedModel) {
-      const { nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst } = selectedModel;
-  
+      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst} =
+        selectedModel;
+
       setModalNm(nm_model);
       setSelectedModelId(id_model);
       setIdSAssetdiv(id_s_assetdiv);
       setIdAssetdiv(id_assetdiv);
       setTypAsst(typ_asst);
-  
+
       console.log('Selected Model Details:');
       console.log('modal name:', nm_model);
       console.log('model id:', id_model);
       console.log('idasset:', id_assetdiv);
       console.log('SAsset', id_s_assetdiv);
       console.log('type asset:', typ_asst);
-     
     }
   };
+<<<<<<< HEAD
   const handleLeaseStatusChange = (itemValue) => {
+=======
+  const handleLeaseStatusChange = itemValue => {
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     setLeaseStatus(itemValue);
     setStartDate('');
     setEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
+<<<<<<< HEAD
   
   
   
 
 
+=======
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   return (
     <ScrollView>
       <View style={styles.container}>
+<<<<<<< HEAD
         <View style={{ backgroundColor: '#052d6e' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
         
         <View style={{ marginTop: '3%' }}>
+=======
+        <View style={{backgroundColor: '#052d6e'}}>
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: 18,
+              padding: 10,
+            }}>
+            Item/Model Details
+          </Text>
+        </View>
+
+        <View style={{marginTop: '3%'}}>
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
           <Text style={styles.headings}>Item/Model Name*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue),
-                setModalName(itemValue)
+                getModalDetails(itemValue), setModalName(itemValue);
               }}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
-              {models.map((dept) => (
-                <Picker.Item key={dept.nm_model} label={dept.nm_model} value={dept.nm_model} />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              {models.map(dept => (
+                <Picker.Item
+                  key={dept.nm_model}
+                  label={dept.nm_model}
+                  value={dept.nm_model}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Quantity*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setQuantity(value)}
+            onChangeText={value => setQuantity(value)}
             value={quantity}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Unit Price*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setUnitPrice(value)}
+            onChangeText={value => setUnitPrice(value)}
             value={unitPrice}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Taggable*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={taggable}
-              onValueChange={(itemValue) => setTaggable(itemValue)}
+              onValueChange={itemValue => setTaggable(itemValue)}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
               <Picker.Item label="Yes" value="Yes" />
               <Picker.Item label="No" value="No" />
-              
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>AMC/Warranty*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={warranty}
               onValueChange={handleWarrantyChange}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
               <Picker.Item label="NO" value="NO" />
               <Picker.Item label="AMC" value="AMC" />
               <Picker.Item label="Warranty" value="Warranty" />
@@ -466,32 +600,36 @@ const AddToStore = ({ navigation }) => {
         </View>
         {showDateInputs && (
           <>
-            <View style={{ marginTop: '3%' }}>
+            <View style={{marginTop: '3%'}}>
               <Text style={styles.headings}>Start Date*</Text>
-              <TextInput style={styles.textinputs}
+              <TextInput
+                style={styles.textinputs}
                 placeholder="Start Date"
                 placeholderTextColor="gray"
                 value={startDate}
                 onFocus={() => setShowStartDatepicker(true)}
               />
               {showStartDatepicker && (
-                <DateTimePicker value={new Date()}
+                <DateTimePicker
+                  value={new Date()}
                   mode="date"
                   display="default"
                   onChange={handleStartDateChange}
                 />
               )}
             </View>
-            <View style={{ marginTop: '3%' }}>
+            <View style={{marginTop: '3%'}}>
               <Text style={styles.headings}>End Date*</Text>
-              <TextInput style={styles.textinputs}
+              <TextInput
+                style={styles.textinputs}
                 placeholder="End Date"
                 placeholderTextColor="gray"
                 value={endDate}
                 onFocus={() => setShowEndDatepicker(true)}
               />
               {showEndDatepicker && (
-                <DateTimePicker value={new Date()}
+                <DateTimePicker
+                  value={new Date()}
                   mode="date"
                   display="default"
                   onChange={handleEndDateChange}
@@ -500,6 +638,7 @@ const AddToStore = ({ navigation }) => {
             </View>
           </>
         )}
+<<<<<<< HEAD
         <View style={{ marginTop: '3%' }}>
         <Text style={styles.headings}>Lease Status*</Text>
         <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
@@ -556,249 +695,398 @@ const AddToStore = ({ navigation }) => {
         </>
       )}
         <View style={{ marginTop: '3%' }}>
+=======
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Lease Status*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            <Picker
+              selectedValue={leaseStatus}
+              onValueChange={handleLeaseStatusChange}
+              style={styles.picker}
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              <Picker.Item label="Not Under Lease" value="Not Under Lease" />
+              <Picker.Item label="Under Lease" value="Under Lease" />
+            </Picker>
+          </View>
+        </View>
+        {showLeaseDateInputs && (
+          <>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Start Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="Start Date"
+                placeholderTextColor="gray"
+                value={leaseStartDate}
+                onFocus={() => setShowLeaseStartDatepicker(true)}
+              />
+              {showLeaseStartDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleLeaseStartDateChange}
+                />
+              )}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>End Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="End Date"
+                placeholderTextColor="gray"
+                value={leaseEndDate}
+                onFocus={() => setShowLeaseEndDatepicker(true)}
+              />
+              {showLeaseEndDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleLeaseEndDateChange}
+                />
+              )}
+            </View>
+          </>
+        )}
+        <View style={{marginTop: '3%'}}>
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
           <Text style={styles.headings}>Type of Procurement*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={typeOfProcurement}
-              onValueChange={(itemValue) => setTypeOfProcurement(itemValue)}
+              onValueChange={itemValue => setTypeOfProcurement(itemValue)}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
               <Picker.Item label="Outright Purchase" value="1" />
               <Picker.Item label="Loan Basis" value="2" />
               <Picker.Item label="Add-On" value="3" />
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Location*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={location}
               onValueChange={(itemValue, itemIndex) => {
+<<<<<<< HEAD
     setLocation(itemValue);
     setSelectedLocationId(locations[itemIndex]?.id_flr || '');
   }}
+=======
+                setLocation(itemValue);
+                setSelectedLocationId(locations[itemIndex]?.id_flr || '');
+              }}
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
-              {locations.map((dept) => (
-                <Picker.Item key={dept.id_flr} label={dept.nm_flr} value={dept.id_flr} />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              {locations.map(dept => (
+                <Picker.Item
+                  key={dept.id_flr}
+                  label={dept.nm_flr}
+                  value={dept.id_flr}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Department*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={department}
               onValueChange={(itemValue, itemIndex) => {
+<<<<<<< HEAD
     setDepartment(itemValue);
     setSelectedDepartmentId(departments[itemIndex]?.id_dept || '');
   }}
+=======
+                setDepartment(itemValue);
+                setSelectedDepartmentId(departments[itemIndex]?.id_dept || '');
+              }}
+>>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
               style={styles.picker}
-              placeholder='Select Department'
-            >
+              placeholder="Select Department">
               <Picker.Item label="Select an option" value="" />
-              {departments.map((dept) => (
-                <Picker.Item key={dept.id_dept} label={dept.nm_dept} value={dept.id_dept} />
+              {departments.map(dept => (
+                <Picker.Item
+                  key={dept.id_dept}
+                  label={dept.nm_dept}
+                  value={dept.id_dept}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Cost Center/Project*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={costCenter}
-              onValueChange={(itemValue) => setCostCenter(itemValue)}
+              onValueChange={itemValue => setCostCenter(itemValue)}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
-              {centers.map((dept) => (
-                <Picker.Item key={dept.id_cc} label={dept.nm_cc} value={dept.id_cc} />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              {centers.map(dept => (
+                <Picker.Item
+                  key={dept.id_cc}
+                  label={dept.nm_cc}
+                  value={dept.id_cc}
+                />
               ))}
             </Picker>
           </View>
         </View>
 
-        <View style={{ marginTop: '3%', marginBottom: '4%' }}>
+        <View style={{marginTop: '3%', marginBottom: '4%'}}>
           <Text style={styles.headings}>Item Description*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setItemDescription(value)}
+            onChangeText={value => setItemDescription(value)}
             value={itemDescription}
           />
         </View>
 
-        <View style={{ backgroundColor: '#052d6e', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{backgroundColor: '#052d6e', marginTop: '3%'}}>
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: 18,
+              padding: 10,
+            }}>
+            Invoice Details
+          </Text>
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>PO Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setPoNumber(value)}
+            onChangeText={value => setPoNumber(value)}
             value={poNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-              <Text style={styles.headings}>PO Date*</Text>
-              <TextInput style={styles.textinputs}
-                placeholder="PO Date"
-                placeholderTextColor="gray"
-                value={poDate}
-                onFocus={() => setShowPoDatepicker(true)}
-              />
-              {showPoDatepicker && (
-                <DateTimePicker value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handlePODateChange}
-                />
-              )}
-            </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>PO Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="PO Date"
+            placeholderTextColor="gray"
+            value={poDate}
+            onFocus={() => setShowPoDatepicker(true)}
+          />
+          {showPoDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handlePODateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Invoice Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setInvoiceNumber(value)}
+            onChangeText={value => setInvoiceNumber(value)}
             value={invoiceNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-              <Text style={styles.headings}>Invoice Date*</Text>
-              <TextInput style={styles.textinputs}
-                placeholder="Invoice Date"
-                placeholderTextColor="gray"
-                value={invoiceDate}
-                onFocus={() => setShowInvoiceDatepicker(true)}
-              />
-              {showInvoiceDatepicker && (
-                <DateTimePicker value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleInvoiceDateChange}
-                />
-              )}
-            </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Invoice Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="Invoice Date"
+            placeholderTextColor="gray"
+            value={invoiceDate}
+            onFocus={() => setShowInvoiceDatepicker(true)}
+          />
+          {showInvoiceDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleInvoiceDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>GRN Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setGrnNumber(value)}
+            onChangeText={value => setGrnNumber(value)}
             value={grnNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-              <Text style={styles.headings}>GRN Date*</Text>
-              <TextInput style={styles.textinputs}
-                placeholder="GRN Date"
-                placeholderTextColor="gray"
-                value={grnDate}
-                onFocus={() => setShowGrnDatepicker(true)}
-              />
-              {showGrnDatepicker && (
-                <DateTimePicker value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleGrnDateChange}
-                />
-              )}
-            </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>GRN Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="GRN Date"
+            placeholderTextColor="gray"
+            value={grnDate}
+            onFocus={() => setShowGrnDatepicker(true)}
+          />
+          {showGrnDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleGrnDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>DC Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setDcNumber(value)}
+            onChangeText={value => setDcNumber(value)}
             value={dcNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-              <Text style={styles.headings}>DC Date*</Text>
-              <TextInput style={styles.textinputs}
-                placeholder="DC Date"
-                placeholderTextColor="gray"
-                value={dcDate}
-                onFocus={() => setShowDcDatepicker(true)}
-              />
-              {showDcDatepicker && (
-                <DateTimePicker value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleDcDateChange}
-                />
-              )}
-            </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>DC Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="DC Date"
+            placeholderTextColor="gray"
+            value={dcDate}
+            onFocus={() => setShowDcDatepicker(true)}
+          />
+          {showDcDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDcDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Vendor</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={vendor}
-              onValueChange={(itemValue) => setVendor(itemValue)}
+              onValueChange={itemValue => setVendor(itemValue)}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
-              {vendors.map((dept) => (
-                <Picker.Item key={dept.id_ven} label={dept.nm_ven} value={dept.id_ven} />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              {vendors.map(dept => (
+                <Picker.Item
+                  key={dept.id_ven}
+                  label={dept.nm_ven}
+                  value={dept.id_ven}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Disk Space(GB)</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setDiskSpace(value)}
+            onChangeText={value => setDiskSpace(value)}
             value={diskSpace}
           />
-          </View>
-         
-          <View style={{ marginTop: '3%' }}>
+        </View>
+
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>RAM(MB)</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setRam(value)}
+            onChangeText={value => setRam(value)}
             value={ram}
           />
-          </View>
-          <View style={{ marginTop: '3%' }}>
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Operating System</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setOperatingSystem(value)}
+            onChangeText={value => setOperatingSystem(value)}
             value={operatingSystem}
           />
-          </View>
-          <View style={{ marginTop: '3%' }}>
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>OS Service Type</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={osServiceType}
-              onValueChange={(itemValue) => setOsServiceType(itemValue)}
+              onValueChange={itemValue => setOsServiceType(itemValue)}
               style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
               <Picker.Item label="Yes" value="Yes" />
               <Picker.Item label="No" value="No" />
             </Picker>
           </View>
         </View>
-          
-          
+
         <TouchableOpacity onPress={handleSerialNo}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
-          </View></TouchableOpacity>
+          </View>
+        </TouchableOpacity>
 
 
         {sidebarOpen && (
@@ -870,7 +1158,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     marginLeft: '3%',
-    marginBottom: '1%'
+    marginBottom: '1%',
   },
   picker: {
     width: '99%',
@@ -886,13 +1174,11 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center',
     margin: '5%',
-    marginTop: '10%'
+    marginTop: '10%',
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
   },
-
-
 });
 export default AddToStore;

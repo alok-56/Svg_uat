@@ -1,161 +1,175 @@
-
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {View, TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FIcon from 'react-native-vector-icons/FontAwesome';
-import AIcon from 'react-native-vector-icons/Entypo'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Sidebar = ({ isOpen, onClose, route }) => {
+const Sidebar = ({isOpen, onClose, route}) => {
   const navigation = useNavigation();
   const [isAssetsClicked, setIsAssetsClicked] = useState(false);
-  const { params: { userId } = {} } = route || {};
+  const {params: {userId} = {}} = route || {};
+  const clearAsyncStorage = async () => {
+    try {
+      await AsyncStorage.removeItem('AssestData');
+      await AsyncStorage.removeItem('userDetails');
+      await AsyncStorage.removeItem('userId');
 
+      console.log('Data CLeared');
+    } catch (err) {
+      console.log('error', err);
+    }
+  };
   const handleItemClick = screen => {
     if (screen === 'Assets') {
       setIsAssetsClicked(!isAssetsClicked);
-    }  else {
+    } else {
       onClose();
       navigation.navigate(screen);
     }
   };
   // const handleOutforDelivery = () => {
-    // handleItemClick('OutForDelivery')
+  // handleItemClick('OutForDelivery')
   // }
   const handleLogout = () => {
+    clearAsyncStorage();
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Login' }],
+      routes: [{name: 'Login'}],
     });
   };
   return (
-    <View style={[styles.sidebarContainer, { display: isOpen ? 'flex' : 'none' }]}>
+    <View
+      style={[styles.sidebarContainer, {display: isOpen ? 'flex' : 'none'}]}>
       <TouchableOpacity
         onPress={() => handleItemClick('Dashboard')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name='home'
+          name="home"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>Dashboard</Text>
-
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => handleItemClick('MyAssets', { userId})}
+        onPress={() => handleItemClick('MyAssets', {userId})}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name='web-asset'
+          name="web-asset"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>My Asset</Text>
-
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => handleItemClick('ScanFirst')}
+        onPress={() => handleItemClick('Scan')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <MIcon
-          name='barcode-scan'
+          name="barcode-scan"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>Scan</Text>
-
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => handleItemClick('Assets')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <FIcon
-          name='user-circle-o'
+          name="user-circle-o"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>Assets</Text>
         <Icon
           name={isAssetsClicked ? 'arrow-drop-up' : 'arrow-drop-down'}
           size={30}
           color="gray"
-          style={{ marginLeft: '50%' }}
+          style={{marginLeft: '50%'}}
         />
       </TouchableOpacity>
       {isAssetsClicked && (
         <View style={styles.dropdownContainer}>
           <TouchableOpacity
-            onPress={() =>handleItemClick('Allocate')}
+            onPress={() => handleItemClick('Allocate')}
             style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
             <FIcon
-              name='file-text'
+              name="file-text"
               size={30}
               color="gray"
-              style={{ marginHorizontal: '10%' }}
+              style={{marginHorizontal: '10%'}}
             />
             <Text style={styles.dropdownItem}>Allocate</Text>
-
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleItemClick('DAllocate')}
             style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
             <MIcon
-              name='pin'
+              name="pin"
               size={30}
               color="gray"
-              style={{ marginHorizontal: '10%' }}
+              style={{marginHorizontal: '10%'}}
             />
             <Text style={styles.dropdownItem}>De - Allocate</Text>
-
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleItemClick('Link')}
             style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
             <Icon
-              name='link'
+              name="link"
               size={30}
               color="gray"
-              style={{ marginHorizontal: '10%' }}
+              style={{marginHorizontal: '10%'}}
             />
             <Text style={styles.dropdownItem}>Link Accessories</Text>
-
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleItemClick('DLink')}
             style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
             <Icon
-              name='link-off'
+              name="link-off"
               size={30}
               color="gray"
-              style={{ marginHorizontal: '10%' }}
+              style={{marginHorizontal: '10%'}}
             />
             <Text style={styles.dropdownItem}>DLink Accessories</Text>
-
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() =>handleItemClick('AddToStore')}
+            onPress={() => handleItemClick('AddToStore')}
             style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
-             <Icon
-              name='menu'
+            <Icon
+              name="menu"
               size={30}
               color="gray"
-              style={{ marginHorizontal: '10%' }}
+              style={{marginHorizontal: '10%'}}
             />
             <Text style={styles.dropdownItem}>Add to Store</Text>
-
           </TouchableOpacity>
         </View>
       )}
       <TouchableOpacity
-        onPress={() =>handleItemClick('ApproveNewAsset')}
+        onPress={() => handleItemClick('ModifyAsset')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
-        <AIcon
-          name='archive'
+        <Icon
+          name="change-circle"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
+        />
+        <Text style={styles.sidebarItem}>Modify Asset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleItemClick('ApproveNewAsset')}
+        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
+        <Icon
+          name="add-card"
+          size={30}
+          color="gray"
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>Approve New Asset</Text>
       </TouchableOpacity>
@@ -163,10 +177,10 @@ const Sidebar = ({ isOpen, onClose, route }) => {
         onPress={handleLogout}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
-          name='logout'
+          name="logout"
           size={30}
           color="gray"
-          style={{ marginHorizontal: '5%' }}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.sidebarItem}>Logout</Text>
       </TouchableOpacity>
