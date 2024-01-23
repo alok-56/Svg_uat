@@ -4,11 +4,20 @@ import { Card, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
 import { encode } from 'base-64';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MyAssets = ({ navigation, route }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const userId = route.params?.userId;
-
+  const getData = async () => {
+    try {
+      const Idempuser = await AsyncStorage.getItem('userId');
+      console.log(Idempuser, "IdempUser My assets");
+      return Idempuser;
+    } catch (error) {
+      console.error('Error retrieving data:', error);
+      return null;
+    }
+  };
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -30,6 +39,7 @@ const MyAssets = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
@@ -48,21 +58,20 @@ const MyAssets = ({ navigation, route }) => {
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
-    if (userId) {
-      // Fetch data from the API when the component mounts and userId is available
+    getData()
       fetchDepartments();
-    }
-  }, [userId]);
+  }, []);
 
   const fetchDepartments = async () => {
-    console.log(userId,"idddddddddddddddddddddddd")
+    const Idempuser = await getData();
+    console.log(Idempuser,"Idempuser my assets")
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
       const response = await fetch(
-        `http://13.235.186.102/SVVG-API/webapi/myasset?searchword=${userId}`,
+        `http://13.235.186.102/SVVG-API/webapi/myasset?searchword=${Idempuser}`,
         {
           headers: {
             Authorization: `Basic ${credentials}`,
@@ -113,7 +122,7 @@ const MyAssets = ({ navigation, route }) => {
       </View>
       {sidebarOpen && (
         <View style={styles.sidebar}>
-          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} userId={userId}/>
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar}/>
         </View>
       )}
     </ScrollView>

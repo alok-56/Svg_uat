@@ -1,10 +1,12 @@
 import { View, Text ,TouchableOpacity,StyleSheet,TextInput} from 'react-native'
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { Picker } from '@react-native-picker/picker';
 import { ScrollView } from 'react-native-gesture-handler';
+import { encode } from 'base-64';
 
-const ApproveForm = () => {
-    const [poNumber, setPoNumber] = useState('');
+const ApproveForm = ({ route }) => {
+  const [apiData, setApiData] = useState([]);
+  const [poNumber, setPoNumber] = useState('');
   const [poDate, setPoDate] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [invoiceDate, setInvoiceDate] = useState('');
@@ -14,8 +16,8 @@ const ApproveForm = () => {
   const [dcDate, setDcDate] = useState('');
   const [vendor, setVendor] = useState('');
   const [modalName, setModalName] = useState('');
-  const [category,setCategory] = useState('');
-  const [subCategory,setSubCategory] = useState('');
+  const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
   const [assetType, setAssetType] = useState('');
   const [quantity, setQuantity] = useState('');
   const [unitPrice, setUnitPrice] = useState('');
@@ -25,10 +27,102 @@ const ApproveForm = () => {
   const [description, setDescription] = useState('');
   const [remarks, setRemarks] = useState('');
 
+  useEffect(() => {
+    const id_inv_m = route.params?.id_inv_m;
+    console.log('id_inv_m:', id_inv_m);
+    fetchData(id_inv_m);
+  }, [route.params?.id_inv_m]);
+
+  const fetchData = async (id_inv_m) => {
+    try {
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
+      const idEmpUser = 1;
+      const userType = 'Super';
+      const credentials = encode(`${Username}:${Password}`);
+      const response = await fetch(
+       `http://13.235.186.102/SVVG-API/webapi/Store_Approver/SelectedItemDetails?id_inv_m=${id_inv_m}&id_inv=597`,
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (Array.isArray(responseData.data) && responseData.data.length > 0) {
+        const itemDetails = responseData.data[0];
+        setApiData(itemDetails);
+        // Populate form fields
+        setPoNumber(itemDetails.PONumber);
+        setPoDate(itemDetails.PODate);
+        setInvoiceNumber(itemDetails.InvoiceNO);
+        setInvoiceDate(itemDetails.InvoiceDate);
+        setGrnNumber(itemDetails.GRN);
+        setGrnDate(itemDetails.GRNdate);
+        setDcNumber(itemDetails.DCNum);
+        setDcDate(itemDetails.DCDate);
+        setVendor(itemDetails.Vendor);
+        setModalName(itemDetails.Item);
+        setCategory(itemDetails.Category);
+        setSubCategory(itemDetails.SubCategory);
+        setAssetType(itemDetails.AssetType);
+        setQuantity(itemDetails.Quantity);
+        setUnitPrice(itemDetails.Price);
+        setLocation(itemDetails.Location);
+        setDepartment(itemDetails.Department);
+        setCenter(itemDetails.CostCenter);
+        setDescription(itemDetails.st_config);
+        setRemarks(itemDetails.Remarks);
+      } else {
+        console.error('Error fetching data: Data is not an array or is empty');
+        setApiData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setApiData([]);
+    }
+  };
+console.log('apiData-->',apiData)
+  const styles = StyleSheet.create({
+    headings: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      color: 'black',
+      marginLeft: '3%',
+      marginBottom: '1%',
+    },
+    textinputs: {
+      borderWidth: 1,
+      borderColor: 'black',
+      color: 'black',
+      width: '95%',
+      padding: 10,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      borderRadius: 5,
+    },
+    button: {
+      backgroundColor: '#ff8a3d',
+      padding: 10,
+      alignItems: 'center',
+      borderRadius: 5,
+      width: '100%',
+      alignSelf: 'center',
+      margin: '5%',
+      marginTop: '30%',
+      marginBottom: '10%',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 18,
+    },
+  });
   return (
     <ScrollView>
     <View>
-    <View style={{ backgroundColor: '#052d6e' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
+    <View style={{ backgroundColor: '#ff8a3d' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
         <View style={{ marginTop: '5%' }}>
           <Text style={styles.headings}>Item/Model Name</Text>
           <TextInput
@@ -129,7 +223,7 @@ const ApproveForm = () => {
             value={remarks}
           />
         </View>
-       <View style={{ backgroundColor: '#052d6e', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
+       <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Invoice Details</Text></View>
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>PO Number</Text>
           <TextInput
@@ -234,39 +328,6 @@ const ApproveForm = () => {
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-    headings: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: 'black',
-        marginLeft: '3%',
-        marginBottom: '1%'
-      },
-      textinputs: {
-        borderWidth: 1,
-        borderColor: 'black',
-        color: 'black',
-        width: '95%',
-        padding: 10,
-        justifyContent: 'center',
-        alignSelf: 'center',
-        borderRadius: 5,
-      },
-      button: {
-        backgroundColor: '#052d6e',
-        padding: 10,
-        alignItems: 'center',
-        borderRadius: 5,
-        width: '100%',
-        alignSelf: 'center',
-        margin: '5%',
-        marginTop: '30%',
-        marginBottom:'10%'
-      },
-      buttonText: {
-        color: 'white',
-        fontSize: 18,
-      },
-})
+
 
 export default ApproveForm

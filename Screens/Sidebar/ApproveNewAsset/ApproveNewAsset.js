@@ -1,20 +1,29 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Table, Row } from 'react-native-table-component';
+import { encode } from 'base-64';
+import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ApproveNewAsset = ({ navigation }) => {
-  const tableData = [
-    ['inv-004', '28/12/2023', 'SUPER', 'CANON(LASER JET)', 'GLOBAL WEB LEARNING SOLUTION', '2', ''],
+  const [apiData, setApiData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+  const tableHeadings = [
+    'Invoice No',
+    'Invoice Date',
+    'Requested By',
+    'Asset Name/Model',
+    'Vendor',
+    'Total Quantity',
+    'Add to Store',
   ];
-
-  const tableHeadings = ['Invoice No', 'Invoice Date', 'Requested By', 'Asset Name/Model', 'Vendor', 'Total Qty', 'Add To Store'];
 
   const MyTable = ({ data, headings }) => {
     const cellWidths = [95, 110, 80, 150, 200, 80, 50];
 
-    const handleAddToStorePress = () => {
-        navigation.navigate('ApproveForm');
+    const handleAddToStorePress = (id_inv_m) => {
+      navigation.navigate('ApproveForm', { id_inv_m });
     };
 
     return (
@@ -25,43 +34,197 @@ const ApproveNewAsset = ({ navigation }) => {
               data={headings}
               style={{
                 height: 40,
-                backgroundColor: '#052d6e',
-                width: '100%', 
+                backgroundColor: '#ff8a3d',
+                width: '100%',
               }}
-              textStyle={{ color: 'white', fontWeight: 'bold',textAlign:'center' }}
-              widthArr={cellWidths}
-            />
-            <Rows
-              data={data}
-              style={{ height: 35, justifyContent: 'space-evenly',color:'black' }}
               textStyle={{
+                color: 'white',
+                fontWeight: 'bold',
                 textAlign: 'center',
-                
-                color:'black'
               }}
               widthArr={cellWidths}
-              onPress={(rowData, rowIndex) => {
-                if (rowIndex === data.length - 1) {
-                  handleAddToStorePress(rowData[0]); // Assuming the first column is the invoice number
-                }
-              }}
             />
+            {data &&
+              data.map &&
+              data.map((rowData, rowIndex) => (
+                <Row
+                  key={rowIndex}
+                  data={[
+                    ...rowData.slice(0, 6), // Columns before "Add to Store"
+                    <TouchableOpacity
+                      onPress={() => handleAddToStorePress(rowData[5])}
+                      key={`plusIcon_${rowIndex}`}
+                      style={{ alignItems: 'center' }}
+                    >
+                      <Icon name="add" size={30} color="#ff8a3d" />
+                    </TouchableOpacity>,
+                  ]}
+                  style={{
+                    height: 35,
+                    justifyContent: 'space-evenly',
+                    color: 'black',
+                  }}
+                  textStyle={{
+                    textAlign: 'center',
+                    color: 'black',
+                  }}
+                  widthArr={[...cellWidths]}
+                />
+              ))}
           </Table>
-          <View style={{ position: 'absolute', right: 10, top: '50%' }}>
-            <TouchableOpacity onPress={() => handleAddToStorePress(data[data.length - 1][0])}>
-              <Icon name="add" size={30} color="#052d6e" />
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
     );
   };
 
+  const fetchData = async () => {
+    try {
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
+      const idEmpUser = 1;
+      const userType = 'Super';
+      const credentials = encode(`${Username}:${Password}`);
+      const response = await fetch(
+        `http://13.235.186.102/SVVG-API/webapi/Store_Approver/dropdownlist?id_emp_user=${idEmpUser}&userType=${userType}&searchWord`,
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (Array.isArray(responseData.data) && responseData.data.length > 0) {
+        const mappedData = responseData.data.map((item) => [
+          item.InvoiceNo,
+          item.InvoiceDate,
+          item.RequestBy,
+          item.AssetName,
+          item.Vendor,
+          item.TotalQty,
+          // item.id_inv_m,
+        ]);
+        setApiData(mappedData);
+      } else {
+        console.error(
+          'Error fetching data: Data is not an array or is empty'
+        );
+        setApiData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setApiData([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const renderPaginationButtons = () => {
+    const totalItems = apiData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // Display up to 5 pagination buttons, along with previous and next arrows
+    const visiblePages = 5;
+    const startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+    return (
+      <View style={styles.paginationContainer}>
+        {currentPage > 1 && (
+          <TouchableOpacity
+            style={styles.paginationButton}
+            onPress={() => handlePageChange(currentPage - 1)}>
+            <Text style={styles.paginationButtonText}>{"<"}</Text>
+          </TouchableOpacity>
+        )}
+
+        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+          <TouchableOpacity
+            key={startPage + index}
+            style={[
+              styles.paginationButton,
+              currentPage === startPage + index &&
+                styles.activePaginationButton,
+            ]}
+            onPress={() => handlePageChange(startPage + index)}>
+            <Text style={styles.paginationButtonText}>
+              {startPage + index}
+            </Text>
+          </TouchableOpacity>
+        ))}
+
+        {currentPage < totalPages && (
+          <TouchableOpacity
+            style={styles.paginationButton}
+            onPress={() => handlePageChange(currentPage + 1)}>
+            <Text style={styles.paginationButtonText}>{">"}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  const styles = StyleSheet.create({
+    button: {
+      backgroundColor: '#ff8a3d',
+      padding: '3%',
+      alignItems: 'center',
+      border: 'none',
+      width: '40%',
+      alignSelf: 'center',
+      margin: '5%',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 18,
+    },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginVertical: '3%',
+    },
+    paginationButton: {
+      padding: 8,
+      marginHorizontal: '2%',
+      border: 'none',
+      color: 'white',
+    },
+    activePaginationButton: {
+      backgroundColor: '#ff8a3d',
+      color: 'white',
+    },
+    paginationButtonText: {
+      color: 'black',
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    exportButtonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginBottom: '3%',
+    },
+  });
+
   return (
-    <View>
-      <Text>ApproveNewAsset</Text>
-      <MyTable data={tableData} headings={tableHeadings} />
-    </View>
+    <ScrollView>
+      <View>
+        {apiData && apiData.length > 0 ? (
+          <>
+            <MyTable data={apiData} headings={tableHeadings} />
+            {renderPaginationButtons()}
+          </>
+        ) : (
+          <Text>Loading data...</Text>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FIcon from 'react-native-vector-icons/FontAwesome';
+import AIcon from 'react-native-vector-icons/Entypo'
 
 const Sidebar = ({ isOpen, onClose, route }) => {
   const navigation = useNavigation();
@@ -150,8 +151,8 @@ const Sidebar = ({ isOpen, onClose, route }) => {
       <TouchableOpacity
         onPress={() =>handleItemClick('ApproveNewAsset')}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
-        <Icon
-          name='logout'
+        <AIcon
+          name='archive'
           size={30}
           color="gray"
           style={{ marginHorizontal: '5%' }}

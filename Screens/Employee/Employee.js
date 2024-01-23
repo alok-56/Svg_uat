@@ -1,4 +1,3 @@
-// ExportTable.js
 import React ,{useEffect,useState}from 'react';
 import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -59,6 +58,24 @@ const Employee = () => {
       </ScrollView>
     );
   };
+  const checkPermission = async () => {
+    const result = await check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+    if (result === RESULTS.GRANTED) {
+      // Permission granted, proceed with generating PDF
+      generatePDF();
+    } else {
+      // Permission not granted, request it
+      const permissionResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+      if (permissionResult === RESULTS.GRANTED) {
+        // Permission granted, proceed with generating PDF
+        generatePDF();
+      } else {
+        // Permission denied, handle accordingly
+        console.error('Write external storage permission denied');
+      }
+    }
+  };
+  
   
   const fetchData = async () => {
     try {
@@ -136,82 +153,88 @@ const Employee = () => {
       marginBottom: 10,
     },
   })
-
+  const generateTableHTML = ({ data, headings }) => {
+    const tableRows = data.map(
+      (rowData) =>
+        `<tr>${rowData.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
+    );
+    const tableHTML = `
+      <table>
+        <thead>
+          <tr>${headings.map((heading) => `<th>${heading}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${tableRows.join('')}
+        </tbody>
+      </table>
+    `;
+    return tableHTML;
+  };
+  const ensureDirectoryExists = async (directoryPath) => {
+    const directoryExists = await RNFS.exists(directoryPath);
+    if (!directoryExists) {
+      await RNFS.mkdir(directoryPath);
+    }
+  };
   const generatePDF = async () => {
-    // Check if WRITE_EXTERNAL_STORAGE permission is granted
-    const permissionResult = await check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-    console.log('Permission Result:', permissionResult);
-    
-    if (permissionResult === RESULTS.GRANTED) {
-      // Permission is already granted, proceed with PDF generation and export
-      const htmlContent = generateTableHTML({ data: tableData, headings: tableHeadings });
-      const pdfFileName = 'table-export.pdf';
-      const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
-      const options = {
-        html: htmlContent,
-        fileName: pdfFileName,
-        directory: downloadsPath,
-      };
-
+    const htmlContent = generateTableHTML({ data: apiData, headings: tableHeadings });
+    const pdfFileName = 'table-export.pdf';
+    const downloadsPath = RNFS.DocumentDirectoryPath;
+    const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
+    await ensureDirectoryExists(downloadsPath);
+    const options = {
+      html: htmlContent,
+      fileName: pdfFileName,
+      directory: downloadsPath,
+    };
+  
+    try {
       const pdf = await RNHTMLtoPDF.convert(options);
-      console.log(pdf.filePath);
-
-      // Move the downloaded PDF file to the correct path
-      try {
+      console.log('PDF Conversion Result:', pdf);
+  
+      if (pdf.filePath) {
+        // Move the downloaded PDF file to the correct path
         await RNFS.moveFile(pdf.filePath, pdfFilePath);
         console.log('PDF file moved to:', pdfFilePath);
         Alert.alert('PDF Export', 'Successfully exported PDF!');
-      } catch (moveError) {
-        console.error('Error moving PDF file:', moveError);
+      } else {
+        console.error('PDF conversion failed. No file path received.');
         Alert.alert('PDF Export', 'Failed to export PDF!');
       }
-    } else {
-      // Request permission from the user
-      const requestResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-      
-      if (requestResult === RESULTS.GRANTED) {
-        // Permission granted, call the generatePDF function again
-        generatePDF();
-      } else {
-        // Permission denied, handle accordingly (e.g., show an alert)
-        Alert.alert('Permission Denied', 'You need to grant storage permission to export files.');
-      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      Alert.alert('PDF Export', 'Failed to export PDF!');
     }
   };
+  
 
-  const downloadsPath = RNFS.DownloadDirectoryPath;
-  const generateExcel = () => {
-    // Convert the data to worksheet
-    const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...tableData]);
-
-    // Create a new workbook
+  const generateExcel = async () => {
+    const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...apiData]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    // Convert the workbook to binary Excel format
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
-
-    // Save the Excel file with the correct extension (.xlsx)
-    const path = `${downloadsPath}/table-export.xlsx`;
-
-    RNFS.writeFile(path, excelBuffer, 'base64')
-      .then(() => {
-        console.log('Excel file created:', path);
-        Alert.alert('Excel Export', 'Successfully exported Excel!');
-      })
-      .catch(error => {
-        console.error('Error creating Excel file:', error);
-        Alert.alert('Excel Export', 'Failed to export Excel!');
-      });
+  
+    const excelFileName = 'table-export.xlsx';
+    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
+  
+    try {
+      await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
+      console.log('Excel file created:', excelFilePath);
+      Alert.alert('Excel Export', 'Successfully exported Excel!');
+    } catch (error) {
+      console.error('Error creating Excel file:', error);
+      Alert.alert('Excel Export', 'Failed to export Excel!');
+    }
   };
+  
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
   const renderPaginationButtons = () => {
     const totalItems = apiData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    // Display up to 5 pagination buttons, along with previous and next arrows
     const visiblePages = 5;
     const startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
     const endPage = Math.min(totalPages, startPage + visiblePages - 1);
@@ -251,8 +274,8 @@ const Employee = () => {
 
   return (
     <ScrollView>
-    <View>
-    {apiData && apiData.length > 0 ? (
+      <View>
+        {apiData && apiData.length > 0 ? (
           <>
             <MyTable data={apiData} headings={tableHeadings} />
             {renderPaginationButtons()}
@@ -260,25 +283,22 @@ const Employee = () => {
         ) : (
           <Text>Loading data...</Text>
         )}
-     
+
         <View style={styles.exportButtonsContainer}>
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={generatePDF}>
-            <Text style={styles.buttonText}>Export to PDF</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={generateExcel}>
-            <Text style={styles.buttonText}>Export to Excel</Text>
-          </TouchableOpacity>
+          <View style={styles.button}>
+            <TouchableOpacity onPress={generatePDF}>
+              <Text style={styles.buttonText}>Export to PDF</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.button}>
+            <TouchableOpacity onPress={generateExcel}>
+              <Text style={styles.buttonText}>Export to Excel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </ScrollView>
-  ); 
+  );
 };
-
 
 export default Employee;

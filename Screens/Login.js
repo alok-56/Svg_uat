@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
   TextInput,
@@ -66,7 +67,7 @@ const Login = ({ navigation }) => {
           console.log('User ID:', userId);
 
           Alert.alert('Login', 'Login successful');
-
+          storeData(userId)
           navigation.navigate('Dashboard', { userId });
           return; 
         } else {
@@ -86,6 +87,17 @@ const Login = ({ navigation }) => {
       Alert.alert('Error', 'An error occurred during login.');
     }
   };
+
+  const storeData = async newData => {
+    try {
+      await AsyncStorage.setItem('userId', newData);
+
+      console.log('Data stored successfully!');
+    } catch (error) {
+      console.error('Error storing data:', error);
+    }
+  }
+ 
   
   
   

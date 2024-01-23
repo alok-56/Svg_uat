@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput ,Alert} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput ,Alert,Button} from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { encode } from 'base-64';
+
 
 const AddToStore = ({ navigation }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,14 +33,19 @@ const AddToStore = ({ navigation }) => {
   const [vendor, setVendor] = useState('');
   const [showStartDatepicker, setShowStartDatepicker] = useState(false);
   const [showEndDatepicker, setShowEndDatepicker] = useState(false);
+  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] = useState(false);
+  const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
   const [showPoDatepicker, setShowPoDatepicker] = useState(false);
   const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
   const [showGrnDatepicker, setShowGrnDatepicker] = useState(false);
   const [showDcDatepicker, setShowDcDatepicker] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const[poDate,setPoDate] = useState('');
+  const [leaseStartDate, setLeaseStartDate] = useState('');
+  const [leaseEndDate, setLeaseEndDate] = useState('');
+  const [poDate,setPoDate] = useState('');
   const [showDateInputs, setShowDateInputs] = useState(false);
+  const [showLeaseDateInputs, setShowLeaseDateInputs] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [centers, setCenters] = useState([]);
@@ -53,8 +59,11 @@ const AddToStore = ({ navigation }) => {
   const [diskSpace, setDiskSpace] = useState('');
   const [operatingSystem, setOperatingSystem] = useState('');
   const [osServiceType, setOsServiceType] = useState('');
+  const [selectedLocationId, setSelectedLocationId] = useState('');
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [ram, setRam] = useState('');
-
+  const [refreshData, setRefreshData] = useState(false);
+ 
 
 
   useEffect(() => {
@@ -67,13 +76,16 @@ const AddToStore = ({ navigation }) => {
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [refreshData]);
   const handleMenuIconPress = () => {
     setSidebarOpen(prevState => !prevState);
   };
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
   };
+  const handleBackPress = () => {
+    navigation.navigate('AddToStore')
+  }
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -85,9 +97,17 @@ const AddToStore = ({ navigation }) => {
       ),
     });
   })
-  const handleBackPress = () => {
-    navigation.navigate('Dashboard')
-  };
+  useEffect(() => {
+    if (refreshData) {
+      // Reset the state values or trigger any necessary updates
+      setModalName('');
+      setQuantity('');
+      // ... (reset other state values)
+
+      // Reset the refreshData state to false
+      setRefreshData(false);
+    }
+  }, [refreshData]);
   
   const handleSerialNo = () => {
     if (!modalName || !quantity || !unitPrice || !taggable || !warranty || !leaseStatus || !department || !typeOfProcurement || !location || !costCenter || !itemDescription || !poNumber || !poDate || !invoiceNumber || !invoiceDate || !grnNumber || !grnDate || !dcNumber || !dcDate || !vendor || !diskSpace || !ram || !operatingSystem || !osServiceType) {
@@ -126,7 +146,11 @@ const AddToStore = ({ navigation }) => {
       idAssetdiv,
       idSAssetdiv,
       typAsst,
-      modalNm
+      modalNm,
+      leaseStartDate,
+      leaseEndDate,
+      selectedLocationId,
+      selectedDepartmentId,
     });
   };
   const handleWarrantyChange = (itemValue) => {
@@ -143,6 +167,16 @@ const AddToStore = ({ navigation }) => {
       setStartDate(formattedDate);
     }
   };
+  const handleLeaseStartDateChange = (event, selectedDate) => {
+    setShowLeaseStartDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setLeaseStartDate(formattedDate);
+    }
+  };
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatepicker(false);
     if (selectedDate) {
@@ -151,6 +185,16 @@ const AddToStore = ({ navigation }) => {
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       setEndDate(formattedDate);
+    }
+  };
+  const handleLeaseEndDateChange = (event, selectedDate) => {
+    setShowLeaseEndDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setLeaseEndDate(formattedDate);
     }
   };
   const handlePODateChange = (event, selectedDate) => {
@@ -309,7 +353,8 @@ const AddToStore = ({ navigation }) => {
     fetchCenters();
     fetchLocations();
     fetchModels();
-  }, []);
+    setRefreshData(false);
+  }, [refreshData]);
  
   const getModalDetails = (e) => {
     const selectedModel = models.find((item) => item?.nm_model === e);
@@ -332,11 +377,23 @@ const AddToStore = ({ navigation }) => {
      
     }
   };
+  const handleLeaseStatusChange = (itemValue) => {
+    setLeaseStatus(itemValue);
+    setStartDate('');
+    setEndDate('');
+    setShowLeaseDateInputs(itemValue === 'Under Lease');
+  };
+  
+  
+  
+
+
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={{ backgroundColor: '#052d6e' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
+        
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>Item/Model Name*</Text>
           <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
@@ -444,21 +501,60 @@ const AddToStore = ({ navigation }) => {
           </>
         )}
         <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Lease Status*</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
-            <Picker
-              selectedValue={leaseStatus}
-              onValueChange={(itemValue) => setLeaseStatus(itemValue)}
-              style={styles.picker}
-              placeholder='Select Asset'
-
-            >
-              <Picker.Item label="Select an option" value=""  />
-              <Picker.Item label="Not Under Lease" value="1" />
-              <Picker.Item label="Under Lease" value="2" />
-            </Picker>
-          </View>
+        <Text style={styles.headings}>Lease Status*</Text>
+        <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <Picker
+            selectedValue={leaseStatus}
+            onValueChange={handleLeaseStatusChange}
+            style={styles.picker}
+            placeholder='Select Asset'
+          >
+            <Picker.Item label="Select an option" value="" />
+            <Picker.Item label="Not Under Lease" value="Not Under Lease" />
+            <Picker.Item label="Under Lease" value="Under Lease" />
+          </Picker>
         </View>
+      </View>
+      {showLeaseDateInputs && (
+        <>
+          <View style={{ marginTop: '3%' }}>
+            <Text style={styles.headings}>Start Date*</Text>
+            <TextInput
+              style={styles.textinputs}
+              placeholder="Start Date"
+              placeholderTextColor="gray"
+              value={leaseStartDate}
+              onFocus={() => setShowLeaseStartDatepicker(true)}
+            />
+            {showLeaseStartDatepicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="date"
+                display="default"
+                onChange={handleLeaseStartDateChange}
+              />
+            )}
+          </View>
+          <View style={{ marginTop: '3%' }}>
+            <Text style={styles.headings}>End Date*</Text>
+            <TextInput
+              style={styles.textinputs}
+              placeholder="End Date"
+              placeholderTextColor="gray"
+              value={leaseEndDate}
+              onFocus={() => setShowLeaseEndDatepicker(true)}
+            />
+            {showLeaseEndDatepicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="date"
+                display="default"
+                onChange={handleLeaseEndDateChange}
+              />
+            )}
+          </View>
+        </>
+      )}
         <View style={{ marginTop: '3%' }}>
           <Text style={styles.headings}>Type of Procurement*</Text>
           <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
@@ -481,7 +577,10 @@ const AddToStore = ({ navigation }) => {
           <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
             <Picker
               selectedValue={location}
-              onValueChange={(itemValue) => setLocation(itemValue)}
+              onValueChange={(itemValue, itemIndex) => {
+    setLocation(itemValue);
+    setSelectedLocationId(locations[itemIndex]?.id_flr || '');
+  }}
               style={styles.picker}
               placeholder='Select Asset'
 
@@ -498,7 +597,10 @@ const AddToStore = ({ navigation }) => {
           <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
             <Picker
               selectedValue={department}
-              onValueChange={(itemValue) => setDepartment(itemValue)}
+              onValueChange={(itemValue, itemIndex) => {
+    setDepartment(itemValue);
+    setSelectedDepartmentId(departments[itemIndex]?.id_dept || '');
+  }}
               style={styles.picker}
               placeholder='Select Department'
             >
@@ -697,6 +799,7 @@ const AddToStore = ({ navigation }) => {
           <View style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
           </View></TouchableOpacity>
+
 
         {sidebarOpen && (
           <View style={styles.sidebar}>
