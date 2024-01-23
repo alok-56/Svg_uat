@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Table, Row } from 'react-native-table-component';
@@ -74,9 +71,9 @@ const ApproveNewAsset = ({ navigation }) => {
                 <Row
                   key={rowIndex}
                   data={[
-                    ...rowData.slice(0, 6), // Columns before "Add to Store"
+                    ...rowData.slice(0, 6), 
                     <TouchableOpacity
-                      onPress={() => handleAddToStorePress(rowData[6], rowData[7])} // Pass both id_inv_m and id_inv
+                      onPress={() => handleAddToStorePress(rowData[6], rowData[7])} 
                       key={`plusIcon_${rowIndex}`}
                       style={{ alignItems: 'center' }}
                     >
@@ -245,141 +242,6 @@ const ApproveNewAsset = ({ navigation }) => {
       alignItems: 'center',
       justifyContent: 'center',
       width: '80%',
-    },
-  });
-
-  const fetchData = async () => {
-    try {
-      const Username = 'SVVG';
-      const Password = 'Pass@123';
-      const idEmpUser = 1;
-      const userType = 'Super';
-      const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch(
-        `http://13.235.186.102/SVVG-API/webapi/Store_Approver/dropdownlist?id_emp_user=${idEmpUser}&userType=${userType}&searchWord`,
-        {
-          headers: {
-            Authorization: `Basic ${credentials}`,
-          },
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (Array.isArray(responseData.data) && responseData.data.length > 0) {
-        const mappedData = responseData.data.map((item) => [
-          item.InvoiceNo,
-          item.InvoiceDate,
-          item.RequestBy,
-          item.AssetName,
-          item.Vendor,
-          item.TotalQty,
-          // item.id_inv_m,
-        ]);
-        setApiData(mappedData);
-      } else {
-        console.error(
-          'Error fetching data: Data is not an array or is empty'
-        );
-        setApiData([]);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setApiData([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  const renderPaginationButtons = () => {
-    const totalItems = apiData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    // Display up to 5 pagination buttons, along with previous and next arrows
-    const visiblePages = 5;
-    const startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
-    const endPage = Math.min(totalPages, startPage + visiblePages - 1);
-
-    return (
-      <View style={styles.paginationContainer}>
-        {currentPage > 1 && (
-          <TouchableOpacity
-            style={styles.paginationButton}
-            onPress={() => handlePageChange(currentPage - 1)}>
-            <Text style={styles.paginationButtonText}>{"<"}</Text>
-          </TouchableOpacity>
-        )}
-
-        {[...Array(endPage - startPage + 1).keys()].map((index) => (
-          <TouchableOpacity
-            key={startPage + index}
-            style={[
-              styles.paginationButton,
-              currentPage === startPage + index &&
-                styles.activePaginationButton,
-            ]}
-            onPress={() => handlePageChange(startPage + index)}>
-            <Text style={styles.paginationButtonText}>
-              {startPage + index}
-            </Text>
-          </TouchableOpacity>
-        ))}
-
-        {currentPage < totalPages && (
-          <TouchableOpacity
-            style={styles.paginationButton}
-            onPress={() => handlePageChange(currentPage + 1)}>
-            <Text style={styles.paginationButtonText}>{">"}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  };
-
-  const styles = StyleSheet.create({
-    button: {
-      backgroundColor: '#ff8a3d',
-      padding: '3%',
-      alignItems: 'center',
-      border: 'none',
-      width: '40%',
-      alignSelf: 'center',
-      margin: '5%',
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 18,
-    },
-    paginationContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginVertical: '3%',
-    },
-    paginationButton: {
-      padding: 8,
-      marginHorizontal: '2%',
-      border: 'none',
-      color: 'white',
-    },
-    activePaginationButton: {
-      backgroundColor: '#ff8a3d',
-      color: 'white',
-    },
-    paginationButtonText: {
-      color: 'black',
-      textAlign: 'center',
-      fontWeight: 'bold',
-    },
-    exportButtonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: '3%',
     },
   });
 

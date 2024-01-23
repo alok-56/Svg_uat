@@ -102,7 +102,7 @@ const Instore = () => {
   }, []);
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       padding: 10,
       alignItems: 'center',
       borderRadius: 5,
@@ -168,14 +168,14 @@ const Instore = () => {
       data: apiData,
       headings: tableHeadings,
     });
-    const pdfFileName = 'table-export.pdf';
-    const downloadsPath = RNFS.DocumentDirectoryPath;
-    const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
-    await ensureDirectoryExists(downloadsPath);
+    const pdfFileName = 'Instore-table.pdf';
+    const downloadsPath = `${RNFS.DownloadDirectoryPath}`;
+    const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`
+    await ensureDirectoryExists(RNFS.DownloadDirectoryPath);
     const options = {
       html: htmlContent,
       fileName: pdfFileName,
-      directory: downloadsPath,
+      directory: RNFS.DownloadDirectoryPath,
     };
 
     try {
@@ -186,7 +186,7 @@ const Instore = () => {
         // Move the downloaded PDF file to the correct path
         await RNFS.moveFile(pdf.filePath, pdfFilePath);
         console.log('PDF file moved to:', pdfFilePath);
-        Alert.alert('PDF Export', 'Successfully exported PDF!');
+        Alert.alert('Successfully exported PDF!', ' File stored in Downloads folder');
       } else {
         console.error('PDF conversion failed. No file path received.');
         Alert.alert('PDF Export', 'Failed to export PDF!');
@@ -204,13 +204,13 @@ const Instore = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    const excelFileName = 'table-export.xlsx';
-    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
+    const excelFileName = 'Instore-table.xlsx';
+    const excelFilePath = `${RNFS.DownloadDirectoryPath}/${excelFileName}`;
 
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);
-      Alert.alert('Excel Export', 'Successfully exported Excel!');
+      Alert.alert('Successfully exported Excel!', ' File stored in Downloads folder');
     } catch (error) {
       console.error('Error creating Excel file:', error);
       Alert.alert('Excel Export', 'Failed to export Excel!');

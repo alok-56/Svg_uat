@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import React ,{useEffect,useState}from 'react';
-import { View, Alert, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
-=======
 import React, {useEffect, useState} from 'react';
 import {View, Alert, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import XLSX from 'xlsx';
@@ -76,13 +70,9 @@ const Employee = () => {
       generatePDF();
     } else {
       // Permission not granted, request it
-<<<<<<< HEAD
-      const permissionResult = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-=======
       const permissionResult = await request(
         PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
       );
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
       if (permissionResult === RESULTS.GRANTED) {
         // Permission granted, proceed with generating PDF
         generatePDF();
@@ -92,12 +82,6 @@ const Employee = () => {
       }
     }
   };
-<<<<<<< HEAD
-  
-  
-=======
-
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const fetchData = async () => {
     try {
       const Username = 'SVVG';
@@ -138,7 +122,7 @@ const Employee = () => {
   }, []);
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: '#052d6e',
+      backgroundColor: '#ff8a3d',
       padding: 10,
       alignItems: 'center',
       border: 'none',
@@ -175,27 +159,15 @@ const Employee = () => {
       justifyContent: 'space-around',
       marginBottom: 10,
     },
-<<<<<<< HEAD
-  })
-  const generateTableHTML = ({ data, headings }) => {
-    const tableRows = data.map(
-      (rowData) =>
-        `<tr>${rowData.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
-=======
   });
   const generateTableHTML = ({data, headings}) => {
     const tableRows = data.map(
       rowData => `<tr>${rowData.map(cell => `<td>${cell}</td>`).join('')}</tr>`,
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     );
     const tableHTML = `
       <table>
         <thead>
-<<<<<<< HEAD
-          <tr>${headings.map((heading) => `<th>${heading}</th>`).join('')}</tr>
-=======
           <tr>${headings.map(heading => `<th>${heading}</th>`).join('')}</tr>
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         </thead>
         <tbody>
           ${tableRows.join('')}
@@ -204,52 +176,36 @@ const Employee = () => {
     `;
     return tableHTML;
   };
-<<<<<<< HEAD
-  const ensureDirectoryExists = async (directoryPath) => {
-=======
   const ensureDirectoryExists = async directoryPath => {
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     const directoryExists = await RNFS.exists(directoryPath);
     if (!directoryExists) {
       await RNFS.mkdir(directoryPath);
     }
   };
   const generatePDF = async () => {
-<<<<<<< HEAD
-    const htmlContent = generateTableHTML({ data: apiData, headings: tableHeadings });
-=======
     const htmlContent = generateTableHTML({
       data: apiData,
       headings: tableHeadings,
     });
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
-    const pdfFileName = 'table-export.pdf';
-    const downloadsPath = RNFS.DocumentDirectoryPath;
-    const pdfFilePath = `${downloadsPath}/${pdfFileName}`;
-    await ensureDirectoryExists(downloadsPath);
+    const pdfFileName = 'Employee-table.pdf';
+    const downloadsPath = `${RNFS.DownloadDirectoryPath}`;
+    const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`
+    await ensureDirectoryExists(RNFS.DownloadDirectoryPath);
     const options = {
       html: htmlContent,
       fileName: pdfFileName,
-      directory: downloadsPath,
+      directory: RNFS.DownloadDirectoryPath,
     };
-<<<<<<< HEAD
-  
-    try {
-      const pdf = await RNHTMLtoPDF.convert(options);
-      console.log('PDF Conversion Result:', pdf);
-  
-=======
 
     try {
       const pdf = await RNHTMLtoPDF.convert(options);
       console.log('PDF Conversion Result:', pdf);
 
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
       if (pdf.filePath) {
         // Move the downloaded PDF file to the correct path
         await RNFS.moveFile(pdf.filePath, pdfFilePath);
         console.log('PDF file moved to:', pdfFilePath);
-        Alert.alert('PDF Export', 'Successfully exported PDF!');
+        Alert.alert('Successfully exported PDF!', ' File stored in Downloads folder');
       } else {
         console.error('PDF conversion failed. No file path received.');
         Alert.alert('PDF Export', 'Failed to export PDF!');
@@ -265,36 +221,24 @@ const Employee = () => {
     const ws = XLSX.utils.aoa_to_sheet([tableHeadings, ...apiData]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-<<<<<<< HEAD
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
-  
-    const excelFileName = 'table-export.xlsx';
-    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
-  
-=======
     const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    const excelFileName = 'table-export.xlsx';
-    const excelFilePath = `${RNFS.DocumentDirectoryPath}/${excelFileName}`;
+    const excelFileName = 'Employee-table.xlsx';
+    const excelFilePath = `${RNFS.DownloadDirectoryPath}/${excelFileName}`;
 
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);
-      Alert.alert('Excel Export', 'Successfully exported Excel!');
+     
+      Alert.alert('Successfully exported Excel!', ' File stored in Downloads folder');
+
     } catch (error) {
       console.error('Error creating Excel file:', error);
       Alert.alert('Excel Export', 'Failed to export Excel!');
     }
   };
-<<<<<<< HEAD
-  
-
-  const handlePageChange = (newPage) => {
-=======
 
   const handlePageChange = newPage => {
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     setCurrentPage(newPage);
   };
 
@@ -368,8 +312,4 @@ const Employee = () => {
   );
 };
 
-<<<<<<< HEAD
 export default Employee;
-=======
-export default Employee;
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52

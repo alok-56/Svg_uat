@@ -9,11 +9,7 @@ import {
 import {Card, Title} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
-<<<<<<< HEAD
-import { encode } from 'base-64';
-=======
 import {encode} from 'base-64';
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MyAssets = ({navigation, route}) => {
@@ -21,12 +17,9 @@ const MyAssets = ({navigation, route}) => {
   const getData = async () => {
     try {
       const Idempuser = await AsyncStorage.getItem('userId');
-<<<<<<< HEAD
-      console.log(Idempuser, "IdempUser My assets");
-=======
+      const changeFormat = JSON.parse(Idempuser) 
       console.log(Idempuser, 'IdempUser My assets');
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
-      return Idempuser;
+      return changeFormat;
     } catch (error) {
       console.error('Error retrieving data:', error);
       return null;
@@ -72,22 +65,13 @@ const MyAssets = ({navigation, route}) => {
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
-<<<<<<< HEAD
-    getData()
-      fetchDepartments();
-=======
     getData();
     fetchDepartments();
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   }, []);
 
   const fetchDepartments = async () => {
     const Idempuser = await getData();
-<<<<<<< HEAD
-    console.log(Idempuser,"Idempuser my assets")
-=======
-    console.log(Idempuser, 'Idempuser my assets');
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
+    console.log(typeof Idempuser, 'Idempuser my assets');
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
@@ -98,9 +82,11 @@ const MyAssets = ({navigation, route}) => {
         {
           headers: {
             Authorization: `Basic ${credentials}`,
+
           },
         },
       );
+      console.log(response,'batttttttt')
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -108,6 +94,7 @@ const MyAssets = ({navigation, route}) => {
 
       const data = await response.json();
       setDepartments(data.data || []); // Provide a default empty array
+      console.log(data,'dattttttt')
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -146,11 +133,7 @@ const MyAssets = ({navigation, route}) => {
       </View>
       {sidebarOpen && (
         <View style={styles.sidebar}>
-<<<<<<< HEAD
-          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar}/>
-=======
           <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         </View>
       )}
     </ScrollView>

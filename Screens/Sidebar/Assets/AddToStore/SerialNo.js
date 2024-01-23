@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-import { View, Text ,TextInput,StyleSheet,TouchableOpacity,Alert} from 'react-native'
-import React,{useEffect, useState} from 'react'
-import { ScrollView } from 'react-native-gesture-handler';
-import { encode } from 'base-64';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DocumentPicker from 'react-native-document-picker';
-import RNFS from 'react-native-fs'
-
-const SerialNo = ({ route,navigation }) => {
-  const [refreshData, setRefreshData] = useState(false);
-  const { modalName, quantity, unitPrice, taggable, warranty,startDate,endDate,leaseStatus,typeOfProcurement,location,department,costCenter,itemDescription ,poNumber,poDate,invoiceNumber,invoiceDate,grnNumber,grnDate,dcNumber,dcDate,vendor,operatingSystem,diskSpace,ram,osServiceType,selectedModelId,idAssetdiv,idSAssetdiv,typAsst,leaseStartDate,leaseEndDate,selectedLocationId,selectedDepartmentId} = route.params;
-  const [serialNumbers, setSerialNumbers] = useState(Array.from({ length: quantity }, (_, index) => ({
-    serialNo: '',
-    assetRef: '',
-    id: index + 1
-  })));
-=======
 import {
   View,
   Text,
@@ -76,7 +58,6 @@ const SerialNo = ({route, navigation}) => {
       id: index + 1,
     })),
   );
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [uploadedDocument, setUploadedDocument] = useState(null);
   const [fetchSerialNumbers, setFetchSerialNumbers] = useState(false);
   const [serialVal, setSerialVal] = useState('');
@@ -85,285 +66,14 @@ const SerialNo = ({route, navigation}) => {
   const getData = async () => {
     try {
       const Idempuser = await AsyncStorage.getItem('userId');
-<<<<<<< HEAD
-      console.log(Idempuser, "IdempUser Idempuser");
-=======
-      console.log(Idempuser, 'IdempUser Idempuser');
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
-      return Idempuser;
+      const changeFormat = JSON.parse(Idempuser) 
+      console.log(Idempuser, 'IdempUser My assets');
+      return changeFormat;
     } catch (error) {
       console.error('Error retrieving data:', error);
       return null;
     }
   };
-<<<<<<< HEAD
-  
-      const handleSaveData = async () => {
-  
-        try {
-          const Idempuser = await getData();
-          const apiUrl = 'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/SavingData';
-          const username = 'SVVG';
-          const password = 'Pass@123';
-          const headers = new Headers();
-          headers.set('Authorization', `Basic ${encode(`${username}:${password}`)}`);
-          headers.set('Content-Type', 'application/json');
-    
-          const requestData = {
-            data: [
-              {
-                nm_model: modalName,
-                id_model: selectedModelId,
-                id_assetdiv: idAssetdiv,
-                id_s_assetdiv: idSAssetdiv,
-                typ_asst: typAsst,
-                qty_asst: quantity,
-                id_emp_user: Idempuser,
-                val_asst: unitPrice,
-                tag: taggable,
-                warr_amc: warranty,
-                dt_amc_start: startDate,
-                dt_amc_exp: endDate,
-                st_lease: leaseStatus,
-                typ_proc: typeOfProcurement,
-                std_lease: leaseStartDate,
-                endt_lease: leaseEndDate,
-                id_flr: selectedLocationId,
-                id_dept: selectedDepartmentId,
-                id_cc: costCenter,
-                item_description: itemDescription,
-                rmk_asst: "",
-                no_po: poNumber,
-                dt_po: poDate,
-                no_inv: invoiceNumber,
-                dt_inv: invoiceDate,
-                no_grn: grnNumber,
-                dt_grn: grnDate,
-                no_dc: dcNumber,
-                dt_dc: dcDate,
-                id_ven: vendor,
-                storeage_typ: diskSpace,
-                ram_typ: ram,
-                process_typ: operatingSystem,
-                st_config: osServiceType,
-                id_loc: "1",
-                id_subl: "1",
-                id_building: "1",
-                ds_pro: modalName,
-                ds_asst: modalName,
-                id_inv_m: "",
-                id_inv: "",
-                no_model: modalName,
-                cst_asst: "",
-                tt_un_prc: "",
-                invoice_file: uploadedDocument,
-                SerialVal: serialVal,
-                sapno: serialVal,
-              },
-            ],
-          };
-          console.log('Request Payload:', JSON.stringify(requestData));
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(requestData),
-          });
-      
-          const responseText = await response.text();
-          console.log('Server Response:', responseText);
-          Alert.alert("Success", responseText, [
-            {
-              text: "OK",
-              onPress: () => {
-                setSerialNumbers(Array.from({ length: quantity }, (_, index) => ({
-                  serialNo: '',
-                  assetRef: '',
-                  id: index + 1
-                })));
-                setSerialVal('');
-                setSapno('');
-              }
-            }
-          ]);
-      
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-      
-          const responseData = await response.json();
-          if (responseData.status === 'Record has been inserted successfully') {
-            console.log('Record has been inserted successfully');
-      
-            // Reset the state values
-            setSerialNumbers(Array.from({ length: quantity }, (_, index) => ({
-              serialNo: '',
-              assetRef: '',
-              id: index + 1
-            })));
-            setSerialVal('');
-            setSapno('');
-          } else {
-            console.error('Error:', responseData.message);
-            Alert.alert('Error', responseData.message);
-          }
-        } catch (error) {
-          console.log("error")
-        }
-      };
-      const handleDontSerial = async () => {
-        try {
-          setFetchSerialNumbers(true);
-          const apiUrl = 'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Serial_No';
-          const username = 'SVVG';
-          const password = 'Pass@123';
-    
-          const headers = new Headers();
-          headers.set('Authorization', `Basic ${encode(`${username}:${password}`)}`);
-          headers.set('Content-Type', 'application/json');
-    
-          const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: headers,
-          });
-    
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-    
-          const responseData = await response.json();
-    
-          const currentSerialNumber = parseInt(responseData.data[0].slNo);
-          const currentMaxValue = parseInt(responseData.data[0].maxvalue);
-    
-          const generatedSerialNumbers = Array.from({ length: quantity }, (_, index) => ({
-            serialNo: `NA${currentSerialNumber + index}${currentMaxValue + index}`,
-            assetRef: `NA${currentSerialNumber + index}${currentMaxValue + index}`,
-            id: index + 1,
-          }));
-    
-          setSerialNumbers(generatedSerialNumbers);
-    
-          // Update SerialVal and sapno
-          const serialValStr = generatedSerialNumbers.map((sn) => sn.serialNo).join(',,');
-          const sapnoStr = generatedSerialNumbers.map((sn) => sn.assetRef).join(',,');
-          setSerialVal(serialValStr);
-          setSapno(sapnoStr);
-        } catch (error) {
-          console.error('Error fetching serial numbers:', error);
-        } finally {
-          setFetchSerialNumbers(false);
-        }
-      };
-    
-      useEffect(() => {
-        getData()
-        if (fetchSerialNumbers) {
-          handleDontSerial();
-        }
-      }, [fetchSerialNumbers]);
-      useEffect(() => {
-        // Check if the refreshData state has changed
-        if (refreshData) {
-          // Fetch data again or trigger the necessary update
-          getData(); // Assuming getData is your fetch function
-    
-          // Reset the refreshData state to false
-          setRefreshData(false);
-        }
-      }, [refreshData]);
-      const handleBackPress = () => {
-        setRefreshData(true);
-        navigation.navigate('AddToStore')
-      };
-      const uploadDocument = async () => {
-        try {
-          const pickedFile = await DocumentPicker.pickSingle({
-            type: [DocumentPicker.types.allFiles],
-          });
-    
-          const base64Data = await RNFS.readFile(pickedFile.uri, 'base64');
-    
-          const Username = 'SVVG';
-          const Password = 'Pass@123';
-          const credentials = encode(`${Username}:${Password}`);
-    
-          const response = await fetch('http://13.235.186.102/SVVG/Upload_File', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json', // adjust the content type if needed
-              'Authorization': `Basic ${credentials}`,
-            },
-            body: JSON.stringify({
-              fileData: base64Data,
-              fileName: pickedFile.name,
-              fileType: pickedFile.type,
-            }),
-          });
-    
-          if (response.ok) {
-            console.log('Document uploaded successfully');
-            Alert.alert("Upload Document","Document uploaded successfully")
-    
-            // Update the state with the uploaded document information
-            setUploadedDocument({
-              base64Data,
-              fileName: pickedFile.name,
-              fileType: pickedFile.type,
-            });
-          } else {
-            console.error('Failed to upload document. Status:', response.status);
-          }
-        } catch (err) {
-          if (DocumentPicker.isCancel(err)) {
-            console.log('Document picker canceled');
-          } else {
-            console.error('Error picking document:', err);
-            throw err;
-          }
-        }
-      };
-
-  return (
-    <ScrollView>
-    <View>
-    <TouchableOpacity onPress={() => setFetchSerialNumbers(true)}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Do Not Have Serial No</Text>
-          </View></TouchableOpacity>
-          
-          {serialNumbers.map((serialNumber, index) => (
-  <View key={index} style={{ flexDirection: 'row' }}>
-    <View style={{ marginTop: '5%' }}>
-      <Text style={styles.headings}>{`Serial No ${serialNumber.id}`}</Text>
-      <TextInput
-        style={styles.textinputs}
-        onChangeText={(value) => {
-          const updatedSerialNumbers = [...serialNumbers];
-          updatedSerialNumbers[index].serialNo = value;
-          setSerialNumbers(updatedSerialNumbers);
-        }}
-        value={serialNumber.serialNo}
-        placeholder={`Enter Serial No ${serialNumber.id}`}
-        placeholderTextColor="gray"
-      />
-    </View>
-    <View style={{ marginTop: '5%' }}>
-      <Text style={styles.headings}>{`Asset REF.NO${serialNumber.id}`}</Text>
-      <TextInput
-        style={styles.textinputs}
-        onChangeText={(value) => {
-          const updatedSerialNumbers = [...serialNumbers];
-          updatedSerialNumbers[index].assetRef = value;
-          setSerialNumbers(updatedSerialNumbers);
-        }}
-        value={serialNumber.assetRef}
-        placeholder={`Enter Asset REF.NO${serialNumber.id}`}
-        placeholderTextColor="gray"
-      />
-    </View>
-  </View>
-))}
-=======
 
   const handleSaveData = async () => {
     try {
@@ -426,7 +136,7 @@ const SerialNo = ({route, navigation}) => {
             no_model: modalName,
             cst_asst: '',
             tt_un_prc: '',
-            invoice_file: uploadedDocument,
+            invoice_file: '',
             SerialVal: serialVal,
             sapno: serialVal,
           },
@@ -454,6 +164,7 @@ const SerialNo = ({route, navigation}) => {
             );
             setSerialVal('');
             setSapno('');
+            navigation.navigate('Dashboard');
           },
         },
       ]);
@@ -655,7 +366,6 @@ const SerialNo = ({route, navigation}) => {
             </View>
           </View>
         ))}
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         {/* <View >
       <Text style={{color:'black'}}>Values to be posted:</Text>
       <Text style={{color:'black'}}>Modal Name: {modalName}</Text>
@@ -691,71 +401,6 @@ const SerialNo = ({route, navigation}) => {
       <Text style={{color:'black'}}>modalNm: {modalNm}</Text>
 <Text style={{color:'black'}}>modalNm: {serialVal}</Text>
     </View> */}
-<<<<<<< HEAD
-    <View style={{marginTop:'3%'}}>
-      <TouchableOpacity onPress={uploadDocument}>
-        <Text style={{textAlign:'center',backgroundColor:'#052d6e',color:'white',fontWeight:'bold',padding:10,borderRadius:10,width:'45%',marginTop:'3%',marginLeft:'3%'}}>Upload Document</Text>
-      </TouchableOpacity>
-      {uploadedDocument && (
-        <View style={{marginLeft:'3%'}}>
-          <Text style={{color:'black'}}>Uploaded Document:</Text>
-          <Text style={{color:'black'}}>Name: {uploadedDocument.fileName}</Text>
-          <Text style={{color:'black'}}>Type: {uploadedDocument.fileType}</Text>
-        </View>
-      )}
-    </View>
-    
-        <View style={{flexDirection:'row',justifyContent:'space-evenly',marginTop:'8%'}}>
-        <TouchableOpacity onPress={handleSaveData}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Save</Text>
-          </View></TouchableOpacity>
-          <TouchableOpacity onPress={handleBackPress}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Back</Text>
-          </View>
-          </TouchableOpacity>
-          </View>
-        
-    </View>
-    </ScrollView>
-  )
-}
-const styles = StyleSheet.create({
-    textinputs: {
-      borderWidth: 1,
-      borderColor: 'black',
-      color: 'black',
-      width: '95%',
-      padding: 10,
-      justifyContent: 'center',
-      alignSelf: 'center',
-      borderRadius: 5,
-      marginLeft:'10%'
-    },
-    headings: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: 'black',
-        marginLeft: '10%',
-        marginBottom: '1%'
-      },
-      button: {
-        backgroundColor: '#052d6e',
-        padding: 10,
-        alignItems: 'center',
-        borderRadius: 5,
-        width: '80%',
-        alignSelf: 'center',
-        margin: '5%',
-        marginTop: '10%'
-      },
-      buttonText: {
-        color: 'white',
-        fontSize: 18,
-      },
-})
-=======
         <View style={{marginTop: '3%'}}>
           <TouchableOpacity onPress={uploadDocument}>
             <Text
@@ -785,7 +430,6 @@ const styles = StyleSheet.create({
             </View>
           )}
         </View>
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
         <View
           style={{
@@ -828,7 +472,7 @@ const styles = StyleSheet.create({
     marginBottom: '1%',
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,

@@ -112,15 +112,9 @@ const Login = ({navigation}) => {
           console.log('User ID:', userId);
 
           Alert.alert('Login', 'Login successful');
-<<<<<<< HEAD
-          storeData(userId)
-          navigation.navigate('Dashboard', { userId });
-          return; 
-=======
 
           navigation.navigate('Dashboard', {userId});
           return;
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
         } else {
           Alert.alert('Login Failed', 'Invalid username or password');
         }
@@ -140,23 +134,6 @@ const Login = ({navigation}) => {
       Alert.alert('Error', 'An error occurred during login.');
     }
   };
-<<<<<<< HEAD
-
-  const storeData = async newData => {
-    try {
-      await AsyncStorage.setItem('userId', newData);
-
-      console.log('Data stored successfully!');
-    } catch (error) {
-      console.error('Error storing data:', error);
-    }
-  }
- 
-  
-  
-  
-=======
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   return (
     <View style={styles.container}>
@@ -246,9 +223,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   loginButton: {
-    backgroundColor: '#406792',
+    backgroundColor: '#ff8a3d',
     borderWidth: 1,
-    borderColor: '#406792',
+    borderColor: '#ff8a3d',
     padding: 12,
     alignItems: 'center',
     marginHorizontal: '30%',

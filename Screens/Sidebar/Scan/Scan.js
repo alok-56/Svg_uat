@@ -275,6 +275,7 @@ const Scan = ({navigation}) => {
   return (
     <ScrollView>
       <View style={styles.container}>
+      
         <Modal
           style={styles.containerModal}
           animationType="slide"
@@ -285,6 +286,7 @@ const Scan = ({navigation}) => {
             <View style={styles.modalContent}>
               <Text style={styles.modalHeader}>Enter your message:</Text>
               {console.log(idData, 'ghghghhg')}
+              <Text style={{color:'black',textAlign:'center',fontWeight:'bold',fontSize:16,marginBottom:'5%'}}>AssetID</Text>
               <TextInput
                 style={styles.textInput}
                 multiline
@@ -631,12 +633,12 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     padding: 10,
-    backgroundColor: 'lightblue',
+    backgroundColor: '#ff8a3d',
     margin: 5,
   },
   button: {
     padding: 10,
-    backgroundColor: 'lightblue',
+    backgroundColor: '#ff8a3d',
   },
 });
 export default Scan;

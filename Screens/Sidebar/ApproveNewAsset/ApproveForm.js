@@ -48,6 +48,7 @@ const ApproveForm = ({ route }) => {
           },
         }
       );
+      console.log(id_inv,'idddd',id_inv_m,'helloooo')
 
       const responseData = await response.json();
 
@@ -391,10 +392,6 @@ const ApproveForm = ({ route }) => {
     </ScrollView>
   )
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
 
 export default ApproveForm

@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput ,Alert,Button} from 'react-native';
-import { Card, Title } from 'react-native-paper';
-=======
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -14,7 +9,6 @@ import {
   Button,
 } from 'react-native';
 import {Card, Title} from 'react-native-paper';
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
 import {Picker} from '@react-native-picker/picker';
@@ -22,12 +16,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {encode} from 'base-64';
 
-<<<<<<< HEAD
-
-const AddToStore = ({ navigation }) => {
-=======
 const AddToStore = ({navigation}) => {
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalName, setModalName] = useState('');
   const [modalNm, setModalNm] = useState('');
@@ -51,12 +40,8 @@ const AddToStore = ({navigation}) => {
   const [vendor, setVendor] = useState('');
   const [showStartDatepicker, setShowStartDatepicker] = useState(false);
   const [showEndDatepicker, setShowEndDatepicker] = useState(false);
-<<<<<<< HEAD
-  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] = useState(false);
-=======
   const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =
     useState(false);
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
   const [showPoDatepicker, setShowPoDatepicker] = useState(false);
   const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
@@ -66,11 +51,7 @@ const AddToStore = ({navigation}) => {
   const [endDate, setEndDate] = useState('');
   const [leaseStartDate, setLeaseStartDate] = useState('');
   const [leaseEndDate, setLeaseEndDate] = useState('');
-<<<<<<< HEAD
-  const [poDate,setPoDate] = useState('');
-=======
   const [poDate, setPoDate] = useState('');
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const [showDateInputs, setShowDateInputs] = useState(false);
   const [showLeaseDateInputs, setShowLeaseDateInputs] = useState(false);
   const [departments, setDepartments] = useState([]);
@@ -90,11 +71,6 @@ const AddToStore = ({navigation}) => {
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [ram, setRam] = useState('');
   const [refreshData, setRefreshData] = useState(false);
-<<<<<<< HEAD
- 
-
-=======
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   useEffect(() => {
     navigation.setOptions({
@@ -114,13 +90,8 @@ const AddToStore = ({navigation}) => {
     setSidebarOpen(false);
   };
   const handleBackPress = () => {
-<<<<<<< HEAD
-    navigation.navigate('AddToStore')
-  }
-=======
-    navigation.navigate('AddToStore');
+    navigation.navigate('Dashboard');
   };
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -131,11 +102,7 @@ const AddToStore = ({navigation}) => {
         </TouchableOpacity>
       ),
     });
-<<<<<<< HEAD
-  })
-=======
   });
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   useEffect(() => {
     if (refreshData) {
       // Reset the state values or trigger any necessary updates
@@ -147,11 +114,6 @@ const AddToStore = ({navigation}) => {
       setRefreshData(false);
     }
   }, [refreshData]);
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
   const handleSerialNo = () => {
     if (
       !modalName ||
@@ -438,17 +400,10 @@ const AddToStore = ({navigation}) => {
     fetchModels();
     setRefreshData(false);
   }, [refreshData]);
-<<<<<<< HEAD
- 
-  const getModalDetails = (e) => {
-    const selectedModel = models.find((item) => item?.nm_model === e);
-  
-=======
 
   const getModalDetails = e => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     if (selectedModel) {
       const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst} =
         selectedModel;
@@ -467,33 +422,16 @@ const AddToStore = ({navigation}) => {
       console.log('type asset:', typ_asst);
     }
   };
-<<<<<<< HEAD
-  const handleLeaseStatusChange = (itemValue) => {
-=======
   const handleLeaseStatusChange = itemValue => {
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
     setLeaseStatus(itemValue);
     setStartDate('');
     setEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
-<<<<<<< HEAD
-  
-  
-  
-
-
-=======
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
 
   return (
     <ScrollView>
       <View style={styles.container}>
-<<<<<<< HEAD
-        <View style={{ backgroundColor: '#052d6e' }}><Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>Item/Model Details</Text></View>
-        
-        <View style={{ marginTop: '3%' }}>
-=======
         <View style={{backgroundColor: '#052d6e'}}>
           <Text
             style={{
@@ -508,7 +446,6 @@ const AddToStore = ({navigation}) => {
         </View>
 
         <View style={{marginTop: '3%'}}>
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
           <Text style={styles.headings}>Item/Model Name*</Text>
           <View
             style={{
@@ -638,64 +575,6 @@ const AddToStore = ({navigation}) => {
             </View>
           </>
         )}
-<<<<<<< HEAD
-        <View style={{ marginTop: '3%' }}>
-        <Text style={styles.headings}>Lease Status*</Text>
-        <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
-          <Picker
-            selectedValue={leaseStatus}
-            onValueChange={handleLeaseStatusChange}
-            style={styles.picker}
-            placeholder='Select Asset'
-          >
-            <Picker.Item label="Select an option" value="" />
-            <Picker.Item label="Not Under Lease" value="Not Under Lease" />
-            <Picker.Item label="Under Lease" value="Under Lease" />
-          </Picker>
-        </View>
-      </View>
-      {showLeaseDateInputs && (
-        <>
-          <View style={{ marginTop: '3%' }}>
-            <Text style={styles.headings}>Start Date*</Text>
-            <TextInput
-              style={styles.textinputs}
-              placeholder="Start Date"
-              placeholderTextColor="gray"
-              value={leaseStartDate}
-              onFocus={() => setShowLeaseStartDatepicker(true)}
-            />
-            {showLeaseStartDatepicker && (
-              <DateTimePicker
-                value={new Date()}
-                mode="date"
-                display="default"
-                onChange={handleLeaseStartDateChange}
-              />
-            )}
-          </View>
-          <View style={{ marginTop: '3%' }}>
-            <Text style={styles.headings}>End Date*</Text>
-            <TextInput
-              style={styles.textinputs}
-              placeholder="End Date"
-              placeholderTextColor="gray"
-              value={leaseEndDate}
-              onFocus={() => setShowLeaseEndDatepicker(true)}
-            />
-            {showLeaseEndDatepicker && (
-              <DateTimePicker
-                value={new Date()}
-                mode="date"
-                display="default"
-                onChange={handleLeaseEndDateChange}
-              />
-            )}
-          </View>
-        </>
-      )}
-        <View style={{ marginTop: '3%' }}>
-=======
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Lease Status*</Text>
           <View
@@ -759,7 +638,6 @@ const AddToStore = ({navigation}) => {
           </>
         )}
         <View style={{marginTop: '3%'}}>
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
           <Text style={styles.headings}>Type of Procurement*</Text>
           <View
             style={{
@@ -796,15 +674,9 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={location}
               onValueChange={(itemValue, itemIndex) => {
-<<<<<<< HEAD
-    setLocation(itemValue);
-    setSelectedLocationId(locations[itemIndex]?.id_flr || '');
-  }}
-=======
                 setLocation(itemValue);
                 setSelectedLocationId(locations[itemIndex]?.id_flr || '');
               }}
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -832,15 +704,9 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={department}
               onValueChange={(itemValue, itemIndex) => {
-<<<<<<< HEAD
-    setDepartment(itemValue);
-    setSelectedDepartmentId(departments[itemIndex]?.id_dept || '');
-  }}
-=======
                 setDepartment(itemValue);
                 setSelectedDepartmentId(departments[itemIndex]?.id_dept || '');
               }}
->>>>>>> 6e504a12c3a9fafaf998ef3b7a15a6a106c96f52
               style={styles.picker}
               placeholder="Select Department">
               <Picker.Item label="Select an option" value="" />
@@ -1167,7 +1033,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   button: {
-    backgroundColor: '#052d6e',
+    backgroundColor: '#ff8a3d',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,
