@@ -105,6 +105,14 @@ const SerialNo = ({route, navigation}) => {
         `Basic ${encode(`${username}:${password}`)}`,
       );
       headers.set('Content-Type', 'application/json');
+      const isSerialNumbersEmpty = serialNumbers.some(
+        (sn) => sn.serialNo.trim() === '' || sn.assetRef.trim() === ''
+      );
+
+      if (isSerialNumbersEmpty) {
+        Alert.alert('Validation Error', 'Please fill in all Serial Numbers and Asset Reference Numbers.');
+        return;
+      }
 
       const requestData = {
         data: [
