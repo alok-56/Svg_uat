@@ -10,12 +10,12 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
 import {encode} from 'base-64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DocumentPicker from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
+
 
 const SerialNo = ({route, navigation}) => {
   const [refreshData, setRefreshData] = useState(false);
   const {
+    handleIdLoc,
     modalName,
     quantity,
     unitPrice,
@@ -50,6 +50,9 @@ const SerialNo = ({route, navigation}) => {
     leaseEndDate,
     selectedLocationId,
     selectedDepartmentId,
+    locationId,
+    subLocationId,
+    buildingId
   } = route.params;
   const [serialNumbers, setSerialNumbers] = useState(
     Array.from({length: quantity}, (_, index) => ({
@@ -58,10 +61,24 @@ const SerialNo = ({route, navigation}) => {
       id: index + 1,
     })),
   );
-  const [uploadedDocument, setUploadedDocument] = useState(null);
+  
   const [fetchSerialNumbers, setFetchSerialNumbers] = useState(false);
   const [serialVal, setSerialVal] = useState('');
   const [sapno, setSapno] = useState('');
+  const [uploadInv, setUploadInv] = useState(null);
+  useEffect(() => {
+    const retrieveUploadInv = async () => {
+      try {
+        // Retrieve upload_inv from AsyncStorage
+        const storedUploadInv = await AsyncStorage.getItem('upload_inv');
+        setUploadInv(storedUploadInv);
+      } catch (error) {
+        console.error('Error retrieving upload_inv from AsyncStorage:', error);
+      }
+    };
+
+    retrieveUploadInv();
+  }, []);
 
   const getData = async () => {
     try {
@@ -126,9 +143,9 @@ const SerialNo = ({route, navigation}) => {
             ram_typ: ram,
             process_typ: operatingSystem,
             st_config: osServiceType,
-            id_loc: '1',
-            id_subl: '1',
-            id_building: '1',
+            id_loc: locationId,
+            id_subl: subLocationId,
+            id_building: buildingId,
             ds_pro: modalName,
             ds_asst: modalName,
             id_inv_m: '',
@@ -136,7 +153,7 @@ const SerialNo = ({route, navigation}) => {
             no_model: modalName,
             cst_asst: '',
             tt_un_prc: '',
-            invoice_file: '',
+            invoice_file: uploadInv,
             SerialVal: serialVal,
             sapno: serialVal,
           },
@@ -273,53 +290,8 @@ const SerialNo = ({route, navigation}) => {
     setRefreshData(true);
     navigation.navigate('AddToStore');
   };
-  const uploadDocument = async () => {
-    try {
-      const pickedFile = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.allFiles],
-      });
-
-      const base64Data = await RNFS.readFile(pickedFile.uri, 'base64');
-
-      const Username = 'SVVG';
-      const Password = 'Pass@123';
-      const credentials = encode(`${Username}:${Password}`);
-
-      const response = await fetch('http://13.235.186.102/SVVG/Upload_File', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // adjust the content type if needed
-          Authorization: `Basic ${credentials}`,
-        },
-        body: JSON.stringify({
-          fileData: base64Data,
-          fileName: pickedFile.name,
-          fileType: pickedFile.type,
-        }),
-      });
-
-      if (response.ok) {
-        console.log('Document uploaded successfully');
-        Alert.alert('Upload Document', 'Document uploaded successfully');
-
-        // Update the state with the uploaded document information
-        setUploadedDocument({
-          base64Data,
-          fileName: pickedFile.name,
-          fileType: pickedFile.type,
-        });
-      } else {
-        console.error('Failed to upload document. Status:', response.status);
-      }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('Document picker canceled');
-      } else {
-        console.error('Error picking document:', err);
-        throw err;
-      }
-    }
-  };
+ 
+  
 
   return (
     <ScrollView>
@@ -398,38 +370,15 @@ const SerialNo = ({route, navigation}) => {
       <Text style={{color:'black'}}>idAssetdiv: {idAssetdiv}</Text>
       <Text style={{color:'black'}}>idSAssetdiv: {idSAssetdiv}</Text>
       <Text style={{color:'black'}}>typAsst: {typAsst}</Text>
-      <Text style={{color:'black'}}>modalNm: {modalNm}</Text>
 <Text style={{color:'black'}}>modalNm: {serialVal}</Text>
+<Text style={{color:'black'}}>Received upload_inv: {uploadInv}</Text>
+<Text style={{color:'black'}}>locationId: {locationId}</Text>
+    <Text style={{color:'black'}}>subLocationId: {subLocationId}</Text>
+    <Text style={{color:'black'}}>buildingId: {buildingId}</Text>
     </View> */}
-        <View style={{marginTop: '3%'}}>
-          <TouchableOpacity onPress={uploadDocument}>
-            <Text
-              style={{
-                textAlign: 'center',
-                backgroundColor: '#052d6e',
-                color: 'white',
-                fontWeight: 'bold',
-                padding: 10,
-                borderRadius: 10,
-                width: '45%',
-                marginTop: '3%',
-                marginLeft: '3%',
-              }}>
-              Upload Document
-            </Text>
-          </TouchableOpacity>
-          {uploadedDocument && (
-            <View style={{marginLeft: '3%'}}>
-              <Text style={{color: 'black'}}>Uploaded Document:</Text>
-              <Text style={{color: 'black'}}>
-                Name: {uploadedDocument.fileName}
-              </Text>
-              <Text style={{color: 'black'}}>
-                Type: {uploadedDocument.fileType}
-              </Text>
-            </View>
-          )}
-        </View>
+    
+    
+       
 
         <View
           style={{

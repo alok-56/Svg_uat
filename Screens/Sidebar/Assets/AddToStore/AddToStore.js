@@ -15,6 +15,7 @@ import {Picker} from '@react-native-picker/picker';
 import {ScrollView} from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {encode} from 'base-64';
+import UploadFile from './UploadFile';
 
 const AddToStore = ({navigation}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +27,6 @@ const AddToStore = ({navigation}) => {
   const [warranty, setWarranty] = useState('');
   const [leaseStatus, setLeaseStatus] = useState('');
   const [typeOfProcurement, setTypeOfProcurement] = useState('');
-  const [location, setLocation] = useState('');
   const [department, setDepartment] = useState('');
   const [costCenter, setCostCenter] = useState('');
   const [itemDescription, setItemDescription] = useState('');
@@ -40,8 +40,7 @@ const AddToStore = ({navigation}) => {
   const [vendor, setVendor] = useState('');
   const [showStartDatepicker, setShowStartDatepicker] = useState(false);
   const [showEndDatepicker, setShowEndDatepicker] = useState(false);
-  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =
-    useState(false);
+  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =useState(false);
   const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
   const [showPoDatepicker, setShowPoDatepicker] = useState(false);
   const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
@@ -57,7 +56,6 @@ const AddToStore = ({navigation}) => {
   const [departments, setDepartments] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [centers, setCenters] = useState([]);
-  const [locations, setLocations] = useState([]);
   const [models, setModels] = useState([]);
   const [selectedModelId, setSelectedModelId] = useState('');
   const [idSAssetdiv, setIdSAssetdiv] = useState('');
@@ -67,10 +65,17 @@ const AddToStore = ({navigation}) => {
   const [diskSpace, setDiskSpace] = useState('');
   const [operatingSystem, setOperatingSystem] = useState('');
   const [osServiceType, setOsServiceType] = useState('');
-  const [selectedLocationId, setSelectedLocationId] = useState('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
   const [ram, setRam] = useState('');
   const [refreshData, setRefreshData] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState('');
+  const [selectedLocationId, setSelectedLocationId] = useState('');
+  const [selectedLocationDetails, setSelectedLocationDetails] = useState(null);
+  const [locationId, setLocationId] = useState('');
+  const [subLocationId, setSubLocationId] = useState('');
+  const [buildingId, setBuildingId] = useState('');
+
 
   useEffect(() => {
     navigation.setOptions({
@@ -105,46 +110,51 @@ const AddToStore = ({navigation}) => {
   });
   useEffect(() => {
     if (refreshData) {
-      // Reset the state values or trigger any necessary updates
       setModalName('');
       setQuantity('');
-      // ... (reset other state values)
-
-      // Reset the refreshData state to false
       setRefreshData(false);
     }
   }, [refreshData]);
-  const handleSerialNo = () => {
-    if (
-      !modalName ||
-      !quantity ||
-      !unitPrice ||
-      !taggable ||
-      !warranty ||
-      !leaseStatus ||
-      !department ||
-      !typeOfProcurement ||
-      !location ||
-      !costCenter ||
-      !itemDescription ||
-      !poNumber ||
-      !poDate ||
-      !invoiceNumber ||
-      !invoiceDate ||
-      !grnNumber ||
-      !grnDate ||
-      !dcNumber ||
-      !dcDate ||
-      !vendor ||
-      !diskSpace ||
-      !ram ||
-      !operatingSystem ||
-      !osServiceType
-    ) {
-      Alert.alert('Validation Error', 'Please fill in all required fields.');
-      return;
-    }
+  const handleValidation = () => {
+    const emptyFields = [];
+  
+    if (!modalName) emptyFields.push('Modal Name');
+    if (!quantity) emptyFields.push('Quantity');
+    if (!unitPrice) emptyFields.push('UnitPrice');
+    if (!taggable) emptyFields.push('Taggable');
+    if (!warranty) emptyFields.push('warranty');
+    if (!leaseStatus) emptyFields.push('Lease Status');
+    if (!department) emptyFields.push('Department');
+    if (!typeOfProcurement) emptyFields.push('Type of Procurement');
+    if (!location) emptyFields.push('Location');
+    if (!costCenter) emptyFields.push('Cost Center');
+    if (!itemDescription) emptyFields.push('Item Description');
+    if (!poNumber) emptyFields.push('PO Number');
+    if (!poDate) emptyFields.push('PO Date');
+    if (!invoiceNumber) emptyFields.push('Invoice Number');
+    if (!invoiceDate) emptyFields.push('Invoice ate');
+    if (!grnNumber) emptyFields.push('GRN Number');
+    if (!grnDate) emptyFields.push('GRN Date');
+    if (!dcNumber) emptyFields.push('DC Number');
+    if (!dcDate) emptyFields.push('DC Date');
+    if (!vendor) emptyFields.push('Vendor');
+    if (!diskSpace) emptyFields.push('Disk Space');
+    if (!ram) emptyFields.push('RAM');
+    if (!operatingSystem ) emptyFields.push('Operating System ');
+    if (!osServiceType) emptyFields.push('OS Service Type');
 
+ 
+  
+    if (emptyFields.length > 0) {
+      const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
+      Alert.alert('Required Fields', errorMessage);
+      return false; 
+    }
+  
+    return true; 
+  };
+  const handleSerialNo = () => {
+    if (handleValidation()) {
     navigation.navigate('SerialNo', {
       modalName,
       quantity,
@@ -181,7 +191,11 @@ const AddToStore = ({navigation}) => {
       leaseEndDate,
       selectedLocationId,
       selectedDepartmentId,
+      locationId,
+      subLocationId,
+      buildingId
     });
+  }
   };
   const handleWarrantyChange = itemValue => {
     setWarranty(itemValue);
@@ -194,19 +208,43 @@ const AddToStore = ({navigation}) => {
       const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
+  
+      // Calculate end date by adding one year to the selected start date
+      const endDate = new Date(selectedDate);
+      endDate.setFullYear(year + 1);
+  
+      const endYear = endDate.getFullYear();
+      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+      const endDay = `${endDate.getDate()}`.padStart(2, '0');
+      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+  
       setStartDate(formattedDate);
+      setEndDate(formattedEndDate);
     }
   };
+  
   const handleLeaseStartDateChange = (event, selectedDate) => {
     setShowLeaseStartDatepicker(false);
     if (selectedDate) {
       const year = selectedDate.getFullYear();
       const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-      setLeaseStartDate(formattedDate);
+      const formattedStartDate = `${year}-${month}-${day}`;
+  
+      // Calculate lease end date by adding one year to the selected lease start date
+      const endDate = new Date(selectedDate);
+      endDate.setFullYear(year + 1);
+  
+      const endYear = endDate.getFullYear();
+      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+      const endDay = `${endDate.getDate()}`.padStart(2, '0');
+      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+  
+      setLeaseStartDate(formattedStartDate);
+      setLeaseEndDate(formattedEndDate); // Assuming you have a state for lease end date
     }
   };
+  
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatepicker(false);
     if (selectedDate) {
@@ -367,6 +405,21 @@ const AddToStore = ({navigation}) => {
       console.error('Error fetching departments:', error);
     }
   };
+  const handleLocationSelection = (itemValue, itemIndex) => {
+    setLocation(itemValue);
+    setSelectedLocationId(locations[itemIndex]?.id_flr || '');
+
+    // Find and set details of the selected location
+    const selectedLocationDetails = locations.filter((item) => item.id_flr === itemValue);
+    setSelectedLocationDetails(selectedLocationDetails);
+
+    console.log('Selected Location Details:');
+    console.log('location id:', selectedLocationDetails[0]?.id_loc);
+    console.log('location name:', selectedLocationDetails[0]?.nm_flr);
+    setLocationId(selectedLocationDetails[0]?.id_loc)
+    setSubLocationId(selectedLocationDetails[0]?.id_sloc)
+    setBuildingId(selectedLocationDetails[0]?.id_building)
+  };
   const fetchModels = async () => {
     try {
       const Username = 'SVVG';
@@ -480,6 +533,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setQuantity(value)}
             value={quantity}
+            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -488,6 +542,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setUnitPrice(value)}
             value={unitPrice}
+            
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -672,23 +727,22 @@ const AddToStore = ({navigation}) => {
               borderRadius: 5,
             }}>
             <Picker
-              selectedValue={location}
-              onValueChange={(itemValue, itemIndex) => {
-                setLocation(itemValue);
-                setSelectedLocationId(locations[itemIndex]?.id_flr || '');
-              }}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              {locations.map(dept => (
-                <Picker.Item
-                  key={dept.id_flr}
-                  label={dept.nm_flr}
-                  value={dept.id_flr}
-                />
-              ))}
-            </Picker>
+        selectedValue={location}
+        onValueChange={handleLocationSelection}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select an option" value="" />
+        {locations.map((loc) => (
+          <Picker.Item
+            key={loc.id_flr}
+            label={loc.nm_flr}
+            value={loc.id_flr}
+          />
+        ))}
+      </Picker>
+
           </View>
+        
         </View>
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Department*</Text>
@@ -775,6 +829,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setPoNumber(value)}
             value={poNumber}
+            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -801,6 +856,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setInvoiceNumber(value)}
             value={invoiceNumber}
+            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -827,6 +883,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setGrnNumber(value)}
             value={grnNumber}
+            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -853,6 +910,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setDcNumber(value)}
             value={dcNumber}
+            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -947,6 +1005,7 @@ const AddToStore = ({navigation}) => {
             </Picker>
           </View>
         </View>
+        <UploadFile/>
 
         <TouchableOpacity onPress={handleSerialNo}>
           <View style={styles.button}>
