@@ -162,13 +162,28 @@ const ApproveForm = ({route}) => {
         console.log(responseData, 'respppp');
         // Display different alerts based on status
         if (status === 'Accepted') {
-          Alert.alert('Accepted', 'Record has been Accepted successfully', [
-            {text: 'OK', onPress: () => navigation.navigate('ApproveNewAsset')},
-          ]);
+          Alert.alert(
+            'Accepted',
+            'Record has been Acceptes successfully\n\nIt may take some time to reflect in the table',
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.navigate('ApproveNewAsset'),
+              },
+            ],
+          );
         } else if (status === 'Rejected') {
-          Alert.alert('Rejected', 'Record has been Rejected successfully', [
-            {text: 'OK', onPress: () => navigation.navigate('ApproveNewAsset')},
-          ]);
+          Alert.alert(
+            'Rejected',
+            'Record has been Rejected successfully\n\nIt may take some time to reflect in the table',
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.navigate('ApproveNewAsset'),
+              },
+            ],
+            {message: 'It may take some time to reflect in the table'},
+          );
         } else {
           // Handle other status cases if needed
           Alert.alert('Success', responseData);
