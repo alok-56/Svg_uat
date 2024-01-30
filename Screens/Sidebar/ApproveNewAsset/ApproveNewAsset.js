@@ -1,21 +1,20 @@
-
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Table, Row } from 'react-native-table-component';
-import { encode } from 'base-64';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Table, Row} from 'react-native-table-component';
+import {encode} from 'base-64';
+import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
-const ApproveNewAsset = ({ navigation }) => {
+const ApproveNewAsset = ({navigation}) => {
   const [apiData, setApiData] = useState([]);
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={handleMenuIconPress}
-          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
           <Icon name="menu" color="white" size={25} />
         </TouchableOpacity>
       ),
@@ -30,6 +29,7 @@ const ApproveNewAsset = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const tableHeadings = [
+    'S.NO',
     'Invoice No',
     'Invoice Date',
     'Requested By',
@@ -39,19 +39,21 @@ const ApproveNewAsset = ({ navigation }) => {
     'Add to Store',
   ];
 
-  const MyTable = ({ data, headings }) => {
-    const cellWidths = [95, 110, 80, 150, 200, 80, 50];
+  const MyTable = ({data, headings}) => {
+    console.log(data, 'llllllllooooo');
+    const cellWidths = [50, 95, 110, 80, 150, 200, 80, 50];
     const startIdx = (currentPage - 1) * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
-  
+
     const handleAddToStorePress = (id_inv_m, id_inv) => {
-      navigation.navigate('ApproveForm', { id_inv_m, id_inv });
+      console.log(id_inv_m, id_inv, '6,7');
+      navigation.navigate('ApproveForm', {id_inv_m, id_inv});
     };
-  
+
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: '10%', marginBottom: '10%' }}>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
             <Row
               data={headings}
               style={{
@@ -66,31 +68,37 @@ const ApproveNewAsset = ({ navigation }) => {
               }}
               widthArr={cellWidths}
             />
+
             {data &&
               data.slice(startIdx, endIdx).map((rowData, rowIndex) => (
-                <Row
-                  key={rowIndex}
-                  data={[
-                    ...rowData.slice(0, 6), // Columns before "Add to Store"
-                    <TouchableOpacity
-                      onPress={() => handleAddToStorePress(rowData[6], rowData[7])} // Pass both id_inv_m and id_inv
-                      key={`plusIcon_${rowIndex}`}
-                      style={{ alignItems: 'center' }}
-                    >
-                      <Icon name="add" size={30} color="#ff8a3d" />
-                    </TouchableOpacity>,
-                  ]}
-                  style={{
-                    height: 35,
-                    justifyContent: 'space-evenly',
-                    color: 'black',
-                  }}
-                  textStyle={{
-                    textAlign: 'center',
-                    color: 'black',
-                  }}
-                  widthArr={[...cellWidths]}
-                />
+                <>
+                  {console.log(rowData[6], rowData[7], '6,7777777777')}
+                  <Row
+                    key={rowIndex}
+                    data={[
+                      rowIndex + 1,
+                      ...rowData.slice(0, 6), // Columns before "Add to Store"
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAddToStorePress(rowData[6], rowData[7])
+                        } // Pass both id_inv_m and id_inv
+                        key={`plusIcon_${rowIndex}`}
+                        style={{alignItems: 'center'}}>
+                        <Icon name="add" size={30} color="#ff8a3d" />
+                      </TouchableOpacity>,
+                    ]}
+                    style={{
+                      height: 35,
+                      justifyContent: 'space-evenly',
+                      color: 'black',
+                    }}
+                    textStyle={{
+                      textAlign: 'center',
+                      color: 'black',
+                    }}
+                    widthArr={[...cellWidths]}
+                  />
+                </>
               ))}
           </Table>
         </View>
@@ -110,17 +118,17 @@ const ApproveNewAsset = ({ navigation }) => {
           headers: {
             Authorization: `Basic ${credentials}`,
           },
-        }
+        },
       );
 
       const responseData = await response.json();
-
+      console.log(responseData, 'llolllll');
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
-        const mappedData = responseData.data.map((item) => [
+        const mappedData = responseData.data.map(item => [
           item.InvoiceNo,
           item.InvoiceDate,
           item.RequestBy,
-          item["AssetName/Item"],
+          item['AssetName/Item'],
           item.Vendor,
           item.TotalQty,
           item.id_inv_m,
@@ -129,9 +137,7 @@ const ApproveNewAsset = ({ navigation }) => {
         ]);
         setApiData(mappedData);
       } else {
-        console.error(
-          'Error fetching data: Data is not an array or is empty'
-        );
+        console.error('Error fetching data: Data is not an array or is empty');
         setApiData([]);
       }
     } catch (error) {
@@ -143,7 +149,7 @@ const ApproveNewAsset = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = newPage => {
     setCurrentPage(newPage);
   };
 
@@ -162,11 +168,11 @@ const ApproveNewAsset = ({ navigation }) => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage - 1)}>
-            <Text style={styles.paginationButtonText}>{"<"}</Text>
+            <Text style={styles.paginationButtonText}>{'<'}</Text>
           </TouchableOpacity>
         )}
 
-        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+        {[...Array(endPage - startPage + 1).keys()].map(index => (
           <TouchableOpacity
             key={startPage + index}
             style={[
@@ -175,9 +181,7 @@ const ApproveNewAsset = ({ navigation }) => {
                 styles.activePaginationButton,
             ]}
             onPress={() => handlePageChange(startPage + index)}>
-            <Text style={styles.paginationButtonText}>
-              {startPage + index}
-            </Text>
+            <Text style={styles.paginationButtonText}>{startPage + index}</Text>
           </TouchableOpacity>
         ))}
 
@@ -185,7 +189,7 @@ const ApproveNewAsset = ({ navigation }) => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage + 1)}>
-            <Text style={styles.paginationButtonText}>{">"}</Text>
+            <Text style={styles.paginationButtonText}>{'>'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -258,10 +262,10 @@ const ApproveNewAsset = ({ navigation }) => {
         )}
       </View>
       {sidebarOpen && (
-         <View style={styles.sidebar}>
-           <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
-         </View>
-       )}
+        <View style={styles.sidebar}>
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+        </View>
+      )}
     </ScrollView>
   );
 };
