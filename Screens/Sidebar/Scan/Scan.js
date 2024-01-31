@@ -226,6 +226,18 @@ const Scan = ({navigation}) => {
   };
   const saveDetails = async () => {
     try {
+      if (idBodyData.length <= 0) {
+        return Alert.alert(
+          'Error',
+          'Scan Atleast One Asset to save the Details',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('QrCodeScanner'),
+            },
+          ],
+        );
+      }
       console.log(idBodyData, 'idddb');
       // Define Basic Authentication headers
       const Username = 'SVVG'; // Replace with your actual username

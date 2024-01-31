@@ -118,26 +118,26 @@ const AddToStore = ({navigation}) => {
   const handleValidation = () => {
     const emptyFields = [];
   
-    if (!modalName) emptyFields.push('Modal Name');
+    // if (!modalName) emptyFields.push('Modal Name');
     if (!quantity) emptyFields.push('Quantity');
-    if (!unitPrice) emptyFields.push('UnitPrice');
-    if (!taggable) emptyFields.push('Taggable');
-    if (!warranty) emptyFields.push('warranty');
-    if (!leaseStatus) emptyFields.push('Lease Status');
-    if (!department) emptyFields.push('Department');
-    if (!typeOfProcurement) emptyFields.push('Type of Procurement');
-    if (!location) emptyFields.push('Location');
-    if (!costCenter) emptyFields.push('Cost Center');
-    if (!poNumber) emptyFields.push('PO Number');
-    if (!poDate) emptyFields.push('PO Date');
-    if (!invoiceNumber) emptyFields.push('Invoice Number');
-    if (!invoiceDate) emptyFields.push('Invoice Date');
-    if (!vendor) emptyFields.push('Vendor');
-    if (emptyFields.length > 0) {
-      const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
-      Alert.alert('Required Fields', errorMessage);
-      return false; 
-    }
+    // if (!unitPrice) emptyFields.push('UnitPrice');
+    // if (!taggable) emptyFields.push('Taggable');
+    // if (!warranty) emptyFields.push('warranty');
+    // if (!leaseStatus) emptyFields.push('Lease Status');
+    // if (!department) emptyFields.push('Department');
+    // if (!typeOfProcurement) emptyFields.push('Type of Procurement');
+    // if (!location) emptyFields.push('Location');
+    // if (!costCenter) emptyFields.push('Cost Center');
+    // if (!poNumber) emptyFields.push('PO Number');
+    // if (!poDate) emptyFields.push('PO Date');
+    // if (!invoiceNumber) emptyFields.push('Invoice Number');
+    // if (!invoiceDate) emptyFields.push('Invoice Date');
+    // if (!vendor) emptyFields.push('Vendor');
+    // if (emptyFields.length > 0) {
+    //   const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
+    //   Alert.alert('Required Fields', errorMessage);
+    //   return false; 
+    // }
   
     return true; 
   };
@@ -480,6 +480,27 @@ const AddToStore = ({navigation}) => {
       setUnitPrice(value);
     }
   }
+  const handlePoNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setPoNumber(value);
+    }
+  };
+  const handleInvoiceNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setInvoiceNumber(value);
+    }
+  };
+  const handleGrnNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setGrnNumber(value);
+    }
+  };
+  const handleDcNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setDcNumber(value);
+    }
+  };
+
 
   return (
     <ScrollView>
@@ -832,7 +853,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>PO Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setPoNumber(value)}
+            onChangeText={handlePoNumberChange}
             value={poNumber}
           />
         </View>
@@ -858,7 +879,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Invoice Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setInvoiceNumber(value)}
+            onChangeText={handleInvoiceNumberChange}
             value={invoiceNumber}
           />
         </View>
@@ -884,7 +905,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>GRN Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setGrnNumber(value)}
+            onChangeText={handleGrnNumberChange}
             value={grnNumber}
           />
         </View>
@@ -910,7 +931,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>DC Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setDcNumber(value)}
+            onChangeText={handleDcNumberChange}
             value={dcNumber}
             keyboardType='numeric'
           />

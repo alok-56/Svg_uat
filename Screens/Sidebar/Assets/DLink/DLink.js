@@ -20,6 +20,7 @@ const DLink = ({ navigation }) => {
   const [textValue, setTextValue] = useState('');
   const [assetDropdownData, setAssetDropdownData] = useState([]);
   const [selectedDropdownItem, setSelectedDropdownItem] = useState(null);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
 
   const handleToDateChange = (event, selectedDate) => {
     setShowToDatepicker(false);
@@ -105,6 +106,14 @@ const DLink = ({ navigation }) => {
   useEffect(() => {
     fetchAssetDropdownData();
   }, []);
+  useEffect(() => {
+    // Initialize the selectedCheckboxes state based on the assetDropdownData
+    const initialCheckboxes = {};
+    assetDropdownData.forEach((item) => {
+      initialCheckboxes[item.asset_id] = false;
+    });
+    setSelectedCheckboxes(initialCheckboxes);
+  }, [assetDropdownData]);
   const handleAssetChange = (itemValue) => {
     const selectedAssetData = assetDropdownData.find((asset) => asset.asset_id === itemValue);
     setSelectedAsset({
@@ -116,7 +125,15 @@ const DLink = ({ navigation }) => {
       asset_nm: selectedAssetData?.asset_nm || '',
       accessory_id_wh: selectedAssetData?.accessory_id_wh || '',
     });
-    setLoginType(itemValue); 
+    setLoginType(itemValue);
+
+    // Update the selectedCheckboxes state when the asset changes
+    setSelectedCheckboxes((prevCheckboxes) => {
+      return {
+        ...prevCheckboxes,
+        [itemValue]: false, // Initialize the checkbox state as unchecked
+      };
+    });
   };
   const [selectedAsset, setSelectedAsset] = useState({
     accessory_id: '',
@@ -138,6 +155,20 @@ const DLink = ({ navigation }) => {
         ]);
         return;
       }
+      if ( !textValue  ) {
+        Alert.alert('Validation Error', 'Please Enter Remarks', [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+        return;
+      }
+      const isCheckboxSelected = Object.values(selectedCheckboxes).some((value) => value);
+      if (!isCheckboxSelected) {
+        Alert.alert('Validation Error', 'Please select at least one accessory.', [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+        return;
+      }
+
       // Define Basic Authentication headers
       const Username = 'SVVG'; // Replace with your actual username
       const Password = 'Pass@123'; // Replace with your actual password
@@ -225,7 +256,17 @@ const DLink = ({ navigation }) => {
             <View><Card 
             style={{ ...styles.card }}>
                 <Card.Content >
-                <Checkbox status={checkBoxChecked ? 'checked' : 'unchecked'} onPress={() => setCheckBoxChecked(!checkBoxChecked)}/>
+                <Checkbox
+                    status={selectedCheckboxes[selectedAsset.asset_id] ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setSelectedCheckboxes((prevCheckboxes) => {
+                        return {
+                          ...prevCheckboxes,
+                          [selectedAsset.asset_id]: !prevCheckboxes[selectedAsset.asset_id],
+                        };
+                      });
+                    }}
+                  />
                 <View style={styles.labelContainer}>
                   <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Id :</Text>
                   <Text style={styles.cardvalue}>{selectedAsset.accessory_id}</Text>
@@ -249,7 +290,7 @@ const DLink = ({ navigation }) => {
                   
                 <TextInput
                 style={styles.dateInput}
-                placeholder="Allocate Date"
+                placeholder="Dlink Date"
                 placeholderTextColor="gray"
                 value={dateTo}
                 onFocus={() => setShowToDatepicker(true)}

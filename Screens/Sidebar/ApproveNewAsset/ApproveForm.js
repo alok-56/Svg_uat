@@ -71,9 +71,9 @@ const ApproveForm = ({route}) => {
         setInvoiceNumber(itemDetails.InvoiceNO);
         setInvoiceDate(itemDetails.InvoiceDate);
         setGrnNumber(itemDetails.GRN);
-        setGrnDate(itemDetails.GRNdate);
+        setGrnDate(itemDetails.GRNdate || '');
         setDcNumber(itemDetails.DCNum);
-        setDcDate(itemDetails.DCDate);
+        setDcDate(itemDetails.DCDate || '');
         setVendor(itemDetails.Vendor);
         setModalName(itemDetails.Item);
         setCategory(itemDetails.Category);
