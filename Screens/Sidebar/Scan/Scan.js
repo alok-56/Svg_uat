@@ -226,6 +226,18 @@ const Scan = ({navigation}) => {
   };
   const saveDetails = async () => {
     try {
+      if (idBodyData.length <= 0) {
+        return Alert.alert(
+          'Error',
+          'Scan Atleast One Asset to save the Details',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('QrCodeScanner'),
+            },
+          ],
+        );
+      }
       console.log(idBodyData, 'idddb');
       // Define Basic Authentication headers
       const Username = 'SVVG'; // Replace with your actual username
@@ -275,7 +287,6 @@ const Scan = ({navigation}) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-      
         <Modal
           style={styles.containerModal}
           animationType="slide"
@@ -284,9 +295,18 @@ const Scan = ({navigation}) => {
           onRequestClose={hideModal}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalHeader}>Enter your message:</Text>
+              <Text style={styles.modalHeader}>Scanned Assets Ids:</Text>
               {console.log(idData, 'ghghghhg')}
-              <Text style={{color:'black',textAlign:'center',fontWeight:'bold',fontSize:16,marginBottom:'5%'}}>AssetID</Text>
+              {/* <Text
+                style={{
+                  color: 'black',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                  marginBottom: '5%',
+                }}>
+                AssetID
+              </Text> */}
               <TextInput
                 style={styles.textInput}
                 multiline
