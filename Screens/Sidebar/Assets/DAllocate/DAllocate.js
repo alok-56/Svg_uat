@@ -113,7 +113,7 @@ const DAllocate = ({ navigation }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
   
       // Handle success, e.g., show a success message or navigate to a different screen

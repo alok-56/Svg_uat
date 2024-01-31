@@ -202,7 +202,7 @@ const DLink = ({ navigation }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
   
       const responseText = await response.text();

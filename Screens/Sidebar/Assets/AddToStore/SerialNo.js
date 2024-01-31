@@ -125,7 +125,7 @@ const SerialNo = ({route, navigation}) => {
             typ_asst: typAsst,
             qty_asst: quantity,
             id_emp_user: Idempuser,
-            val_asst: unitPrice,
+            val_asst:  unitPrice,
             tag: taggable,
             warr_amc: warranty,
             dt_amc_start: startDate,
@@ -190,7 +190,7 @@ const SerialNo = ({route, navigation}) => {
             );
             setSerialVal('');
             setSapno('');
-            navigation.navigate('Dashboard');
+            // navigation.navigate('Dashboard');
           },
         },
       ]);
@@ -347,7 +347,7 @@ const SerialNo = ({route, navigation}) => {
             </View>
           </View>
         ))}
-        <View >
+        {/* <View >
       <Text style={{color:'black'}}>Values to be posted:</Text>
       <Text style={{color:'black'}}>Modal Name: {modalName}</Text>
       <Text style={{color:'black'}}>ID Model: {selectedModelId}</Text>
@@ -386,7 +386,7 @@ const SerialNo = ({route, navigation}) => {
     <Text style={{color:'black'}}>subLocationId: {subLocationId}</Text>
     <Text style={{color:'black'}}>buildingId: {buildingId}</Text>
     <Text style={{color:'black'}}>Id: {Idempuser}</Text>
-    </View>
+    </View> */}
     
     
        

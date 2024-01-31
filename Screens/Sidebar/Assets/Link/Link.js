@@ -311,7 +311,7 @@ const handleCheckboxSelect = (itemId) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
   
       const responseText = await response.text();
@@ -320,7 +320,6 @@ const handleCheckboxSelect = (itemId) => {
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
   
-      // Try to parse the response as JSON
       try {
         const data = JSON.parse(responseText);
         console.log('Parsed JSON Response:', data);
