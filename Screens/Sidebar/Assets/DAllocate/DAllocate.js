@@ -246,9 +246,9 @@ const DAllocate = ({ navigation }) => {
               placeholder='Select Asset'
             >
             <Picker.Item label="Select Status"/>
-              <Picker.Item label="Working" value="working" />
-              <Picker.Item label="Physical Damage Major" value="physical_dmg_mjr" />
-              <Picker.Item label="Physical Damage Minor " value="physical_dmg_mnr" />
+              <Picker.Item label="Working" value="Working" key="working"/>
+              <Picker.Item label="Physical Damage Major" value="Physical Damage Major" key="physical_dmg_mjr"/>
+              <Picker.Item label="Physical Damage Minor" value="Physical Damage Minor" key="physical_dmg_mnr"/>
             </Picker>
             </View>
 

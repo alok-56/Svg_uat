@@ -128,23 +128,11 @@ const AddToStore = ({navigation}) => {
     if (!typeOfProcurement) emptyFields.push('Type of Procurement');
     if (!location) emptyFields.push('Location');
     if (!costCenter) emptyFields.push('Cost Center');
-    if (!itemDescription) emptyFields.push('Item Description');
     if (!poNumber) emptyFields.push('PO Number');
     if (!poDate) emptyFields.push('PO Date');
     if (!invoiceNumber) emptyFields.push('Invoice Number');
-    if (!invoiceDate) emptyFields.push('Invoice ate');
-    if (!grnNumber) emptyFields.push('GRN Number');
-    if (!grnDate) emptyFields.push('GRN Date');
-    if (!dcNumber) emptyFields.push('DC Number');
-    if (!dcDate) emptyFields.push('DC Date');
+    if (!invoiceDate) emptyFields.push('Invoice Date');
     if (!vendor) emptyFields.push('Vendor');
-    if (!diskSpace) emptyFields.push('Disk Space');
-    if (!ram) emptyFields.push('RAM');
-    if (!operatingSystem ) emptyFields.push('Operating System ');
-    if (!osServiceType) emptyFields.push('OS Service Type');
-
- 
-  
     if (emptyFields.length > 0) {
       const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
       Alert.alert('Required Fields', errorMessage);
@@ -224,26 +212,27 @@ const AddToStore = ({navigation}) => {
   };
   
   const handleLeaseStartDateChange = (event, selectedDate) => {
-    setShowLeaseStartDatepicker(false);
-    if (selectedDate) {
-      const year = selectedDate.getFullYear();
-      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
-      const day = `${selectedDate.getDate()}`.padStart(2, '0');
-      const formattedStartDate = `${year}-${month}-${day}`;
-  
-      // Calculate lease end date by adding one year to the selected lease start date
-      const endDate = new Date(selectedDate);
-      endDate.setFullYear(year + 1);
-  
-      const endYear = endDate.getFullYear();
-      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
-      const endDay = `${endDate.getDate()}`.padStart(2, '0');
-      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
-  
-      setLeaseStartDate(formattedStartDate);
-      setLeaseEndDate(formattedEndDate); // Assuming you have a state for lease end date
-    }
-  };
+  setShowLeaseStartDatepicker(false);
+  if (selectedDate) {
+    const year = selectedDate.getFullYear();
+    const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+    const day = `${selectedDate.getDate()}`.padStart(2, '0');
+    const formattedStartDate = `${year}-${month}-${day}`;
+
+    // Calculate lease end date by setting the year to the current year
+    const endDate = new Date(selectedDate);
+    endDate.setFullYear(new Date().getFullYear() + 1);
+
+    const endYear = endDate.getFullYear();
+    const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+    const endDay = `${endDate.getDate()}`.padStart(2, '0');
+    const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+
+    setLeaseStartDate(formattedStartDate);
+    setLeaseEndDate(formattedEndDate);
+  }
+};
+
   
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatepicker(false);
@@ -477,10 +466,20 @@ const AddToStore = ({navigation}) => {
   };
   const handleLeaseStatusChange = itemValue => {
     setLeaseStatus(itemValue);
-    setStartDate('');
-    setEndDate('');
+    setLeaseStartDate('');
+    setLeaseEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
+  const handleQuantityNumber = (value) =>{
+    if (/^\d*\.?\d+$/.test(value) || value === ''){
+      setQuantity(value);
+    }
+  }
+  const handleUnitPriceNumber = (value) =>{
+    if (/^\d*\.?\d*$/.test(value) || value === ''){
+      setUnitPrice(value);
+    }
+  }
 
   return (
     <ScrollView>
@@ -531,7 +530,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Quantity*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setQuantity(value)}
+            onChangeText={handleQuantityNumber}
             value={quantity}
             keyboardType='numeric'
           />
@@ -540,7 +539,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Unit Price*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setUnitPrice(value)}
+            onChangeText={handleUnitPriceNumber}
             value={unitPrice}
             
           />
@@ -580,7 +579,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={warranty}
-              onValueChange={handleWarrantyChange}
+              onValueChange={(value) => {
+    handleWarrantyChange(value);
+    setShowDateInputs(value === 'AMC' || value === 'Warranty');
+  }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -643,7 +645,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={leaseStatus}
-              onValueChange={handleLeaseStatusChange}
+              onValueChange={(value) => {
+    handleLeaseStatusChange(value);
+    setShowLeaseDateInputs(value === 'Under Lease');
+  }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -829,7 +834,6 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setPoNumber(value)}
             value={poNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -856,7 +860,6 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setInvoiceNumber(value)}
             value={invoiceNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -883,7 +886,6 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={value => setGrnNumber(value)}
             value={grnNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>

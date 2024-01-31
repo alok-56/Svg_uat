@@ -52,7 +52,8 @@ const SerialNo = ({route, navigation}) => {
     selectedDepartmentId,
     locationId,
     subLocationId,
-    buildingId
+    buildingId,
+    Idempuser
   } = route.params;
   const [serialNumbers, setSerialNumbers] = useState(
     Array.from({length: quantity}, (_, index) => ({
@@ -346,9 +347,10 @@ const SerialNo = ({route, navigation}) => {
             </View>
           </View>
         ))}
-        {/* <View >
+        <View >
       <Text style={{color:'black'}}>Values to be posted:</Text>
       <Text style={{color:'black'}}>Modal Name: {modalName}</Text>
+      <Text style={{color:'black'}}>ID Model: {selectedModelId}</Text>
       <Text style={{color:'black'}}>Quantity: {quantity}</Text>
       <Text style={{color:'black'}}>Unit Price: {unitPrice}</Text>
       <Text style={{color:'black'}}>Taggable: {taggable}</Text>
@@ -383,7 +385,8 @@ const SerialNo = ({route, navigation}) => {
 <Text style={{color:'black'}}>locationId: {locationId}</Text>
     <Text style={{color:'black'}}>subLocationId: {subLocationId}</Text>
     <Text style={{color:'black'}}>buildingId: {buildingId}</Text>
-    </View> */}
+    <Text style={{color:'black'}}>Id: {Idempuser}</Text>
+    </View>
     
     
        
