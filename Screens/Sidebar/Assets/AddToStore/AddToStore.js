@@ -133,6 +133,8 @@ const AddToStore = ({navigation}) => {
     if (!invoiceNumber) emptyFields.push('Invoice Number');
     if (!invoiceDate) emptyFields.push('Invoice Date');
     if (!vendor) emptyFields.push('Vendor');
+    if (!grnDate) emptyFields.push('GRN Date');
+    if (!dcDate) emptyFields.push('DC Date');
     if (emptyFields.length > 0) {
       const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
       Alert.alert('Required Fields', errorMessage);
@@ -470,9 +472,13 @@ const AddToStore = ({navigation}) => {
     setLeaseEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
-  const handleQuantityNumber = (value) =>{
-    if (/^\d*\.?\d+$/.test(value) || value === ''){
-      setQuantity(value);
+  const handleQuantityNumber = (value) => {
+    if (/^\d*\.?\d+$/.test(value) || value === '') {
+      const numericValue = parseFloat(value);
+      
+      if (numericValue > 0 || value === '') {
+        setQuantity(value);
+      }
     }
   }
   const handleUnitPriceNumber = (value) =>{
@@ -498,6 +504,11 @@ const AddToStore = ({navigation}) => {
   const handleDcNumberChange = (value) => {
     if (!/\s/.test(value) || value === '') {
       setDcNumber(value);
+    }
+  };
+  const handleOsServiceTypeChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setOsServiceType(value);
     }
   };
 
@@ -933,7 +944,6 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={handleDcNumberChange}
             value={dcNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -1006,27 +1016,14 @@ const AddToStore = ({navigation}) => {
             value={operatingSystem}
           />
         </View>
+        
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>OS Service Type</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={osServiceType}
-              onValueChange={itemValue => setOsServiceType(itemValue)}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Yes" value="Yes" />
-              <Picker.Item label="No" value="No" />
-            </Picker>
-          </View>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={handleOsServiceTypeChange}
+            value={osServiceType}
+          />
         </View>
         <UploadFile/>
 

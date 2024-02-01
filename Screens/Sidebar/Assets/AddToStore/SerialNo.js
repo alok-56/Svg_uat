@@ -92,6 +92,7 @@ const SerialNo = ({route, navigation}) => {
       return null;
     }
   };
+  
 
   const handleSaveData = async () => {
     try {
@@ -177,7 +178,7 @@ const SerialNo = ({route, navigation}) => {
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
-      Alert.alert('Success', responseText, [
+      Alert.alert('Response', responseText, [
         {
           text: 'OK',
           onPress: () => {
@@ -190,7 +191,7 @@ const SerialNo = ({route, navigation}) => {
             );
             setSerialVal('');
             setSapno('');
-            // navigation.navigate('Dashboard');
+            navigation.navigate('Dashboard');
           },
         },
       ]);
@@ -300,7 +301,20 @@ const SerialNo = ({route, navigation}) => {
     navigation.navigate('AddToStore');
   };
  
-  
+  const handleSerialNumberChange = (value, index) => {
+    if (!/\s/.test(value) || value === '') {
+      const updatedSerialNumbers = [...serialNumbers];
+      updatedSerialNumbers[index].serialNo = value;
+      setSerialNumbers(updatedSerialNumbers);
+    }
+  };
+  const handleInputChange = (value, index, field) => {
+    if (!/\s/.test(value) || value === '') {
+      const updatedSerialNumbers = [...serialNumbers];
+      updatedSerialNumbers[index][field] = value;
+      setSerialNumbers(updatedSerialNumbers);
+    }
+  };
 
   return (
     <ScrollView>
@@ -318,11 +332,7 @@ const SerialNo = ({route, navigation}) => {
                 style={styles.headings}>{`Serial No ${serialNumber.id}`}</Text>
               <TextInput
                 style={styles.textinputs}
-                onChangeText={value => {
-                  const updatedSerialNumbers = [...serialNumbers];
-                  updatedSerialNumbers[index].serialNo = value;
-                  setSerialNumbers(updatedSerialNumbers);
-                }}
+                onChangeText={(value) => handleSerialNumberChange(value, index)}
                 value={serialNumber.serialNo}
                 placeholder={`Enter Serial No ${serialNumber.id}`}
                 placeholderTextColor="gray"
@@ -335,11 +345,7 @@ const SerialNo = ({route, navigation}) => {
                 }>{`Asset REF.NO${serialNumber.id}`}</Text>
               <TextInput
                 style={styles.textinputs}
-                onChangeText={value => {
-                  const updatedSerialNumbers = [...serialNumbers];
-                  updatedSerialNumbers[index].assetRef = value;
-                  setSerialNumbers(updatedSerialNumbers);
-                }}
+                onChangeText={(value) => handleInputChange(value, index, 'assetRef')}
                 value={serialNumber.assetRef}
                 placeholder={`Enter Asset REF.NO${serialNumber.id}`}
                 placeholderTextColor="gray"
