@@ -115,6 +115,7 @@ const SerialNo = ({route, navigation}) => {
         Alert.alert('Validation Error', 'Please fill in all Serial Numbers and Asset Reference Numbers.');
         return;
       }
+      
 
       const requestData = {
         data: [

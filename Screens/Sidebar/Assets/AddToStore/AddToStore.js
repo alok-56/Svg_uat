@@ -75,6 +75,8 @@ const AddToStore = ({navigation}) => {
   const [locationId, setLocationId] = useState('');
   const [subLocationId, setSubLocationId] = useState('');
   const [buildingId, setBuildingId] = useState('');
+  const [dsAsset, setDsAsset] = useState('');
+
 
 
   useEffect(() => {
@@ -449,7 +451,7 @@ const AddToStore = ({navigation}) => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
     if (selectedModel) {
-      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst} =
+      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst,ds_asst} =
         selectedModel;
 
       setModalNm(nm_model);
@@ -457,6 +459,8 @@ const AddToStore = ({navigation}) => {
       setIdSAssetdiv(id_s_assetdiv);
       setIdAssetdiv(id_assetdiv);
       setTypAsst(typ_asst);
+      setDsAsset(ds_asst);
+      setItemDescription(ds_asst);
 
       console.log('Selected Model Details:');
       console.log('modal name:', nm_model);
@@ -464,6 +468,7 @@ const AddToStore = ({navigation}) => {
       console.log('idasset:', id_assetdiv);
       console.log('SAsset', id_s_assetdiv);
       console.log('type asset:', typ_asst);
+      console.log('item description:', ds_asst);
     }
   };
   const handleLeaseStatusChange = itemValue => {
@@ -543,7 +548,7 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue), setModalName(itemValue);
+                getModalDetails(itemValue), setModalName(itemValue),getModalDetails(itemValue);;
               }}
               style={styles.picker}
               placeholder="Select Asset">
