@@ -11,10 +11,9 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {encode} from 'base-64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SerialNo = ({route, navigation}) => {
+const UpdateRejectedSerialNo = ({route, navigation}) => {
   const [refreshData, setRefreshData] = useState(false);
   const {
-    handleIdLoc,
     modalName,
     quantity,
     unitPrice,
@@ -28,6 +27,7 @@ const SerialNo = ({route, navigation}) => {
     department,
     costCenter,
     itemDescription,
+    description,
     poNumber,
     poDate,
     invoiceNumber,
@@ -37,14 +37,15 @@ const SerialNo = ({route, navigation}) => {
     dcNumber,
     dcDate,
     vendor,
-    operatingSystem,
     diskSpace,
     ram,
+    operatingSystem,
     osServiceType,
     selectedModelId,
     idAssetdiv,
     idSAssetdiv,
     typAsst,
+    modalNm,
     leaseStartDate,
     leaseEndDate,
     selectedLocationId,
@@ -52,8 +53,11 @@ const SerialNo = ({route, navigation}) => {
     locationId,
     subLocationId,
     buildingId,
-    Idempuser,
+    idDept,
+    idVendor,
+    idCostCenter,
   } = route.params;
+  console.log(route.params, 'uiio');
   const [serialNumbers, setSerialNumbers] = useState(
     Array.from({length: quantity}, (_, index) => ({
       serialNo: '',
@@ -70,7 +74,7 @@ const SerialNo = ({route, navigation}) => {
     const retrieveUploadInv = async () => {
       try {
         // Retrieve upload_inv from AsyncStorage
-        const storedUploadInv = await AsyncStorage.getItem('upload_inv');
+        const storedUploadInv = await AsyncStorage.getItem('modifStore');
         setUploadInv(storedUploadInv);
       } catch (error) {
         console.error('Error retrieving upload_inv from AsyncStorage:', error);
@@ -96,7 +100,7 @@ const SerialNo = ({route, navigation}) => {
     try {
       const Idempuser = await getData();
       const apiUrl =
-        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/SavingData';
+        'http://13.235.186.102/SVVG-API/webapi/Store_Rejectlist/UpdateAddToStore';
       const username = 'SVVG';
       const password = 'Pass@123';
       const headers = new Headers();
@@ -117,13 +121,50 @@ const SerialNo = ({route, navigation}) => {
         return;
       }
 
+      const convertDate = dateString => {
+        const dateParts = dateString.split('/');
+        if (dateParts.length === 3) {
+          const [day, month, year] = dateParts;
+          return `${year}-${month}-${day}`;
+        } else {
+          return dateString;
+        }
+      };
+
+      const convertDatesInObject = obj => {
+        console.log(obj, 'kol');
+        const newObj = {};
+
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+
+            // Check if the value is a string and matches the date pattern
+            if (
+              typeof value === 'string' &&
+              /\d{2}\/\d{2}\/\d{4}/.test(value)
+            ) {
+              console.log('jjjjjjelo');
+              newObj[key] = convertDate(value);
+            } else {
+              newObj[key] = value;
+            }
+          }
+        }
+
+        const bodaydata = {
+          data: [newObj],
+        };
+        return bodaydata;
+      };
+
       const requestData = {
         data: [
           {
             nm_model: modalName,
             id_model: selectedModelId,
-            id_assetdiv: idAssetdiv,
-            id_s_assetdiv: idSAssetdiv,
+            id_grp: idAssetdiv,
+            id_sgrp: idSAssetdiv,
             typ_asst: typAsst,
             qty_asst: quantity,
             id_emp_user: Idempuser,
@@ -137,9 +178,9 @@ const SerialNo = ({route, navigation}) => {
             std_lease: leaseStartDate,
             endt_lease: leaseEndDate,
             id_flr: selectedLocationId,
-            id_dept: selectedDepartmentId,
-            id_cc: costCenter,
-            item_description: itemDescription,
+            id_dept: idDept,
+            id_cc: idCostCenter,
+            item_description: description,
             rmk_asst: '',
             no_po: poNumber,
             dt_po: poDate,
@@ -149,7 +190,7 @@ const SerialNo = ({route, navigation}) => {
             dt_grn: grnDate,
             no_dc: dcNumber,
             dt_dc: dcDate,
-            id_ven: vendor,
+            id_ven: idVendor,
             storeage_typ: diskSpace,
             ram_typ: ram,
             process_typ: operatingSystem,
@@ -170,16 +211,21 @@ const SerialNo = ({route, navigation}) => {
           },
         ],
       };
-      console.log('Request Payload:', JSON.stringify(requestData));
+      const convertedData = convertDatesInObject(requestData.data[0]);
+
+      console.log('Request Payload:', JSON.stringify(convertedData.data));
+      console.log('Request Payload222', JSON.stringify(requestData));
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(requestData),
+        body: JSON.stringify(convertedData.data),
       });
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
-      Alert.alert('Response', responseText, [
+
+      Alert.alert('Success', 'Updated Asset Successfully', [
         {
           text: 'OK',
           onPress: () => {
@@ -192,35 +238,36 @@ const SerialNo = ({route, navigation}) => {
             );
             setSerialVal('');
             setSapno('');
-            navigation.navigate('Dashboard');
+            navigation.navigate('ModifyAsset');
           },
         },
       ]);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      //   if (!response.ok) {
+      //     throw new Error(`HTTP error! Status: ${response.status}`);
+      //   }
 
-      const responseData = await response.json();
-      if (responseData.status === 'Record has been inserted successfully') {
-        console.log('Record has been inserted successfully');
+      //   const responseData = await response.json();
+      //   if (responseData.status === 'Record has been inserted successfully') {
+      //     console.log('Record has been inserted successfully');
 
-        // Reset the state values
-        setSerialNumbers(
-          Array.from({length: quantity}, (_, index) => ({
-            serialNo: '',
-            assetRef: '',
-            id: index + 1,
-          })),
-        );
-        setSerialVal('');
-        setSapno('');
-      } else {
-        console.error('Error:', responseData.message);
-        Alert.alert('Error', responseData.message);
-      }
+      // Reset the state values
+      //     setSerialNumbers(
+      //       Array.from({length: quantity}, (_, index) => ({
+      //         serialNo: '',
+      //         assetRef: '',
+      //         id: index + 1,
+      //       })),
+      //     );
+      //     setSerialVal('');
+      //     setSapno('');
+      //   } else {
+      //     console.error('Error:', responseData.message);
+      //     Alert.alert('Error', responseData.message);
+      //   }
     } catch (error) {
-      console.log('error');
+      console.log('error', error);
+      Alert.alert('Error', error.message);
     }
   };
   const handleDontSerial = async () => {
@@ -299,7 +346,7 @@ const SerialNo = ({route, navigation}) => {
   }, [refreshData]);
   const handleBackPress = () => {
     setRefreshData(true);
-    navigation.navigate('AddToStore');
+    navigation.navigate('ModifyAssetForm');
   };
 
   const handleSerialNumberChange = (value, index) => {
@@ -453,4 +500,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SerialNo;
+export default UpdateRejectedSerialNo;

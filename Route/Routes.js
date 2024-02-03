@@ -24,6 +24,7 @@ import QRCodeScannerComp from '../Screens/Sidebar/Scan/QrCodeScanner';
 import WelcomeScreen from '../Screens/WelcomeScreen';
 import ModifyAsset from '../Screens/Sidebar/ModifyAsset/ModifyAsset';
 import ModifyAssetForm from '../Screens/Sidebar/ModifyAsset/ModifyAssetForm';
+import UpdateRejectedSerialNo from '../Screens/Sidebar/ModifyAsset/ModifyAssetSerialNo';
 
 const Stack = createStackNavigator();
 const Routes = () => {
@@ -201,7 +202,7 @@ const Routes = () => {
           name="ModifyAsset"
           component={ModifyAsset}
           options={{
-            headerTitle: 'Modify Asset',
+            headerTitle: 'Update Rejected Assets',
             headerStyle: {backgroundColor: '#052d6e'},
             headerTitleAlign: 'center',
             headerTintColor: 'white',
@@ -211,7 +212,17 @@ const Routes = () => {
           name="ModifyAssetForm"
           component={ModifyAssetForm}
           options={{
-            headerTitle: 'Modify Asset Form',
+            headerTitle: 'Update Rejected Assets',
+            headerStyle: {backgroundColor: '#052d6e'},
+            headerTitleAlign: 'center',
+            headerTintColor: 'white',
+          }}
+        />
+        <Stack.Screen
+          name="updateAssetSerialNo"
+          component={UpdateRejectedSerialNo}
+          options={{
+            headerTitle: 'Add Asset Serial',
             headerStyle: {backgroundColor: '#052d6e'},
             headerTitleAlign: 'center',
             headerTintColor: 'white',

@@ -1,115 +1,97 @@
-
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { ScrollView } from 'react-native-gesture-handler';
-import { encode } from 'base-64';
-import { Picker } from '@react-native-picker/picker';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Alert,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {ScrollView} from 'react-native-gesture-handler';
+import {encode} from 'base-64';
+import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import UploadFile from '../Assets/AddToStore/UploadFile';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Sidebar from '../Sidebar';
 
-const ModifyAssetForm = ({ route }) => {
+const ModifyAssetForm = ({route, navigation}) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalName, setModalName] = useState('');
   const [modalNm, setModalNm] = useState('');
-  const [idSAssetdiv, setIdSAssetdiv] = useState('');
-  const [idAssetdiv, setIdAssetdiv] = useState('');
-  const [selectedModelId, setSelectedModelId] = useState('');
-  const [typAsst, setTypAsst] = useState('');
-  const [apiData, setApiData] = useState([]);
+  const [quantity, setQuantity] = useState('');
+  const [unitPrice, setUnitPrice] = useState('');
+  const [taggable, setTaggable] = useState('');
+  const [warranty, setWarranty] = useState('');
+  const [leaseStatus, setLeaseStatus] = useState('');
+  const [typeOfProcurement, setTypeOfProcurement] = useState('');
+  const [department, setDepartment] = useState('');
+  const [costCenter, setCostCenter] = useState('');
+  const [itemDescription, setItemDescription] = useState('');
   const [poNumber, setPoNumber] = useState('');
-  const [poDate, setPoDate] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
-  const [invoiceDate, setInvoiceDate] = useState('');
   const [grnNumber, setGrnNumber] = useState('');
   const [grnDate, setGrnDate] = useState('');
   const [dcNumber, setDcNumber] = useState('');
   const [dcDate, setDcDate] = useState('');
+  const [invoiceDate, setInvoiceDate] = useState('');
   const [vendor, setVendor] = useState('');
-  const [modalName, setModalName] = useState('');
-  const [category, setCategory] = useState('');
-  const [subCategory, setSubCategory] = useState('');
-  const [assetType, setAssetType] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [unitPrice, setUnitPrice] = useState('');
-  const [location, setLocation] = useState('');
-  const [department, setDepartment] = useState('');
-  const [center, setCenter] = useState('');
-  const [description, setDescription] = useState('');
-  const [remarks, setRemarks] = useState('');
-  const [idInv, setIdInv] = useState(0)
-  const [idInvM, setIdInvM] = useState(0)
+  const [showStartDatepicker, setShowStartDatepicker] = useState(false);
+  const [showEndDatepicker, setShowEndDatepicker] = useState(false);
+  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =
+    useState(false);
+  const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
+  const [showPoDatepicker, setShowPoDatepicker] = useState(false);
+  const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
+  const [showGrnDatepicker, setShowGrnDatepicker] = useState(false);
+  const [showDcDatepicker, setShowDcDatepicker] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [leaseStartDate, setLeaseStartDate] = useState('');
+  const [leaseEndDate, setLeaseEndDate] = useState('');
+  const [poDate, setPoDate] = useState('');
+  const [showDateInputs, setShowDateInputs] = useState(false);
+  const [showLeaseDateInputs, setShowLeaseDateInputs] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [centers, setCenters] = useState([]);
-  const [locations, setLocations] = useState([]);
   const [models, setModels] = useState([]);
-  const [costCenter, setCostCenter] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedPODate, setSelectedPODate] = useState(new Date());
-  const [selectedInvoiceDate, setSelectedInvoiceDate] = useState(new Date());
-const [showInvoiceDatePicker, setShowInvoiceDatePicker] = useState(false);
-const [selectedGRNDate, setSelectedGRNDate] = useState(new Date());
-const [showGRNDatePicker, setShowGRNDatePicker] = useState(false);
-const [selectedDCDate, setSelectedDCDate] = useState(new Date());
-const [showDCDatePicker, setShowDCDatePicker] = useState(false);
+  const [selectedModelId, setSelectedModelId] = useState('');
+  const [idSAssetdiv, setIdSAssetdiv] = useState('');
+  const [idAssetdiv, setIdAssetdiv] = useState('');
+  const [typAsst, setTypAsst] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [diskSpace, setDiskSpace] = useState('');
+  const [operatingSystem, setOperatingSystem] = useState('');
+  const [osServiceType, setOsServiceType] = useState('');
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState('');
+  const [ram, setRam] = useState('');
+  const [refreshData, setRefreshData] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState('');
+  const [selectedLocationId, setSelectedLocationId] = useState('');
+  const [selectedLocationDetails, setSelectedLocationDetails] = useState(null);
+  const [locationId, setLocationId] = useState('');
+  const [subLocationId, setSubLocationId] = useState('');
+  const [buildingId, setBuildingId] = useState('');
+  const [dsAsset, setDsAsset] = useState('');
+  const [idInv, setIdInv] = useState(0);
+  const [idInvM, setIdInvM] = useState(0);
+  const [apiData, setApiData] = useState([]);
+  const [center, setCenter] = useState('');
+  const [description, setDescription] = useState('');
+  const [remarks, setRemarks] = useState('');
+  const [idDept, setIdDept] = useState('');
+  const [idVendor, setIdvendor] = useState('');
+  const [idCostCenter, setIdCostCenter] = useState('');
 
-
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
-  const handleDateChange = (event, date) => {
-    if (date) {
-      setSelectedPODate(date);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-      setPoDate(formattedDate); // Update your state accordingly
-    }
-    setShowDatePicker(false);
-  };
-  const openInvoiceDatePicker = () => {
-    setShowInvoiceDatePicker(true);
-  };
-  
-  const handleInvoiceDateChange = (event, date) => {
-    if (date) {
-      setSelectedInvoiceDate(date);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-      setInvoiceDate(formattedDate);
-    }
-    setShowInvoiceDatePicker(false);
-  };
-  
-  const openGRNDatePicker = () => {
-    setShowGRNDatePicker(true);
-  };
-  
-  const handleGRNDateChange = (event, date) => {
-    if (date) {
-      setSelectedGRNDate(date);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-      setGrnDate(formattedDate);
-    }
-    setShowGRNDatePicker(false);
-  };
-  const openDCDatePicker = () => {
-    setShowDCDatePicker(true);
-  };
-  
-  const handleDCDateChange = (event, date) => {
-    if (date) {
-      setSelectedDCDate(date);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-      setDcDate(formattedDate);
-    }
-    setShowDCDatePicker(false);
-  };
-  
-  // ... Repeat for GRN Date and DC Date
-  
-  // ... Repeat for GRN Date and DC Date
-  
   useEffect(() => {
     const id_inv_m = route.params?.id_inv_m;
-    const id_inv = route.params?.id_inv_m;
+    const id_inv = route.params?.id_inv;
     setIdInvM(id_inv_m);
     setIdInv(id_inv);
+
     fetchData(id_inv_m, id_inv);
   }, [route.params?.id_inv_m, route.params?.id_inv]);
 
@@ -118,18 +100,29 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       const Username = 'SVVG';
       const Password = 'Pass@123';
       const credentials = encode(`${Username}:${Password}`);
+      console.log(id_inv, 'idinv', id_inv_m, 'idinvm');
+      const getIt = await fetchLocations(); //fetch location async
+      const getModalData = await fetchModels();
+      const getDeparmentData = await fetchDepartments();
+      const getVendorData = await fetchVendors();
+      const getIdcc = await fetchCenters();
+      if (id_inv === undefined && id_inv_m === undefined) {
+        return;
+      }
       const response = await fetch(
         `http://13.235.186.102/SVVG-API/webapi/Store_Approver/SelectedItemDetails?id_inv_m=${id_inv_m}&id_inv=${id_inv}`,
         {
           headers: {
             Authorization: `Basic ${credentials}`,
           },
-        }
+        },
       );
 
       const responseData = await response.json();
+      console.log('item data--->', responseData);
 
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
+        console.log(getModalData, 'modu');
         const itemDetails = responseData.data[0];
         setApiData(itemDetails);
         // Populate form fields
@@ -143,9 +136,9 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
         setDcDate(itemDetails.DCDate);
         setVendor(itemDetails.Vendor);
         setModalName(itemDetails.Item);
-        setCategory(itemDetails.Category);
-        setSubCategory(itemDetails.SubCategory);
-        setAssetType(itemDetails.AssetType);
+        // setCategory(itemDetails.Category);
+        // setSubCategory(itemDetails.SubCategory);
+        // setAssetType(itemDetails.AssetType);
         setQuantity(itemDetails.Quantity);
         setUnitPrice(itemDetails.Price);
         setLocation(itemDetails.Location);
@@ -153,7 +146,25 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
         setCenter(itemDetails.CostCenter);
         setDescription(itemDetails.ItemDescription);
         setRemarks(itemDetails.Remarks || '');
-         setCostCenter(itemDetails.CostCenter);
+        setCostCenter(itemDetails.CostCenter);
+        if (getModalData.data) {
+          getModalDetails(itemDetails.Item, getModalData.data);
+        }
+
+        if (getIt.data) {
+          handleLocationSelection(itemDetails.Location, getIt.data);
+        }
+
+        if (getDeparmentData.data) {
+          handleIdDepSet(itemDetails.Department, getDeparmentData.data);
+        }
+        if (getVendorData.data) {
+          handeIdVend(itemDetails.Vendor, getVendorData.data);
+        }
+        if (getIdcc.data) {
+          handleIdCc(itemDetails.CostCenter, getIdcc.data);
+        }
+        // handleLocationSelection(itemDetails.Location, getIt.data);
       } else {
         console.error('Error fetching data: Data is not an array or is empty');
         setApiData([]);
@@ -163,17 +174,245 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       setApiData([]);
     }
   };
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <TouchableOpacity
+  //         onPress={handleMenuIconPress}
+  //         style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
+  //         <Icon name="menu" color="white" size={25} />
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [refreshData]);
+  const handleMenuIconPress = () => {
+    setSidebarOpen(prevState => !prevState);
+  };
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false);
+  };
+  const handleBackPress = () => {
+    navigation.navigate('Dashboard');
+  };
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={{position: 'absolute', top: '30%', left: '20%', zIndex: 1}}>
+          <Icon name="arrow-back" color="white" size={25} />
+        </TouchableOpacity>
+      ),
+    });
+  });
+  // useEffect(() => {
+  //   if (refreshData) {
+  //     setModalName('');
+  //     setQuantity('');
+  //     setRefreshData(false);
+  //   }
+  // }, [refreshData]);
+  const handleValidation = () => {
+    const emptyFields = [];
+
+    if (!modalName) emptyFields.push('Modal Name');
+    if (!quantity) emptyFields.push('Quantity');
+    if (!unitPrice) emptyFields.push('UnitPrice');
+    if (!taggable) emptyFields.push('Taggable');
+    if (!warranty) emptyFields.push('warranty');
+    if (!leaseStatus) emptyFields.push('Lease Status');
+    if (!department) emptyFields.push('Department');
+    if (!typeOfProcurement) emptyFields.push('Type of Procurement');
+    if (!location) emptyFields.push('Location');
+    if (!costCenter) emptyFields.push('Cost Center');
+    if (!poNumber) emptyFields.push('PO Number');
+    if (!poDate) emptyFields.push('PO Date');
+    if (!invoiceNumber) emptyFields.push('Invoice Number');
+    if (!invoiceDate) emptyFields.push('Invoice Date');
+    if (!vendor) emptyFields.push('Vendor');
+    if (!grnDate) emptyFields.push('GRN Date');
+    if (!dcDate) emptyFields.push('DC Date');
+    if (emptyFields.length > 0) {
+      const errorMessage = `Please fill in the following fields: ${emptyFields.join(
+        ', ',
+      )}.`;
+      Alert.alert('Required Fields', errorMessage);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSerialNo = () => {
+    if (handleValidation()) {
+      navigation.navigate('updateAssetSerialNo', {
+        modalName,
+        quantity,
+        unitPrice,
+        taggable,
+        warranty,
+        startDate,
+        endDate,
+        leaseStatus,
+        typeOfProcurement,
+        location,
+        department,
+        costCenter,
+        itemDescription,
+        description,
+        poNumber,
+        poDate,
+        invoiceNumber,
+        invoiceDate,
+        grnNumber,
+        grnDate,
+        dcNumber,
+        dcDate,
+        vendor,
+        diskSpace,
+        ram,
+        operatingSystem,
+        osServiceType,
+        selectedModelId,
+        idAssetdiv,
+        idSAssetdiv,
+        typAsst,
+        modalNm,
+        leaseStartDate,
+        leaseEndDate,
+        selectedLocationId,
+        selectedDepartmentId,
+        locationId,
+        subLocationId,
+        buildingId,
+        idDept,
+        idVendor,
+        idCostCenter,
+      });
+    }
+  };
+  const handleWarrantyChange = itemValue => {
+    setWarranty(itemValue);
+    setShowDateInputs(itemValue === 'AMC' || itemValue === 'Warranty');
+  };
+  const handleStartDateChange = (event, selectedDate) => {
+    setShowStartDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+
+      // Calculate end date by adding one year to the selected start date
+      const endDate = new Date(selectedDate);
+      endDate.setFullYear(year + 1);
+
+      const endYear = endDate.getFullYear();
+      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+      const endDay = `${endDate.getDate()}`.padStart(2, '0');
+      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+
+      setStartDate(formattedDate);
+      setEndDate(formattedEndDate);
+    }
+  };
+
+  const handleLeaseStartDateChange = (event, selectedDate) => {
+    setShowLeaseStartDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedStartDate = `${year}-${month}-${day}`;
+
+      // Calculate lease end date by setting the year to the current year
+      const endDate = new Date(selectedDate);
+      endDate.setFullYear(new Date().getFullYear() + 1);
+
+      const endYear = endDate.getFullYear();
+      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+      const endDay = `${endDate.getDate()}`.padStart(2, '0');
+      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+
+      setLeaseStartDate(formattedStartDate);
+      setLeaseEndDate(formattedEndDate);
+    }
+  };
+
+  const handleEndDateChange = (event, selectedDate) => {
+    setShowEndDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setEndDate(formattedDate);
+    }
+  };
+  const handleLeaseEndDateChange = (event, selectedDate) => {
+    setShowLeaseEndDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setLeaseEndDate(formattedDate);
+    }
+  };
+  const handlePODateChange = (event, selectedDate) => {
+    setShowPoDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setPoDate(formattedDate);
+    }
+  };
+  const handleInvoiceDateChange = (event, selectedDate) => {
+    setShowInvoiceDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setInvoiceDate(formattedDate);
+    }
+  };
+  const handleGrnDateChange = (event, selectedDate) => {
+    setShowGrnDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setGrnDate(formattedDate);
+    }
+  };
+  const handleDcDateChange = (event, selectedDate) => {
+    setShowDcDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setDcDate(formattedDate);
+    }
+  };
   const fetchDepartments = async () => {
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_department', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_department',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -181,6 +420,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
 
       const data = await response.json();
       setDepartments(data.data);
+      return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -191,11 +431,14 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/vendor_dropdownlist', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/vendor_dropdownlist',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -203,6 +446,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
 
       const data = await response.json();
       setVendors(data.data);
+      return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -213,11 +457,14 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_CC', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_CC',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -225,6 +472,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
 
       const data = await response.json();
       setCenters(data.data);
+      return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -235,11 +483,14 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Loc', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Loc',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -247,9 +498,28 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
 
       const data = await response.json();
       setLocations(data.data);
+      return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
+  };
+  const handleLocationSelection = (itemValue, itemIndex) => {
+    // Find and set details of the selected location
+    var selectedLocationDetails = [];
+    if (itemIndex !== undefined) {
+      selectedLocationDetails = itemIndex.filter(
+        item => item.nm_flr.split(',')[0] === itemValue,
+      );
+    }
+
+    setSelectedLocationId(selectedLocationDetails[0]?.id_flr || '');
+    setSelectedLocationDetails(selectedLocationDetails);
+
+    console.log('location id:', selectedLocationDetails[0]?.id_loc);
+    console.log('location name:', selectedLocationDetails[0]?.nm_flr);
+    setLocationId(selectedLocationDetails[0]?.id_loc);
+    setSubLocationId(selectedLocationDetails[0]?.id_sloc);
+    setBuildingId(selectedLocationDetails[0]?.id_building);
   };
   const fetchModels = async () => {
     try {
@@ -257,11 +527,14 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       const Password = 'Pass@123';
 
       const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Model', {
-        headers: {
-          Authorization: `Basic ${credentials}`,
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/Display_Model',
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -269,28 +542,9 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
 
       const data = await response.json();
       setModels(data.data);
+      return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
-    }
-  };
-  const getModalDetails = (e) => {
-    const selectedModel = models.find((item) => item?.nm_model === e);
-
-    if (selectedModel) {
-      const { nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst } = selectedModel;
-
-      setModalNm(nm_model);
-      setSelectedModelId(id_model);
-      setIdSAssetdiv(id_s_assetdiv);
-      setIdAssetdiv(id_assetdiv);
-      setTypAsst(typ_asst);
-
-      console.log('Selected Model Details:');
-      console.log('modal name:', nm_model);
-      console.log('model id:', id_model);
-      console.log('idasset:', id_assetdiv);
-      console.log('SAsset', id_s_assetdiv);
-      console.log('type asset:', typ_asst);
     }
   };
   useEffect(() => {
@@ -300,407 +554,731 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
     fetchLocations();
     fetchModels();
   }, []);
-  const handleUpdate = async (status) => {
-    if (!remarks.trim()) {
-      Alert.alert("Alert", 'Please enter all the details');
-      return;
+
+  const getModalDetails = (e, dataIndex) => {
+    console.log('heloooo');
+    const selectedModel = dataIndex.find(item => item?.nm_model === e);
+
+    if (selectedModel) {
+      const {
+        nm_model,
+        id_model,
+        id_s_assetdiv,
+        id_assetdiv,
+        typ_asst,
+        ds_asst,
+      } = selectedModel;
+      console.log(selectedModel, 'smmmmmmm');
+
+      setModalNm(nm_model);
+      setSelectedModelId(id_model);
+      setIdSAssetdiv(id_s_assetdiv);
+      setIdAssetdiv(id_assetdiv);
+      setTypAsst(typ_asst);
+      setDsAsset(ds_asst);
+      setItemDescription(ds_asst);
+
+      console.log('Selected Model Details:');
+      console.log('modal name:', nm_model);
+      console.log('model id:', id_model);
+      console.log('idasset:', id_assetdiv);
+      console.log('SAsset', id_s_assetdiv);
+      console.log('type asset:', typ_asst);
+      console.log('item description:', ds_asst);
     }
+  };
+  const handleLeaseStatusChange = itemValue => {
+    setLeaseStatus(itemValue);
+    setLeaseStartDate('');
+    setLeaseEndDate('');
+    setShowLeaseDateInputs(itemValue === 'Under Lease');
+  };
+  const handleQuantityNumber = value => {
+    if (/^\d*\.?\d+$/.test(value) || value === '') {
+      const numericValue = parseFloat(value);
 
-    const currentDate = new Date().toISOString().split('T')[0];
-
-    const postData = {
-      data: [
-        {
-          id_emp_user: "1",
-          id_inv: idInv,
-          id_inv_m: idInvM,
-          dt_approv: currentDate,
-          dt_inv: apiData.InvoiceDate,
-          id_loc: "1",
-          id_sgrp: "203",
-          id_grp: "3",
-          status: status,
-          rmk_asst: remarks,
-        },
-      ],
-    };
-
-    console.log('postData-->', postData);
-
-    try {
-      const Username = 'SVVG';
-      const Password = 'Pass@123';
-      const credentials = encode(`${Username}:${Password}`);
-      const response = await fetch(
-        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/SavingData',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${credentials}`,
-          },
-          body: JSON.stringify(postData),
-        }
-      );
-
-      // Check if the response is successful (status 2xx)
-      if (response.ok) {
-        const responseData = await response.text(); // Get the raw response as text
-
-        // Display different alerts based on status
-        if (status === 'Updated') {
-          Alert.alert('Updated', 'Record has been Updated successfully');
-        } else {
-          // Handle other status cases if needed
-          Alert.alert('Success', responseData);
-        }
-
-        // You might want to navigate back or perform other actions here
-      } else {
-        // Handle error case
-        console.error('Error in API response:', response.status);
-        Alert.alert('Error', 'Failed to communicate with the server');
+      if (numericValue > 0 || value === '') {
+        setQuantity(value);
       }
-    } catch (error) {
-      console.error('Error in API call:', error);
-      Alert.alert('Error', 'Failed to communicate with the server');
+    }
+  };
+  const handleUnitPriceNumber = value => {
+    if ((/^\d*\.?\d*$/.test(value) && parseFloat(value) > 0) || value === '') {
+      setUnitPrice(value);
+    }
+  };
+  const handlePoNumberChange = value => {
+    if (!/\s/.test(value) || value === '') {
+      setPoNumber(value);
+    }
+  };
+  const handleInvoiceNumberChange = value => {
+    if (!/\s/.test(value) || value === '') {
+      setInvoiceNumber(value);
+    }
+  };
+  const handleGrnNumberChange = value => {
+    if (!/\s/.test(value) || value === '') {
+      setGrnNumber(value);
+    }
+  };
+  const handleDcNumberChange = value => {
+    if (!/\s/.test(value) || value === '') {
+      setDcNumber(value);
+    }
+  };
+  const handleOsServiceTypeChange = value => {
+    if (!/\s/.test(value) || value === '') {
+      setOsServiceType(value);
     }
   };
 
-  const styles = StyleSheet.create({
-    headings: {
-      fontSize: 15,
-      fontWeight: 'bold',
-      color: 'black',
-      marginLeft: '3%',
-      marginBottom: '1%',
-    },
-    textinputs: {
-      borderWidth: 1,
-      borderColor: 'black',
-      color: 'black',
-      width: '95%',
-      padding: 10,
-      justifyContent: 'center',
-      alignSelf: 'center',
-      borderRadius: 5,
-    },
-    button: {
-      backgroundColor: '#ff8a3d',
-      padding: 10,
-      alignItems: 'center',
-      borderRadius: 5,
-      width: '100%',
-      alignSelf: 'center',
-      margin: '5%',
-      marginTop: '30%',
-      marginBottom: '10%',
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 18,
-    },
-    picker: {
-      width: '99%',
-      color: 'black',
-      justifyContent: 'center',
-      alignSelf: 'center',
-    },
-  });
-  const handleQuantityNumber = (value) =>{
-    if (/^\d*\.?\d+$/.test(value) || value === ''){
-      setQuantity(value);
-    }
-  }
-  const handleUnitPriceNumber = (value) =>{
-    if (/^\d*\.?\d*$/.test(value) || value === ''){
-      setUnitPrice(value);
-    }
-  }
+  const handleIdDepSet = (itemValue, dataIndex) => {
+    console.log(dataIndex, 'diiaiiaia');
+    const filteredDep =
+      dataIndex && dataIndex.filter(i => i?.nm_dept === itemValue);
+    console.log(filteredDep, 'dep Id');
+    setIdDept(filteredDep[0]?.id_dept);
+  };
+  const handeIdVend = (itemValue, dataIndex) => {
+    console.log(dataIndex, 'viaiiaia');
+
+    const filteredDep =
+      dataIndex && dataIndex.filter(i => i?.nm_ven === itemValue);
+    console.log(filteredDep, 'venId');
+    setIdvendor(filteredDep[0]?.id_ven);
+  };
+  const handleIdCc = (itemValue, dataIndex) => {
+    console.log(dataIndex, 'icccc');
+
+    const filteredDep =
+      dataIndex && dataIndex.filter(i => i?.nm_cc === itemValue);
+    console.log(filteredDep, 'iccc');
+    setIdCostCenter(filteredDep[0]?.id_cc);
+  };
+
   return (
     <ScrollView>
-      <View>
-        <View style={{ backgroundColor: '#ff8a3d' }}>
+      {console.log(idDept, idVendor, 'oooooooo')}
+      <View style={styles.container}>
+        <View style={{backgroundColor: '#052d6e'}}>
           <Text
-            style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: 18,
+              padding: 10,
+            }}>
             Item/Model Details
           </Text>
         </View>
-        <View style={{ marginTop: '5%' }}>
-          <Text style={styles.headings}>Item/Model Name</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Item/Model Name*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue),
-                  setModalName(itemValue)
+                getModalDetails(itemValue, models), setModalName(itemValue);
               }}
               style={styles.picker}
-
-            >
-              {/* <Picker.Item label="Select an option" value="" /> */}
-              {models.map((dept) => (
-                <Picker.Item key={dept.nm_model} label={dept.nm_model} value={dept.nm_model} />
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              {models.map(dept => (
+                <Picker.Item
+                  key={dept.nm_model}
+                  label={dept.nm_model}
+                  value={dept.nm_model}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Category</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={(value) => setCategory(value)}
-            value={category}
-          />
-        </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Sub Category</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={(value) => setSubCategory(value)}
-            value={subCategory}
-          />
-        </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Asset Type</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={(value) => setAssetType(value)}
-            value={assetType}
-          />
-        </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Quantity</Text>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Quantity*</Text>
           <TextInput
             style={styles.textinputs}
             onChangeText={handleQuantityNumber}
             value={quantity}
+            keyboardType="numeric"
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Unit Price</Text>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Unit Price*</Text>
           <TextInput
             style={styles.textinputs}
             onChangeText={handleUnitPriceNumber}
             value={unitPrice}
+            keyboardType="numeric"
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Location</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Taggable*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            <Picker
+              selectedValue={taggable}
+              onValueChange={itemValue => setTaggable(itemValue)}
+              style={styles.picker}
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              <Picker.Item label="Yes" value="Yes" />
+              <Picker.Item label="No" value="No" />
+            </Picker>
+          </View>
+        </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>AMC/Warranty*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            <Picker
+              selectedValue={warranty}
+              onValueChange={value => {
+                handleWarrantyChange(value);
+                setShowDateInputs(value === 'AMC' || value === 'Warranty');
+              }}
+              style={styles.picker}
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              <Picker.Item label="NO" value="NO" />
+              <Picker.Item label="AMC" value="AMC" />
+              <Picker.Item label="Warranty" value="Warranty" />
+            </Picker>
+          </View>
+        </View>
+        {showDateInputs && (
+          <>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Start Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="Start Date"
+                placeholderTextColor="gray"
+                value={startDate}
+                onFocus={() => setShowStartDatepicker(true)}
+              />
+              {showStartDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleStartDateChange}
+                />
+              )}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>End Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="End Date"
+                placeholderTextColor="gray"
+                value={endDate}
+                onFocus={() => setShowEndDatepicker(true)}
+              />
+              {showEndDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleEndDateChange}
+                />
+              )}
+            </View>
+          </>
+        )}
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Lease Status*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            <Picker
+              selectedValue={leaseStatus}
+              onValueChange={value => {
+                handleLeaseStatusChange(value);
+                setShowLeaseDateInputs(value === 'Under Lease');
+              }}
+              style={styles.picker}
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              <Picker.Item label="Not Under Lease" value="Not Under Lease" />
+              <Picker.Item label="Under Lease" value="Under Lease" />
+            </Picker>
+          </View>
+        </View>
+        {showLeaseDateInputs && (
+          <>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Start Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="Start Date"
+                placeholderTextColor="gray"
+                value={leaseStartDate}
+                onFocus={() => setShowLeaseStartDatepicker(true)}
+              />
+              {showLeaseStartDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleLeaseStartDateChange}
+                />
+              )}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>End Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="End Date"
+                placeholderTextColor="gray"
+                value={leaseEndDate}
+                onFocus={() => setShowLeaseEndDatepicker(true)}
+              />
+              {showLeaseEndDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleLeaseEndDateChange}
+                />
+              )}
+            </View>
+          </>
+        )}
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Type of Procurement*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            <Picker
+              selectedValue={typeOfProcurement}
+              onValueChange={itemValue => setTypeOfProcurement(itemValue)}
+              style={styles.picker}
+              placeholder="Select Asset">
+              <Picker.Item label="Select an option" value="" />
+              <Picker.Item label="Outright Purchase" value="1" />
+              <Picker.Item label="Loan Basis" value="2" />
+              <Picker.Item label="Add-On" value="3" />
+            </Picker>
+          </View>
+        </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Location*</Text>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={location}
-              onValueChange={(itemValue) => setLocation(itemValue)}
-              style={styles.picker}
-
-            >
-              {/* <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} /> */}
-              {locations.map((dept) => (
-                <Picker.Item key={dept.id_loc} label={dept.nm_flr} value={dept.id_loc} />
-              ))}
+              onValueChange={e => (
+                handleLocationSelection(e, locations), setLocation(e)
+              )}
+              style={styles.picker}>
+              {locations &&
+                locations.map(dept => (
+                  <Picker.Item
+                    key={dept.id_loc}
+                    label={dept.nm_flr}
+                    value={dept.nm_flr.split(',')[0]}
+                  />
+                ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Department</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={department}
-              onValueChange={(itemValue) => setDepartment(itemValue)}
+              onValueChange={itemValue => (
+                handleIdDepSet(itemValue, departments), setDepartment(itemValue)
+              )}
               style={styles.picker}
-              placeholder='Select Department'
-            >
-              {/* <Picker.Item label="Select an option" value="" /> */}
-              {departments.map((dept) => (
-                <Picker.Item key={dept.id_dept} label={dept.nm_dept} value={dept.id_dept} />
+              placeholder="Select Department">
+              <Picker.Item label="Select an option" value="" />
+              {departments.map(dept => (
+                <Picker.Item
+                  key={dept.id_dept}
+                  label={dept.nm_dept}
+                  value={dept.nm_dept}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Cost Center/Project</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
+            {console.log(costCenter, 'cffffccfc')}
+
+            {console.log(centers, 'llllll')}
             <Picker
               selectedValue={costCenter}
-              onValueChange={(itemValue) => setCostCenter(itemValue)}
-              style={styles.picker}
-
-            >
+              onValueChange={itemValue => (
+                handleIdCc(itemValue, centers), setCostCenter(itemValue)
+              )}
+              style={styles.picker}>
               {/* <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} /> */}
-              {centers.map((dept) => (
-                <Picker.Item key={dept.id_cc} label={dept.nm_cc} value={dept.id_cc} />
+              {centers.map(dept => (
+                <Picker.Item
+                  key={dept.id_cc}
+                  label={dept.nm_cc}
+                  value={dept.nm_cc}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Item Description</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setDescription(value)}
+            onChangeText={value => setDescription(value)}
             value={description}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Remarks</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setRemarks(value)}
+            onChangeText={value => setRemarks(value)}
             value={remarks}
+            editable={false}
+            multiline={true}
           />
         </View>
-        <View style={{ backgroundColor: '#ff8a3d', marginTop: '3%' }}>
-          <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18, padding: 10 }}>
+        <View style={{backgroundColor: '#052d6e', marginTop: '3%'}}>
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: 18,
+              padding: 10,
+            }}>
             Invoice Details
           </Text>
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>PO Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setPoNumber(value)}
+            onChangeText={handlePoNumberChange}
             value={poNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>PO Date*</Text>
-          <TouchableOpacity onPress={openDatePicker}>
-            <View>
-              <Text style={{...styles.textinputs,border:'0px solid white'}}>{poDate}</Text>
-            </View>
-          </TouchableOpacity>
-
-          {showDatePicker && (
+          <TextInput
+            style={styles.textinputs}
+            placeholder="PO Date"
+            placeholderTextColor="gray"
+            value={poDate}
+            onFocus={() => setShowPoDatepicker(true)}
+          />
+          {showPoDatepicker && (
             <DateTimePicker
-              value={selectedPODate}
+              value={new Date()}
               mode="date"
-              is24Hour={true}
               display="default"
-              onChange={handleDateChange}
-              style={{...styles.textinputs,border:'0px solid white'}}
+              onChange={handlePODateChange}
             />
           )}
         </View>
-        {/* <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>PO Date</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={(value) => setPoDate(value)}
-            value={poDate}
-          />
-        </View> */}
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Invoice Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setInvoiceNumber(value)}
+            onChangeText={handleInvoiceNumberChange}
             value={invoiceNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-  <Text style={styles.headings}>Invoice Date*</Text>
-  <TouchableOpacity onPress={openInvoiceDatePicker}>
-    <View>
-      <Text style={{...styles.textinputs, border: '0px solid white'}}>{invoiceDate}</Text>
-    </View>
-  </TouchableOpacity>
-
-  {showInvoiceDatePicker && (
-    <DateTimePicker
-      value={selectedInvoiceDate}
-      mode="date"
-      is24Hour={true}
-      display="default"
-      onChange={handleInvoiceDateChange}
-      style={{...styles.textinputs, border: '0px solid white'}}
-    />
-  )}
-</View>
-
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Invoice Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="Invoice Date"
+            placeholderTextColor="gray"
+            value={invoiceDate}
+            onFocus={() => setShowInvoiceDatepicker(true)}
+          />
+          {showInvoiceDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleInvoiceDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>GRN Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setGrnNumber(value)}
+            onChangeText={handleGrnNumberChange}
             value={grnNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-  <Text style={styles.headings}>GRN Date</Text>
-  <TouchableOpacity onPress={openGRNDatePicker}>
-    <View>
-      <Text style={{...styles.textinputs, border: '0px solid white'}}>{grnDate}</Text>
-    </View>
-  </TouchableOpacity>
-
-  {showGRNDatePicker && (
-    <DateTimePicker
-      value={selectedGRNDate}
-      mode="date"
-      is24Hour={true}
-      display="default"
-      onChange={handleGRNDateChange}
-      style={{...styles.textinputs, border: '0px solid white'}}
-    />
-  )}
-</View>
-
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>GRN Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="GRN Date"
+            placeholderTextColor="gray"
+            value={grnDate}
+            onFocus={() => setShowGrnDatepicker(true)}
+          />
+          {showGrnDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleGrnDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>DC Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setDcNumber(value)}
+            onChangeText={handleDcNumberChange}
             value={dcNumber}
           />
         </View>
-        <View style={{ marginTop: '3%' }}>
-  <Text style={styles.headings}>DC Date</Text>
-  <TouchableOpacity onPress={openDCDatePicker}>
-    <View>
-      <Text style={{...styles.textinputs, border: '0px solid white'}}>{dcDate}</Text>
-    </View>
-  </TouchableOpacity>
-
-  {showDCDatePicker && (
-    <DateTimePicker
-      value={selectedDCDate}
-      mode="date"
-      is24Hour={true}
-      display="default"
-      onChange={handleDCDateChange}
-      style={{...styles.textinputs, border: '0px solid white'}}
-    />
-  )}
-</View>
-
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>DC Date*</Text>
+          <TextInput
+            style={styles.textinputs}
+            placeholder="DC Date"
+            placeholderTextColor="gray"
+            value={dcDate}
+            onFocus={() => setShowDcDatepicker(true)}
+          />
+          {showDcDatepicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDcDateChange}
+            />
+          )}
+        </View>
+        <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Vendor</Text>
-          <View style={{ borderWidth: 1, width: '95%', justifyContent: 'center', alignSelf: 'center', height: 58, borderRadius: 5 }}>
+          <View
+            style={{
+              borderWidth: 1,
+              width: '95%',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              height: 58,
+              borderRadius: 5,
+            }}>
             <Picker
               selectedValue={vendor}
-              onValueChange={(itemValue) => setVendor(itemValue)}
+              onValueChange={itemValue => (
+                handeIdVend(itemValue, vendors), setVendor(itemValue)
+              )}
               style={styles.picker}
-            >
-              {/* <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} /> */}
-              {vendors.map((dept) => (
-                <Picker.Item key={dept.id_ven} label={dept.nm_ven} value={dept.id_ven} />
+              placeholder="Select Asset">
+              {vendors.map(dept => (
+                <Picker.Item
+                  key={dept.id_ven}
+                  label={dept.nm_ven}
+                  value={dept.nm_ven}
+                />
               ))}
             </Picker>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          <TouchableOpacity onPress={() => handleUpdate('Updated')}>
-            <View style={styles.button}>
-              <Text style={styles.buttonText}>Update</Text>
-            </View>
-          </TouchableOpacity>
-
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Disk Space(GB)</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setDiskSpace(value)}
+            value={diskSpace}
+          />
         </View>
+
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>RAM(MB)</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setRam(value)}
+            value={ram}
+          />
+        </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Operating System</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setOperatingSystem(value)}
+            value={operatingSystem}
+          />
+        </View>
+
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>OS Service Type</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={handleOsServiceTypeChange}
+            value={osServiceType}
+          />
+        </View>
+        <UploadFile from={'modifStore'} />
+
+        <TouchableOpacity onPress={handleSerialNo}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>Next</Text>
+          </View>
+        </TouchableOpacity>
+
+        {sidebarOpen && (
+          <View style={styles.sidebar}>
+            <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+          </View>
+        )}
       </View>
     </ScrollView>
-  )
-}
-
-
+  );
+};
+const styles = StyleSheet.create({
+  textinputs: {
+    borderWidth: 1,
+    borderColor: 'black',
+    color: 'black',
+    width: '95%',
+    padding: 10,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    borderRadius: 5,
+  },
+  container: {
+    flex: 1,
+  },
+  icon: {
+    position: 'absolute',
+    top: '23%',
+    left: '80%',
+    zIndex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: '5%',
+    paddingTop: '10%',
+  },
+  card: {
+    marginBottom: '5%',
+    backgroundColor: '#cccfff',
+  },
+  back: {
+    position: 'absolute',
+    marginLeft: '5%',
+    marginTop: '3%',
+  },
+  cardicon: {
+    position: 'absolute',
+    marginLeft: '80%',
+    marginTop: '7%',
+    backgroundColor: '#ccc',
+    borderRadius: 10,
+    height: '100%',
+    width: '25%',
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#ccc',
+    padding: '5%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+  },
+  headings: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'black',
+    marginLeft: '3%',
+    marginBottom: '1%',
+  },
+  picker: {
+    width: '99%',
+    color: 'black',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  button: {
+    backgroundColor: '#ff8a3d',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    width: '40%',
+    alignSelf: 'center',
+    margin: '5%',
+    marginTop: '10%',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+});
 export default ModifyAssetForm;
-

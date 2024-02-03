@@ -40,7 +40,8 @@ const AddToStore = ({navigation}) => {
   const [vendor, setVendor] = useState('');
   const [showStartDatepicker, setShowStartDatepicker] = useState(false);
   const [showEndDatepicker, setShowEndDatepicker] = useState(false);
-  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =useState(false);
+  const [showLeaseStartDatepicker, setShowLeaseStartDatepicker] =
+    useState(false);
   const [showLeaseEndDatepicker, setShowLeaseEndDatepicker] = useState(false);
   const [showPoDatepicker, setShowPoDatepicker] = useState(false);
   const [showInvoiceDatepicker, setShowInvoiceDatepicker] = useState(false);
@@ -76,8 +77,6 @@ const AddToStore = ({navigation}) => {
   const [subLocationId, setSubLocationId] = useState('');
   const [buildingId, setBuildingId] = useState('');
   const [dsAsset, setDsAsset] = useState('');
-
-
 
   useEffect(() => {
     navigation.setOptions({
@@ -119,7 +118,7 @@ const AddToStore = ({navigation}) => {
   }, [refreshData]);
   const handleValidation = () => {
     const emptyFields = [];
-  
+
     if (!modalName) emptyFields.push('Modal Name');
     if (!quantity) emptyFields.push('Quantity');
     if (!unitPrice) emptyFields.push('UnitPrice');
@@ -138,56 +137,58 @@ const AddToStore = ({navigation}) => {
     if (!grnDate) emptyFields.push('GRN Date');
     if (!dcDate) emptyFields.push('DC Date');
     if (emptyFields.length > 0) {
-      const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
+      const errorMessage = `Please fill in the following fields: ${emptyFields.join(
+        ', ',
+      )}.`;
       Alert.alert('Required Fields', errorMessage);
-      return false; 
+      return false;
     }
-  
-    return true; 
+
+    return true;
   };
   const handleSerialNo = () => {
     if (handleValidation()) {
-    navigation.navigate('SerialNo', {
-      modalName,
-      quantity,
-      unitPrice,
-      taggable,
-      warranty,
-      startDate,
-      endDate,
-      leaseStatus,
-      typeOfProcurement,
-      location,
-      department,
-      costCenter,
-      itemDescription,
-      poNumber,
-      poDate,
-      invoiceNumber,
-      invoiceDate,
-      grnNumber,
-      grnDate,
-      dcNumber,
-      dcDate,
-      vendor,
-      diskSpace,
-      ram,
-      operatingSystem,
-      osServiceType,
-      selectedModelId,
-      idAssetdiv,
-      idSAssetdiv,
-      typAsst,
-      modalNm,
-      leaseStartDate,
-      leaseEndDate,
-      selectedLocationId,
-      selectedDepartmentId,
-      locationId,
-      subLocationId,
-      buildingId
-    });
-  }
+      navigation.navigate('SerialNo', {
+        modalName,
+        quantity,
+        unitPrice,
+        taggable,
+        warranty,
+        startDate,
+        endDate,
+        leaseStatus,
+        typeOfProcurement,
+        location,
+        department,
+        costCenter,
+        itemDescription,
+        poNumber,
+        poDate,
+        invoiceNumber,
+        invoiceDate,
+        grnNumber,
+        grnDate,
+        dcNumber,
+        dcDate,
+        vendor,
+        diskSpace,
+        ram,
+        operatingSystem,
+        osServiceType,
+        selectedModelId,
+        idAssetdiv,
+        idSAssetdiv,
+        typAsst,
+        modalNm,
+        leaseStartDate,
+        leaseEndDate,
+        selectedLocationId,
+        selectedDepartmentId,
+        locationId,
+        subLocationId,
+        buildingId,
+      });
+    }
   };
   const handleWarrantyChange = itemValue => {
     setWarranty(itemValue);
@@ -200,44 +201,43 @@ const AddToStore = ({navigation}) => {
       const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
-  
+
       // Calculate end date by adding one year to the selected start date
       const endDate = new Date(selectedDate);
       endDate.setFullYear(year + 1);
-  
+
       const endYear = endDate.getFullYear();
       const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
       const endDay = `${endDate.getDate()}`.padStart(2, '0');
       const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
-  
+
       setStartDate(formattedDate);
       setEndDate(formattedEndDate);
     }
   };
-  
+
   const handleLeaseStartDateChange = (event, selectedDate) => {
-  setShowLeaseStartDatepicker(false);
-  if (selectedDate) {
-    const year = selectedDate.getFullYear();
-    const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
-    const day = `${selectedDate.getDate()}`.padStart(2, '0');
-    const formattedStartDate = `${year}-${month}-${day}`;
+    setShowLeaseStartDatepicker(false);
+    if (selectedDate) {
+      const year = selectedDate.getFullYear();
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+      const day = `${selectedDate.getDate()}`.padStart(2, '0');
+      const formattedStartDate = `${year}-${month}-${day}`;
 
-    // Calculate lease end date by setting the year to the current year
-    const endDate = new Date(selectedDate);
-    endDate.setFullYear(new Date().getFullYear() + 1);
+      // Calculate lease end date by setting the year to the current year
+      const endDate = new Date(selectedDate);
+      endDate.setFullYear(new Date().getFullYear() + 1);
 
-    const endYear = endDate.getFullYear();
-    const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
-    const endDay = `${endDate.getDate()}`.padStart(2, '0');
-    const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+      const endYear = endDate.getFullYear();
+      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+      const endDay = `${endDate.getDate()}`.padStart(2, '0');
+      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
 
-    setLeaseStartDate(formattedStartDate);
-    setLeaseEndDate(formattedEndDate);
-  }
-};
+      setLeaseStartDate(formattedStartDate);
+      setLeaseEndDate(formattedEndDate);
+    }
+  };
 
-  
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatepicker(false);
     if (selectedDate) {
@@ -403,15 +403,17 @@ const AddToStore = ({navigation}) => {
     setSelectedLocationId(locations[itemIndex]?.id_flr || '');
 
     // Find and set details of the selected location
-    const selectedLocationDetails = locations.filter((item) => item.id_flr === itemValue);
+    const selectedLocationDetails = locations.filter(
+      item => item.id_flr === itemValue,
+    );
     setSelectedLocationDetails(selectedLocationDetails);
 
     console.log('Selected Location Details:');
     console.log('location id:', selectedLocationDetails[0]?.id_loc);
     console.log('location name:', selectedLocationDetails[0]?.nm_flr);
-    setLocationId(selectedLocationDetails[0]?.id_loc)
-    setSubLocationId(selectedLocationDetails[0]?.id_sloc)
-    setBuildingId(selectedLocationDetails[0]?.id_building)
+    setLocationId(selectedLocationDetails[0]?.id_loc);
+    setSubLocationId(selectedLocationDetails[0]?.id_sloc);
+    setBuildingId(selectedLocationDetails[0]?.id_building);
   };
   const fetchModels = async () => {
     try {
@@ -451,8 +453,14 @@ const AddToStore = ({navigation}) => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
     if (selectedModel) {
-      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst,ds_asst} =
-        selectedModel;
+      const {
+        nm_model,
+        id_model,
+        id_s_assetdiv,
+        id_assetdiv,
+        typ_asst,
+        ds_asst,
+      } = selectedModel;
 
       setModalNm(nm_model);
       setSelectedModelId(id_model);
@@ -477,46 +485,45 @@ const AddToStore = ({navigation}) => {
     setLeaseEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
-  const handleQuantityNumber = (value) => {
+  const handleQuantityNumber = value => {
     if (/^\d*\.?\d+$/.test(value) || value === '') {
       const numericValue = parseFloat(value);
-      
+
       if (numericValue > 0 || value === '') {
         setQuantity(value);
       }
     }
-  }
-  const handleUnitPriceNumber = (value) =>{
-    if (/^\d*\.?\d*$/.test(value) || value === ''){
+  };
+  const handleUnitPriceNumber = value => {
+    if (/^\d*\.?\d*$/.test(value) || value === '') {
       setUnitPrice(value);
     }
-  }
-  const handlePoNumberChange = (value) => {
+  };
+  const handlePoNumberChange = value => {
     if (!/\s/.test(value) || value === '') {
       setPoNumber(value);
     }
   };
-  const handleInvoiceNumberChange = (value) => {
+  const handleInvoiceNumberChange = value => {
     if (!/\s/.test(value) || value === '') {
       setInvoiceNumber(value);
     }
   };
-  const handleGrnNumberChange = (value) => {
+  const handleGrnNumberChange = value => {
     if (!/\s/.test(value) || value === '') {
       setGrnNumber(value);
     }
   };
-  const handleDcNumberChange = (value) => {
+  const handleDcNumberChange = value => {
     if (!/\s/.test(value) || value === '') {
       setDcNumber(value);
     }
   };
-  const handleOsServiceTypeChange = (value) => {
+  const handleOsServiceTypeChange = value => {
     if (!/\s/.test(value) || value === '') {
       setOsServiceType(value);
     }
   };
-
 
   return (
     <ScrollView>
@@ -548,7 +555,9 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue), setModalName(itemValue),getModalDetails(itemValue);;
+                getModalDetails(itemValue),
+                  setModalName(itemValue),
+                  getModalDetails(itemValue);
               }}
               style={styles.picker}
               placeholder="Select Asset">
@@ -569,7 +578,7 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={handleQuantityNumber}
             value={quantity}
-            keyboardType='numeric'
+            keyboardType="numeric"
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -578,7 +587,6 @@ const AddToStore = ({navigation}) => {
             style={styles.textinputs}
             onChangeText={handleUnitPriceNumber}
             value={unitPrice}
-            
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -616,10 +624,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={warranty}
-              onValueChange={(value) => {
-    handleWarrantyChange(value);
-    setShowDateInputs(value === 'AMC' || value === 'Warranty');
-  }}
+              onValueChange={value => {
+                handleWarrantyChange(value);
+                setShowDateInputs(value === 'AMC' || value === 'Warranty');
+              }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -682,10 +690,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={leaseStatus}
-              onValueChange={(value) => {
-    handleLeaseStatusChange(value);
-    setShowLeaseDateInputs(value === 'Under Lease');
-  }}
+              onValueChange={value => {
+                handleLeaseStatusChange(value);
+                setShowLeaseDateInputs(value === 'Under Lease');
+              }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -769,22 +777,19 @@ const AddToStore = ({navigation}) => {
               borderRadius: 5,
             }}>
             <Picker
-        selectedValue={location}
-        onValueChange={handleLocationSelection}
-        style={styles.picker}
-      >
-        <Picker.Item label="Select an option" value="" />
-        {locations.map((loc) => (
-          <Picker.Item
-            key={loc.id_flr}
-            label={loc.nm_flr}
-            value={loc.id_flr}
-          />
-        ))}
-      </Picker>
-
+              selectedValue={location}
+              onValueChange={handleLocationSelection}
+              style={styles.picker}>
+              <Picker.Item label="Select an option" value="" />
+              {locations.map(loc => (
+                <Picker.Item
+                  key={loc.id_flr}
+                  label={loc.nm_flr}
+                  value={loc.id_flr}
+                />
+              ))}
+            </Picker>
           </View>
-        
         </View>
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Department*</Text>
@@ -1021,7 +1026,7 @@ const AddToStore = ({navigation}) => {
             value={operatingSystem}
           />
         </View>
-        
+
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>OS Service Type</Text>
           <TextInput
@@ -1030,14 +1035,13 @@ const AddToStore = ({navigation}) => {
             value={osServiceType}
           />
         </View>
-        <UploadFile/>
+        <UploadFile from={'addToStore'} />
 
         <TouchableOpacity onPress={handleSerialNo}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
           </View>
         </TouchableOpacity>
-
 
         {sidebarOpen && (
           <View style={styles.sidebar}>
