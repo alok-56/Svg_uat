@@ -75,6 +75,8 @@ const AddToStore = ({navigation}) => {
   const [locationId, setLocationId] = useState('');
   const [subLocationId, setSubLocationId] = useState('');
   const [buildingId, setBuildingId] = useState('');
+  const [dsAsset, setDsAsset] = useState('');
+
 
 
   useEffect(() => {
@@ -128,23 +130,13 @@ const AddToStore = ({navigation}) => {
     if (!typeOfProcurement) emptyFields.push('Type of Procurement');
     if (!location) emptyFields.push('Location');
     if (!costCenter) emptyFields.push('Cost Center');
-    if (!itemDescription) emptyFields.push('Item Description');
     if (!poNumber) emptyFields.push('PO Number');
     if (!poDate) emptyFields.push('PO Date');
     if (!invoiceNumber) emptyFields.push('Invoice Number');
-    if (!invoiceDate) emptyFields.push('Invoice ate');
-    if (!grnNumber) emptyFields.push('GRN Number');
-    if (!grnDate) emptyFields.push('GRN Date');
-    if (!dcNumber) emptyFields.push('DC Number');
-    if (!dcDate) emptyFields.push('DC Date');
+    if (!invoiceDate) emptyFields.push('Invoice Date');
     if (!vendor) emptyFields.push('Vendor');
-    if (!diskSpace) emptyFields.push('Disk Space');
-    if (!ram) emptyFields.push('RAM');
-    if (!operatingSystem ) emptyFields.push('Operating System ');
-    if (!osServiceType) emptyFields.push('OS Service Type');
-
- 
-  
+    if (!grnDate) emptyFields.push('GRN Date');
+    if (!dcDate) emptyFields.push('DC Date');
     if (emptyFields.length > 0) {
       const errorMessage = `Please fill in the following fields: ${emptyFields.join(', ')}.`;
       Alert.alert('Required Fields', errorMessage);
@@ -224,26 +216,27 @@ const AddToStore = ({navigation}) => {
   };
   
   const handleLeaseStartDateChange = (event, selectedDate) => {
-    setShowLeaseStartDatepicker(false);
-    if (selectedDate) {
-      const year = selectedDate.getFullYear();
-      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
-      const day = `${selectedDate.getDate()}`.padStart(2, '0');
-      const formattedStartDate = `${year}-${month}-${day}`;
-  
-      // Calculate lease end date by adding one year to the selected lease start date
-      const endDate = new Date(selectedDate);
-      endDate.setFullYear(year + 1);
-  
-      const endYear = endDate.getFullYear();
-      const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
-      const endDay = `${endDate.getDate()}`.padStart(2, '0');
-      const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
-  
-      setLeaseStartDate(formattedStartDate);
-      setLeaseEndDate(formattedEndDate); // Assuming you have a state for lease end date
-    }
-  };
+  setShowLeaseStartDatepicker(false);
+  if (selectedDate) {
+    const year = selectedDate.getFullYear();
+    const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+    const day = `${selectedDate.getDate()}`.padStart(2, '0');
+    const formattedStartDate = `${year}-${month}-${day}`;
+
+    // Calculate lease end date by setting the year to the current year
+    const endDate = new Date(selectedDate);
+    endDate.setFullYear(new Date().getFullYear() + 1);
+
+    const endYear = endDate.getFullYear();
+    const endMonth = `${endDate.getMonth() + 1}`.padStart(2, '0');
+    const endDay = `${endDate.getDate()}`.padStart(2, '0');
+    const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+
+    setLeaseStartDate(formattedStartDate);
+    setLeaseEndDate(formattedEndDate);
+  }
+};
+
   
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatepicker(false);
@@ -458,7 +451,7 @@ const AddToStore = ({navigation}) => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
     if (selectedModel) {
-      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst} =
+      const {nm_model, id_model, id_s_assetdiv, id_assetdiv, typ_asst,ds_asst} =
         selectedModel;
 
       setModalNm(nm_model);
@@ -466,6 +459,8 @@ const AddToStore = ({navigation}) => {
       setIdSAssetdiv(id_s_assetdiv);
       setIdAssetdiv(id_assetdiv);
       setTypAsst(typ_asst);
+      setDsAsset(ds_asst);
+      setItemDescription(ds_asst);
 
       console.log('Selected Model Details:');
       console.log('modal name:', nm_model);
@@ -473,14 +468,55 @@ const AddToStore = ({navigation}) => {
       console.log('idasset:', id_assetdiv);
       console.log('SAsset', id_s_assetdiv);
       console.log('type asset:', typ_asst);
+      console.log('item description:', ds_asst);
     }
   };
   const handleLeaseStatusChange = itemValue => {
     setLeaseStatus(itemValue);
-    setStartDate('');
-    setEndDate('');
+    setLeaseStartDate('');
+    setLeaseEndDate('');
     setShowLeaseDateInputs(itemValue === 'Under Lease');
   };
+  const handleQuantityNumber = (value) => {
+    if (/^\d*\.?\d+$/.test(value) || value === '') {
+      const numericValue = parseFloat(value);
+      
+      if (numericValue > 0 || value === '') {
+        setQuantity(value);
+      }
+    }
+  }
+  const handleUnitPriceNumber = (value) =>{
+    if (/^\d*\.?\d*$/.test(value) || value === ''){
+      setUnitPrice(value);
+    }
+  }
+  const handlePoNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setPoNumber(value);
+    }
+  };
+  const handleInvoiceNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setInvoiceNumber(value);
+    }
+  };
+  const handleGrnNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setGrnNumber(value);
+    }
+  };
+  const handleDcNumberChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setDcNumber(value);
+    }
+  };
+  const handleOsServiceTypeChange = (value) => {
+    if (!/\s/.test(value) || value === '') {
+      setOsServiceType(value);
+    }
+  };
+
 
   return (
     <ScrollView>
@@ -512,7 +548,7 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue), setModalName(itemValue);
+                getModalDetails(itemValue), setModalName(itemValue),getModalDetails(itemValue);;
               }}
               style={styles.picker}
               placeholder="Select Asset">
@@ -531,7 +567,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Quantity*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setQuantity(value)}
+            onChangeText={handleQuantityNumber}
             value={quantity}
             keyboardType='numeric'
           />
@@ -540,7 +576,7 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Unit Price*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setUnitPrice(value)}
+            onChangeText={handleUnitPriceNumber}
             value={unitPrice}
             
           />
@@ -580,7 +616,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={warranty}
-              onValueChange={handleWarrantyChange}
+              onValueChange={(value) => {
+    handleWarrantyChange(value);
+    setShowDateInputs(value === 'AMC' || value === 'Warranty');
+  }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -643,7 +682,10 @@ const AddToStore = ({navigation}) => {
             }}>
             <Picker
               selectedValue={leaseStatus}
-              onValueChange={handleLeaseStatusChange}
+              onValueChange={(value) => {
+    handleLeaseStatusChange(value);
+    setShowLeaseDateInputs(value === 'Under Lease');
+  }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
@@ -827,9 +869,8 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>PO Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setPoNumber(value)}
+            onChangeText={handlePoNumberChange}
             value={poNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -854,9 +895,8 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>Invoice Number*</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setInvoiceNumber(value)}
+            onChangeText={handleInvoiceNumberChange}
             value={invoiceNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -881,9 +921,8 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>GRN Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setGrnNumber(value)}
+            onChangeText={handleGrnNumberChange}
             value={grnNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -908,9 +947,8 @@ const AddToStore = ({navigation}) => {
           <Text style={styles.headings}>DC Number</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={value => setDcNumber(value)}
+            onChangeText={handleDcNumberChange}
             value={dcNumber}
-            keyboardType='numeric'
           />
         </View>
         <View style={{marginTop: '3%'}}>
@@ -983,27 +1021,14 @@ const AddToStore = ({navigation}) => {
             value={operatingSystem}
           />
         </View>
+        
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>OS Service Type</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={osServiceType}
-              onValueChange={itemValue => setOsServiceType(itemValue)}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Yes" value="Yes" />
-              <Picker.Item label="No" value="No" />
-            </Picker>
-          </View>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={handleOsServiceTypeChange}
+            value={osServiceType}
+          />
         </View>
         <UploadFile/>
 

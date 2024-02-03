@@ -151,7 +151,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
         setLocation(itemDetails.Location);
         setDepartment(itemDetails.Department);
         setCenter(itemDetails.CostCenter);
-        setDescription(itemDetails.st_config);
+        setDescription(itemDetails.ItemDescription);
         setRemarks(itemDetails.Remarks || '');
          setCostCenter(itemDetails.CostCenter);
       } else {
@@ -407,6 +407,16 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
       alignSelf: 'center',
     },
   });
+  const handleQuantityNumber = (value) =>{
+    if (/^\d*\.?\d+$/.test(value) || value === ''){
+      setQuantity(value);
+    }
+  }
+  const handleUnitPriceNumber = (value) =>{
+    if (/^\d*\.?\d*$/.test(value) || value === ''){
+      setUnitPrice(value);
+    }
+  }
   return (
     <ScrollView>
       <View>
@@ -463,7 +473,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           <Text style={styles.headings}>Quantity</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setQuantity(value)}
+            onChangeText={handleQuantityNumber}
             value={quantity}
           />
         </View>
@@ -471,7 +481,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           <Text style={styles.headings}>Unit Price</Text>
           <TextInput
             style={styles.textinputs}
-            onChangeText={(value) => setUnitPrice(value)}
+            onChangeText={handleUnitPriceNumber}
             value={unitPrice}
           />
         </View>
@@ -545,7 +555,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           </Text>
         </View>
         <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>PO Number</Text>
+          <Text style={styles.headings}>PO Number*</Text>
           <TextInput
             style={styles.textinputs}
             onChangeText={(value) => setPoNumber(value)}
@@ -553,7 +563,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           />
         </View>
         <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>PO Date</Text>
+          <Text style={styles.headings}>PO Date*</Text>
           <TouchableOpacity onPress={openDatePicker}>
             <View>
               <Text style={{...styles.textinputs,border:'0px solid white'}}>{poDate}</Text>
@@ -580,7 +590,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           />
         </View> */}
         <View style={{ marginTop: '3%' }}>
-          <Text style={styles.headings}>Invoice Number</Text>
+          <Text style={styles.headings}>Invoice Number*</Text>
           <TextInput
             style={styles.textinputs}
             onChangeText={(value) => setInvoiceNumber(value)}
@@ -588,7 +598,7 @@ const [showDCDatePicker, setShowDCDatePicker] = useState(false);
           />
         </View>
         <View style={{ marginTop: '3%' }}>
-  <Text style={styles.headings}>Invoice Date</Text>
+  <Text style={styles.headings}>Invoice Date*</Text>
   <TouchableOpacity onPress={openInvoiceDatePicker}>
     <View>
       <Text style={{...styles.textinputs, border: '0px solid white'}}>{invoiceDate}</Text>

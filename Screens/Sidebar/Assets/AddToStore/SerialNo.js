@@ -52,7 +52,8 @@ const SerialNo = ({route, navigation}) => {
     selectedDepartmentId,
     locationId,
     subLocationId,
-    buildingId
+    buildingId,
+    Idempuser
   } = route.params;
   const [serialNumbers, setSerialNumbers] = useState(
     Array.from({length: quantity}, (_, index) => ({
@@ -91,6 +92,7 @@ const SerialNo = ({route, navigation}) => {
       return null;
     }
   };
+  
 
   const handleSaveData = async () => {
     try {
@@ -113,6 +115,7 @@ const SerialNo = ({route, navigation}) => {
         Alert.alert('Validation Error', 'Please fill in all Serial Numbers and Asset Reference Numbers.');
         return;
       }
+      
 
       const requestData = {
         data: [
@@ -124,7 +127,7 @@ const SerialNo = ({route, navigation}) => {
             typ_asst: typAsst,
             qty_asst: quantity,
             id_emp_user: Idempuser,
-            val_asst: unitPrice,
+            val_asst:  unitPrice,
             tag: taggable,
             warr_amc: warranty,
             dt_amc_start: startDate,
@@ -176,7 +179,7 @@ const SerialNo = ({route, navigation}) => {
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
-      Alert.alert('Success', responseText, [
+      Alert.alert('Response', responseText, [
         {
           text: 'OK',
           onPress: () => {
@@ -299,7 +302,20 @@ const SerialNo = ({route, navigation}) => {
     navigation.navigate('AddToStore');
   };
  
-  
+  const handleSerialNumberChange = (value, index) => {
+    if (!/\s/.test(value) || value === '') {
+      const updatedSerialNumbers = [...serialNumbers];
+      updatedSerialNumbers[index].serialNo = value;
+      setSerialNumbers(updatedSerialNumbers);
+    }
+  };
+  const handleInputChange = (value, index, field) => {
+    if (!/\s/.test(value) || value === '') {
+      const updatedSerialNumbers = [...serialNumbers];
+      updatedSerialNumbers[index][field] = value;
+      setSerialNumbers(updatedSerialNumbers);
+    }
+  };
 
   return (
     <ScrollView>
@@ -317,11 +333,7 @@ const SerialNo = ({route, navigation}) => {
                 style={styles.headings}>{`Serial No ${serialNumber.id}`}</Text>
               <TextInput
                 style={styles.textinputs}
-                onChangeText={value => {
-                  const updatedSerialNumbers = [...serialNumbers];
-                  updatedSerialNumbers[index].serialNo = value;
-                  setSerialNumbers(updatedSerialNumbers);
-                }}
+                onChangeText={(value) => handleSerialNumberChange(value, index)}
                 value={serialNumber.serialNo}
                 placeholder={`Enter Serial No ${serialNumber.id}`}
                 placeholderTextColor="gray"
@@ -334,11 +346,7 @@ const SerialNo = ({route, navigation}) => {
                 }>{`Asset REF.NO${serialNumber.id}`}</Text>
               <TextInput
                 style={styles.textinputs}
-                onChangeText={value => {
-                  const updatedSerialNumbers = [...serialNumbers];
-                  updatedSerialNumbers[index].assetRef = value;
-                  setSerialNumbers(updatedSerialNumbers);
-                }}
+                onChangeText={(value) => handleInputChange(value, index, 'assetRef')}
                 value={serialNumber.assetRef}
                 placeholder={`Enter Asset REF.NO${serialNumber.id}`}
                 placeholderTextColor="gray"
@@ -349,6 +357,7 @@ const SerialNo = ({route, navigation}) => {
         {/* <View >
       <Text style={{color:'black'}}>Values to be posted:</Text>
       <Text style={{color:'black'}}>Modal Name: {modalName}</Text>
+      <Text style={{color:'black'}}>ID Model: {selectedModelId}</Text>
       <Text style={{color:'black'}}>Quantity: {quantity}</Text>
       <Text style={{color:'black'}}>Unit Price: {unitPrice}</Text>
       <Text style={{color:'black'}}>Taggable: {taggable}</Text>
@@ -383,6 +392,7 @@ const SerialNo = ({route, navigation}) => {
 <Text style={{color:'black'}}>locationId: {locationId}</Text>
     <Text style={{color:'black'}}>subLocationId: {subLocationId}</Text>
     <Text style={{color:'black'}}>buildingId: {buildingId}</Text>
+    <Text style={{color:'black'}}>Id: {Idempuser}</Text>
     </View> */}
     
     

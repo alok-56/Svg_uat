@@ -174,7 +174,7 @@ const Allocate = ({ navigation }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
       const responseData = await response.json();
 

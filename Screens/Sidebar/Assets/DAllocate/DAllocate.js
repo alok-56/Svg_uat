@@ -113,7 +113,7 @@ const DAllocate = ({ navigation }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
   
       // Handle success, e.g., show a success message or navigate to a different screen
@@ -245,10 +245,10 @@ const DAllocate = ({ navigation }) => {
               style={styles.picker}
               placeholder='Select Asset'
             >
-            <Picker.Item label="Select Status"/>
-              <Picker.Item label="Working" value="working" />
-              <Picker.Item label="Physical Damage Major" value="physical_dmg_mjr" />
-              <Picker.Item label="Physical Damage Minor " value="physical_dmg_mnr" />
+            <Picker.Item label="Select Status" />
+              <Picker.Item label="Working" key="Working" value="working"/>
+              <Picker.Item label="Physical Damage Major" key="Physical Damage Major" value="physical_dmg_mjr"/>
+              <Picker.Item label="Physical Damage Minor" key="Physical Damage Minor" value="physical_dmg_mnr"/>
             </Picker>
             </View>
 

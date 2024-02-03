@@ -16,11 +16,10 @@ const DamagedAssets = () => {
     'Asset Id',
     'Damage Status',
     'Invoice No',
-    'Approved By',
   ];
 
   const MyTable = ({data, headings}) => {
-    const cellWidths = [150, 130, 80, 120];
+    const cellWidths = [150, 140, 80];
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{marginTop: '10%', marginBottom: '10%'}}>
@@ -88,7 +87,7 @@ const DamagedAssets = () => {
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
         const mappedData = responseData.data.map(item => [
           item.AssetID,
-          item.Status,
+          mapDamageStatus(item.Status),
           item.InvoiceNo,
           item.AssignTo,
         ]);
@@ -100,6 +99,18 @@ const DamagedAssets = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
       setApiData([]);
+    }
+  };
+  const mapDamageStatus = (status) => {
+    switch (status) {
+      case 'physical_dmg_mjr':
+        return 'Physical damage major';
+        case 'physical_dmg_mnr':
+          return 'Physical damage minor';
+          case 'working':
+        return 'Working';
+      default:
+        return status; // Default to the original status if not matched
     }
   };
 

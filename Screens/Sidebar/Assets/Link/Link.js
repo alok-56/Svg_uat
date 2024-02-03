@@ -260,8 +260,15 @@ const handleCheckboxSelect = (itemId) => {
   const handlePostLinkAccessories = async () => {
     
     try {
-      if ( !dateTo || !selectedCheckboxes ) {
+      if (!dateTo) {
         Alert.alert('Validation Error', 'Please fill in all required fields.', [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+        return;
+      }
+      const isCheckboxSelected = Object.values(selectedCheckboxes).some((value) => value);
+      if (!isCheckboxSelected) {
+        Alert.alert('Validation Error', 'Please select at least one accessory.', [
           { text: 'OK', onPress: () => console.log('OK Pressed') },
         ]);
         return;
@@ -304,7 +311,7 @@ const handleCheckboxSelect = (itemId) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }else{
-        navigation.navigate("Dashboard")
+        setShowDropdownAndInput(false);
       }
   
       const responseText = await response.text();
@@ -313,7 +320,6 @@ const handleCheckboxSelect = (itemId) => {
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
   
-      // Try to parse the response as JSON
       try {
         const data = JSON.parse(responseText);
         console.log('Parsed JSON Response:', data);
@@ -325,7 +331,9 @@ const handleCheckboxSelect = (itemId) => {
       console.error('Error posting data:', error);
     }
   };
-  
+  const handleSearchInputChange = (text) => {
+    setSearchText(text);
+  };
   
   
   return (
@@ -334,13 +342,13 @@ const handleCheckboxSelect = (itemId) => {
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
             <View style={styles.searchBarContainer}>
-              <TextInput
-                style={styles.searchBar}
-                placeholder="Search"
-                placeholderTextColor="gray"
-                value={searchText}
-                onChangeText={setSearchText}
-              />
+            <TextInput
+  style={styles.searchBar}
+  placeholder="Search"
+  placeholderTextColor="gray"
+  value={searchText}
+  onChangeText={handleSearchInputChange}
+/>
             </View>
             <View style={styles.dateContainer}>
           <Text style={{ color: 'black' }}>Link Date</Text>
@@ -374,7 +382,9 @@ const handleCheckboxSelect = (itemId) => {
               </Card.Content>
             </Card>
 
-            {additionalData.map((item) => (<View key={item.id_wh}><Card 
+            {additionalData
+              .filter(item => item.asset_id.includes(searchText))
+            .map((item) => (<View key={item.id_wh}><Card 
             style={{ ...styles.card, backgroundColor: '#052d6e' }}>
                 <Card.Content >
                   <View style={styles.labelContainer}>
@@ -383,7 +393,7 @@ const handleCheckboxSelect = (itemId) => {
                     <Checkbox
   status={selectedCheckboxes[item.id_wh] ? 'checked' : 'unchecked'}
   onPress={() => {
-    console.log('Checkbox pressed',item.id_wh); // Add this line
+    console.log('Checkbox pressed',item.id_wh); 
     const updatedCheckboxes = { ...selectedCheckboxes };
     updatedCheckboxes[item.id_wh] = !updatedCheckboxes[item.id_wh];
     setSelectedCheckboxes(updatedCheckboxes);
@@ -549,7 +559,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     padding: 10,
     marginBottom: 10,
-    borderRadius: 10
+    borderRadius: 10,
+    color:'black'
   },
 });
 
