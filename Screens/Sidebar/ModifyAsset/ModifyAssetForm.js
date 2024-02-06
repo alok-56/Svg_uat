@@ -288,12 +288,14 @@ const ModifyAssetForm = ({route, navigation}) => {
         idDept,
         idVendor,
         idCostCenter,
+        idInv,
+        idInvM,
       });
     }
   };
   const handleWarrantyChange = itemValue => {
     setWarranty(itemValue);
-    setShowDateInputs(itemValue === 'AMC' || itemValue === 'Warranty');
+    setShowDateInputs(itemValue === 'A' || itemValue === 'W');
   };
   const handleStartDateChange = (event, selectedDate) => {
     setShowStartDatepicker(false);
@@ -591,7 +593,7 @@ const ModifyAssetForm = ({route, navigation}) => {
     setLeaseStatus(itemValue);
     setLeaseStartDate('');
     setLeaseEndDate('');
-    setShowLeaseDateInputs(itemValue === 'Under Lease');
+    setShowLeaseDateInputs(itemValue === 'UL');
   };
   const handleQuantityNumber = value => {
     if (/^\d*\.?\d+$/.test(value) || value === '') {
@@ -758,14 +760,14 @@ const ModifyAssetForm = ({route, navigation}) => {
               selectedValue={warranty}
               onValueChange={value => {
                 handleWarrantyChange(value);
-                setShowDateInputs(value === 'AMC' || value === 'Warranty');
+                setShowDateInputs(value === 'A' || value === 'W');
               }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="NO" value="NO" />
-              <Picker.Item label="AMC" value="AMC" />
-              <Picker.Item label="Warranty" value="Warranty" />
+              <Picker.Item label="NO" value="O" />
+              <Picker.Item label="AMC" value="A" />
+              <Picker.Item label="Warranty" value="W" />
             </Picker>
           </View>
         </View>
@@ -824,13 +826,13 @@ const ModifyAssetForm = ({route, navigation}) => {
               selectedValue={leaseStatus}
               onValueChange={value => {
                 handleLeaseStatusChange(value);
-                setShowLeaseDateInputs(value === 'Under Lease');
+                setShowLeaseDateInputs(value === 'UL');
               }}
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Not Under Lease" value="Not Under Lease" />
-              <Picker.Item label="Under Lease" value="Under Lease" />
+              <Picker.Item label="Not Under Lease" value="NUL" />
+              <Picker.Item label="Under Lease" value="UL" />
             </Picker>
           </View>
         </View>
@@ -891,9 +893,9 @@ const ModifyAssetForm = ({route, navigation}) => {
               style={styles.picker}
               placeholder="Select Asset">
               <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Outright Purchase" value="1" />
-              <Picker.Item label="Loan Basis" value="2" />
-              <Picker.Item label="Add-On" value="3" />
+              <Picker.Item label="Outright Purchase" value="OP" />
+              <Picker.Item label="Loan Basis" value="LB" />
+              <Picker.Item label="Add-On" value="FOC" />
             </Picker>
           </View>
         </View>

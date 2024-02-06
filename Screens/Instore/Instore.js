@@ -11,6 +11,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 const Instore = () => {
   const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [exportIndex, setExportIndex] = useState(0);
   const itemsPerPage = 15;
   const tableHeadings = ['Asset Id', 'PO No', 'Invoice No'];
 
@@ -168,7 +169,7 @@ const Instore = () => {
       data: apiData,
       headings: tableHeadings,
     });
-    const pdfFileName = 'Instore-table.pdf';
+    const pdfFileName = `Instore-table(${exportIndex}).pdf`;
     const downloadsPath = `${RNFS.DownloadDirectoryPath}`;
     const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`
     await ensureDirectoryExists(RNFS.DownloadDirectoryPath);
@@ -177,7 +178,7 @@ const Instore = () => {
       fileName: pdfFileName,
       directory: RNFS.DownloadDirectoryPath,
     };
-
+    setExportIndex(prevIndex => prevIndex + 1);
     try {
       const pdf = await RNHTMLtoPDF.convert(options);
       console.log('PDF Conversion Result:', pdf);
@@ -204,9 +205,9 @@ const Instore = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    const excelFileName = 'Instore-table.xlsx';
+    const excelFileName = `Instore-table(${exportIndex}).xlsx`;
     const excelFilePath = `${RNFS.DownloadDirectoryPath}/${excelFileName}`;
-
+    setExportIndex(prevIndex => prevIndex + 1);
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);

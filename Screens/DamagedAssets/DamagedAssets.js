@@ -11,6 +11,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 const DamagedAssets = () => {
   const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [exportIndex, setExportIndex] = useState(0);
   const itemsPerPage = 15;
   const tableHeadings = [
     'Asset Id',
@@ -185,9 +186,10 @@ const DamagedAssets = () => {
       data: apiData,
       headings: tableHeadings,
     });
-    const pdfFileName = 'DamagedAssets-table.pdf';
+    const pdfFileName = `DamagedAssets-table.pdf(${exportIndex}).pdf`;
     const downloadsPath =`${RNFS.DownloadDirectoryPath}`;
-    const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`
+    const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`;
+    setExportIndex(prevIndex => prevIndex + 1);
     await ensureDirectoryExists(RNFS.DownloadDirectoryPath);
     const options = {
       html: htmlContent,
@@ -221,9 +223,9 @@ const DamagedAssets = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    const excelFileName = 'DamagedAsset-table.xlsx';
+    const excelFileName = `DamagedAsset-table(${exportIndex}).xlsx`;
     const excelFilePath = `${RNFS.DownloadDirectoryPath}/${excelFileName}`;
-
+    setExportIndex(prevIndex => prevIndex + 1);
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);

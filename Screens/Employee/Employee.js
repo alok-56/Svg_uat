@@ -14,6 +14,7 @@ const Employee = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const tableHeadings = ['Asset Id', 'Serial No', 'Invoice No', 'Location'];
+  const [exportIndex, setExportIndex] = useState(0);
 
   const MyTable = ({data, headings}) => {
     const cellWidths = [150, 130, 80, 120];
@@ -187,9 +188,10 @@ const Employee = () => {
       data: apiData,
       headings: tableHeadings,
     });
-    const pdfFileName = 'Employee-table.pdf';
+    const pdfFileName = `Employee-table(${exportIndex}).pdf`;
     const downloadsPath = `${RNFS.DownloadDirectoryPath}`;
     const pdfFilePath = `${RNFS.DownloadDirectoryPath}/${pdfFileName}`
+    setExportIndex(prevIndex => prevIndex + 1);
     await ensureDirectoryExists(RNFS.DownloadDirectoryPath);
     const options = {
       html: htmlContent,
@@ -223,9 +225,9 @@ const Employee = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'base64'});
 
-    const excelFileName = 'Employee-table.xlsx';
+    const excelFileName = `Employee-table(${exportIndex}).xlsx`;
     const excelFilePath = `${RNFS.DownloadDirectoryPath}/${excelFileName}`;
-
+    setExportIndex(prevIndex => prevIndex + 1);
     try {
       await RNFS.writeFile(excelFilePath, excelBuffer, 'base64');
       console.log('Excel file created:', excelFilePath);

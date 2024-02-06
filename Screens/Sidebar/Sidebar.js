@@ -160,7 +160,7 @@ const Sidebar = ({isOpen, onClose, route}) => {
           color="gray"
           style={{marginHorizontal: '5%'}}
         />
-        <Text style={styles.sidebarItem}>Modify Asset</Text>
+        <Text style={styles.sidebarItem}>Rejected Assets</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => handleItemClick('ApproveNewAsset')}

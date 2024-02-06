@@ -70,6 +70,8 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
   const [serialVal, setSerialVal] = useState('');
   const [sapno, setSapno] = useState('');
   const [uploadInv, setUploadInv] = useState(null);
+  const [idInv, setIdInv] = useState(0);
+  const [idInvM, setIdInvM] = useState(0);
   useEffect(() => {
     const retrieveUploadInv = async () => {
       try {
@@ -83,7 +85,25 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
 
     retrieveUploadInv();
   }, []);
+  const clearImage = async () => {
+    try {
+      // Retrieve upload_inv from AsyncStorage
+      const removeImage = await AsyncStorage.removeItem('modifStore');
+      setUploadInv('');
+    } catch (error) {
+      console.error('Error removing upload_inv from AsyncStorage:', error);
+    }
+  };
 
+  useEffect(() => {
+    const id_inv_m = route.params?.idInvM;
+    const id_inv = route.params?.idInv;
+    console.log('id_inv_m', id_inv_m);
+    console.log('id_inv', id_inv);
+
+    setIdInvM(id_inv_m);
+    setIdInv(id_inv);
+  }, [route.params?.idInv, route.params?.idInvM]);
   const getData = async () => {
     try {
       const Idempuser = await AsyncStorage.getItem('userId');
@@ -200,8 +220,8 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
             id_building: buildingId,
             ds_pro: modalName,
             ds_asst: modalName,
-            id_inv_m: '',
-            id_inv: '',
+            id_inv_m: `${idInvM}`,
+            id_inv: `${idInv}`,
             no_model: modalName,
             cst_asst: '',
             tt_un_prc: '',
@@ -213,19 +233,18 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
       };
       const convertedData = convertDatesInObject(requestData.data[0]);
 
-      console.log('Request Payload:', JSON.stringify(convertedData.data));
-      console.log('Request Payload222', JSON.stringify(requestData));
+      console.log('Request Payload:', JSON.stringify(convertedData));
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(convertedData.data),
+        body: JSON.stringify(convertedData),
       });
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
 
-      Alert.alert('Success', 'Updated Asset Successfully', [
+      Alert.alert('Success', responseText, [
         {
           text: 'OK',
           onPress: () => {
@@ -239,6 +258,8 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
             setSerialVal('');
             setSapno('');
             navigation.navigate('ModifyAsset');
+            setUploadInv('');
+            clearImage();
           },
         },
       ]);
@@ -346,7 +367,7 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
   }, [refreshData]);
   const handleBackPress = () => {
     setRefreshData(true);
-    navigation.navigate('ModifyAssetForm');
+    navigation.navigate('ModifyAssetForm', {idInvM, idInv});
   };
 
   const handleSerialNumberChange = (value, index) => {
