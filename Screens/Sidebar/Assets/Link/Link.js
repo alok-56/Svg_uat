@@ -391,6 +391,7 @@ const handleCheckboxSelect = (itemId) => {
 
                     <Text style={styles.additionlabel}>{item.asset_id}</Text>
                     <Checkbox
+                    
   status={selectedCheckboxes[item.id_wh] ? 'checked' : 'unchecked'}
   onPress={() => {
     console.log('Checkbox pressed',item.id_wh); 

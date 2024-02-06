@@ -16,22 +16,26 @@ const DLink = ({ navigation }) => {
   const [showDropdownAndInput, setShowDropdownAndInput] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [showToDatepicker, setShowToDatepicker] = useState(false);
-  const [checkBoxChecked, setCheckBoxChecked] = useState(false); // State for the checkbox
+  const [checkBoxChecked, setCheckBoxChecked] = useState(false);
   const [textValue, setTextValue] = useState('');
   const [assetDropdownData, setAssetDropdownData] = useState([]);
   const [selectedDropdownItem, setSelectedDropdownItem] = useState(null);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
+  const [filteredAssetData, setFilteredAssetData] = useState([]);
+  const [cardStates, setCardStates] = useState([]);
+  
 
   const handleToDateChange = (event, selectedDate) => {
     setShowToDatepicker(false);
     if (selectedDate) {
       const year = selectedDate.getFullYear();
-      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0'); // Adding 1 as months are zero-based
+      const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0'); 
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       setToDate(formattedDate);
     }
   };
+  
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -73,8 +77,8 @@ const DLink = ({ navigation }) => {
  
 
   const fetchAssetDropdownData = async () => {
-    const Username = 'SVVG'; // Replace with your actual username
-    const Password = 'Pass@123'; // Replace with your actual password
+    const Username = 'SVVG'; 
+    const Password = 'Pass@123'; 
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
 
     try {
@@ -97,7 +101,6 @@ const DLink = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching asset dropdown data:', error);
-      // Handle error, e.g., show an error message
       Alert.alert('Error', 'Failed to fetch asset dropdown data. Please try again.', [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
@@ -107,7 +110,6 @@ const DLink = ({ navigation }) => {
     fetchAssetDropdownData();
   }, []);
   useEffect(() => {
-    // Initialize the selectedCheckboxes state based on the assetDropdownData
     const initialCheckboxes = {};
     assetDropdownData.forEach((item) => {
       initialCheckboxes[item.asset_id] = false;
@@ -125,16 +127,18 @@ const DLink = ({ navigation }) => {
       asset_nm: selectedAssetData?.asset_nm || '',
       accessory_id_wh: selectedAssetData?.accessory_id_wh || '',
     });
+    const filteredData = assetDropdownData.filter((asset) => asset.asset_id === itemValue);
+    setFilteredAssetData(filteredData);
     setLoginType(itemValue);
-
-    // Update the selectedCheckboxes state when the asset changes
-    setSelectedCheckboxes((prevCheckboxes) => {
-      return {
-        ...prevCheckboxes,
-        [itemValue]: false, // Initialize the checkbox state as unchecked
-      };
+  
+    // Initialize checkboxes state individually
+    const initialCheckboxes = {};
+    filteredData.forEach((asset) => {
+      initialCheckboxes[asset.asset_id] = false;
     });
+    setSelectedCheckboxes(initialCheckboxes);
   };
+  
   const [selectedAsset, setSelectedAsset] = useState({
     accessory_id: '',
     serial_num: '',
@@ -169,27 +173,24 @@ const DLink = ({ navigation }) => {
         return;
       }
 
-      // Define Basic Authentication headers
-      const Username = 'SVVG'; // Replace with your actual username
-      const Password = 'Pass@123'; // Replace with your actual password
+      
+      const Username = 'SVVG';
+      const Password = 'Pass@123'; 
       const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
   
-      // Construct the API URL
       const apiUrl = 'http://13.235.186.102/SVVG-API/webapi/De_linkAPI/SetDlinkStatus';
   
-      // Define the body for the POST request
       const requestBody = {
-        data: [
-          {
+        data: filteredAssetData
+          .filter((asset) => selectedCheckboxes[asset.asset_id])
+          .map((asset) => ({
             uninstallAssetDate: dateTo,
-            uninstallAssetID: selectedAsset.accessory_id_wh,
-            uninstallRmk: textValue, 
-          },
-        ],
+            uninstallAssetID: asset.accessory_id_wh,
+            uninstallRmk: textValue,
+          })),
       };
       console.log(requestBody,"postLink")
   
-      // Perform the POST request with Basic Authentication headers and the body
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -207,11 +208,11 @@ const DLink = ({ navigation }) => {
   
       const responseText = await response.text();
       console.log('POST Response:', responseText);
-      Alert.alert('Success', responseText, [
+      Alert.alert('Response', responseText, [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
   
-      // Try to parse the response as JSON
+      
       try {
         const data = JSON.parse(responseText);
         console.log('Parsed JSON Response:', data);
@@ -223,6 +224,9 @@ const DLink = ({ navigation }) => {
       console.error('Error posting data:', error);
     }
   };
+  const handleSearchInputChange = (text) => {
+    setSearchText(text);
+  };
   
   return (
     <ScrollView style={styles.container}>
@@ -230,13 +234,13 @@ const DLink = ({ navigation }) => {
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
             <View style={styles.searchBarContainer}>
-              <TextInput
-                style={styles.searchBar}
-                placeholder="Search"
-                placeholderTextColor="gray"
-                value={searchText}
-                onChangeText={setSearchText}
-              />
+            <TextInput
+  style={styles.searchBar}
+  placeholder="Search"
+  placeholderTextColor="gray"
+  value={searchText}
+  onChangeText={handleSearchInputChange}
+/>
             </View>
             
 
@@ -253,65 +257,68 @@ const DLink = ({ navigation }) => {
               </Card.Content>
             </Card>
 
-            <View><Card 
-            style={{ ...styles.card }}>
-                <Card.Content >
-                <Checkbox
-                    status={selectedCheckboxes[selectedAsset.asset_id] ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                      setSelectedCheckboxes((prevCheckboxes) => {
-                        return {
-                          ...prevCheckboxes,
-                          [selectedAsset.asset_id]: !prevCheckboxes[selectedAsset.asset_id],
-                        };
-                      });
-                    }}
-                  />
-                <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Id :</Text>
-                  <Text style={styles.cardvalue}>{selectedAsset.accessory_id}</Text>
-                </View>
-                <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Name :</Text>
-                  <Text style={styles.cardvalue}>{selectedAsset.nm_accessory}</Text>
-                </View>
-                <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Serial No:</Text>
-                  <Text style={styles.cardvalue}>{selectedAsset.serial_num}</Text>
-                </View>
-                <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Linked Date :</Text>
-                  <Text style={styles.value}>{selectedAsset.Link_date}</Text>
-                </View>
-                <View style={styles.labelContainer}>
-                  <Text style={{ ...styles.label, color: '#ff8a3d' }}>Acc ID :</Text>
-                  <Text style={styles.value}>{selectedAsset.accessory_id_wh}</Text>
-                </View>
-                  
-                <TextInput
-                style={styles.dateInput}
-                placeholder="Dlink Date"
-                placeholderTextColor="gray"
-                value={dateTo}
-                onFocus={() => setShowToDatepicker(true)}
-              />
-              {showToDatepicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleToDateChange}
-                />
-              )}
-              <TextInput style={styles.remarks}
-              onChangeText={(value) => setTextValue(value)}
-              value={textValue}
-              placeholder="Enter Remarks"
-              placeholderTextColor="gray"
-            />
-
-                </Card.Content>
-              </Card></View>
+            <View>
+            {filteredAssetData.filter(item => item.accessory_id.includes(searchText)).map((asset) => (
+              
+    <Card key={asset.asset_id} style={styles.card}>
+      <Card.Content>
+      <Checkbox
+            status={selectedCheckboxes[asset.asset_id] ? 'checked' : 'unchecked'}
+            onPress={() => {
+              setSelectedCheckboxes((prevCheckboxes) => {
+                return {
+                  ...prevCheckboxes,
+                  [asset.asset_id]: !prevCheckboxes[asset.asset_id],
+                };
+              });
+            }}
+          />
+        <View style={styles.labelContainer}>
+          <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Id :</Text>
+          <Text style={styles.cardvalue}>{asset.accessory_id}</Text>
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Name :</Text>
+          <Text style={styles.cardvalue}>{asset.nm_accessory}</Text>
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={{ ...styles.label, color: '#ff8a3d' }}>Serial No:</Text>
+          <Text style={styles.cardvalue}>{asset.serial_num}</Text>
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={{ ...styles.label, color: '#ff8a3d' }}>Linked Date :</Text>
+          <Text style={styles.value}>{asset.Link_date}</Text>
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={{ ...styles.label, color: '#ff8a3d' }}>Acc ID :</Text>
+          <Text style={styles.value}>{asset.accessory_id_wh}</Text>
+        </View>
+        <TextInput
+          style={styles.dateInput}
+          placeholder="Dlink Date"
+          placeholderTextColor="gray"
+          value={dateTo}
+          onFocus={() => setShowToDatepicker(true)}
+        />
+        {showToDatepicker && (
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display="default"
+            onChange={handleToDateChange}
+          />
+        )}
+        <TextInput
+          style={styles.remarks}
+          onChangeText={(value) => setTextValue(value)}
+          value={textValue}
+          placeholder="Enter Remarks"
+          placeholderTextColor="gray"
+        />
+      </Card.Content>
+    </Card>
+  ))}
+</View>
             
 
 
@@ -337,7 +344,7 @@ const DLink = ({ navigation }) => {
               onValueChange={handleAssetChange}
             >
               {assetDropdownData.map((item) => (
-                <Picker.Item key={item.asset_cd} label={item.accessory_id} value={item.asset_id} />
+                <Picker.Item key={item.asset_id} label={item.asset_cd} value={item.asset_id} />
               ))}
             </Picker>
             </View>
@@ -376,7 +383,8 @@ const styles = StyleSheet.create({
     color: 'black',
     borderWidth:1,
     width:'100%',
-    marginBottom:'2%'
+    marginBottom:'2%',
+    borderRadius:10
   },
   card: {
     marginBottom: '5%',
@@ -449,12 +457,12 @@ const styles = StyleSheet.create({
   },
   remarks: {
     borderWidth: 1,
-    borderColor: 'gray',
     color: 'black',
     width: '100%',
     padding: 10,
     minHeight: 100,
     textAlignVertical: 'top',
+    borderRadius:10
   },
   searchBarContainer: {
 
@@ -464,7 +472,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     padding: 10,
     marginBottom: 10,
-    borderRadius: 10
+    borderRadius: 10,
+    color:'black'
   },
 });
 
