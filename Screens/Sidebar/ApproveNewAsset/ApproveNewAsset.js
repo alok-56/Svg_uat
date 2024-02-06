@@ -5,6 +5,7 @@ import {encode} from 'base-64';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
+import {useFocusEffect} from '@react-navigation/native';
 const ApproveNewAsset = ({navigation}) => {
   const [apiData, setApiData] = useState([]);
 
@@ -105,6 +106,12 @@ const ApproveNewAsset = ({navigation}) => {
       </ScrollView>
     );
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      // Your effect code here
+      fetchData(); // Clean up function (if needed)
+    }, []),
+  );
   const fetchData = async () => {
     try {
       const Username = 'SVVG';

@@ -17,6 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {encode as base64Encode} from 'base-64';
+import {Table, Row} from 'react-native-table-component';
 
 const Scan = ({navigation}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -40,14 +41,11 @@ const Scan = ({navigation}) => {
     try {
       const getData = await AsyncStorage.getItem('userDetails');
       const storedDataArray = JSON.parse(getData);
-      console.log(storedDataArray, 'ggggdd');
       const getDataUserId = await AsyncStorage.getItem('userId');
       const storedDataArrayUserID = JSON.parse(getDataUserId);
-      console.log(storedDataArrayUserID, 'idd');
       const filterData = storedDataArray.filter(
         i => i.id_emp_user === storedDataArrayUserID,
       );
-      console.log(filterData, 'kllllol');
       setCurrentUserData(filterData[0]);
       if (filterData) {
         await getFloorDetails(filterData[0].id_building);
@@ -58,8 +56,6 @@ const Scan = ({navigation}) => {
     }
   };
   const getFloorDetails = async id => {
-    console.log(typeof parseInt(id), 'kklo');
-
     const Username = 'SVVG'; // Replace with your actual username
     const Password = 'Pass@123'; // Replace with your actual password
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
@@ -85,7 +81,6 @@ const Scan = ({navigation}) => {
       const data = await response.json();
 
       if (data && Array.isArray(data.data)) {
-        console.log('hello got it', data.data);
         setFloorData(data.data);
       }
     } catch (error) {
@@ -94,8 +89,6 @@ const Scan = ({navigation}) => {
     }
   };
   const getLocationDetails = async userId => {
-    console.log(typeof parseInt(userId), 'kklo');
-
     const Username = 'SVVG'; // Replace with your actual username
     const Password = 'Pass@123'; // Replace with your actual password
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
@@ -121,7 +114,6 @@ const Scan = ({navigation}) => {
       const data = await response.json();
 
       if (data && Array.isArray(data.data)) {
-        console.log('hello got loc', data.data);
         setLocationData(data.data);
       }
     } catch (error) {
@@ -136,7 +128,7 @@ const Scan = ({navigation}) => {
         const storedDataArray = JSON.parse(storedDataString);
         const uniQueData = new Set(storedDataArray);
         const transformedArray = Array.from(uniQueData);
-        setIdData(transformedArray.join('\n'));
+        setIdData(transformedArray.map((I, index) => [index, I]));
         const bodayDataTransfer = transformedArray.map(i => ({id_wh_dyn: i}));
         setIdBodyData(bodayDataTransfer);
         console.log('Data retrieved successfully:', storedDataArray);
@@ -148,12 +140,13 @@ const Scan = ({navigation}) => {
     }
   };
   const hideModal = () => {
+    navigation.navigate('QrCodeScanner');
     setModalVisible(false);
   };
   const saveMessage = () => {
     // Handle the saved message logic here
     console.log('Saved message:', message);
-    hideModal();
+    setModalVisible(false);
   };
   useEffect(() => {
     setModalVisible(true);
@@ -238,7 +231,6 @@ const Scan = ({navigation}) => {
           ],
         );
       }
-      console.log(idBodyData, 'idddb');
       // Define Basic Authentication headers
       const Username = 'SVVG'; // Replace with your actual username
       const Password = 'Pass@123'; // Replace with your actual password
@@ -250,7 +242,7 @@ const Scan = ({navigation}) => {
       const requestBody = {
         data: idBodyData,
       };
-      console.log(requestBody, 'lool');
+
       {
         console.log(
           showYearpicker,
@@ -263,6 +255,7 @@ const Scan = ({navigation}) => {
           '---llllllllll',
         );
       }
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -278,10 +271,117 @@ const Scan = ({navigation}) => {
 
       const responseText = await response.text();
       console.log('POST Response:', responseText);
-      Alert.alert('Saved Successfully', JSON.stringify(responseText));
+      Alert.alert('Saved Successfully', JSON.stringify(responseText), [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Dashboard'),
+        },
+      ]);
+      clearAsyncStorage();
+      setIdBodyData([]);
+      setIdData([]);
     } catch (error) {
       console.log(error, 'error in save');
     }
+  };
+
+  const clearAsyncStorage = async () => {
+    try {
+      await AsyncStorage.removeItem('AssestData');
+
+      console.log('Data CLeared');
+    } catch (err) {
+      console.log('error', err);
+    }
+  };
+
+  const MyTable = ({data, headings}) => {
+    const cellWidths = [50, 200, 60];
+
+    const handleAddToStorePress = (rowData, rowIndex) => {
+      const filtered = idData.filter(i => i[0] !== rowIndex);
+      setIdData(prev => (prev = filtered));
+      const bodayDataTransfer = filtered.map(i => ({id_wh_dyn: i[1]}));
+      setIdBodyData(pre => (pre = bodayDataTransfer));
+      handleFilterDataFromAsync(rowData);
+    };
+    const handleFilterDataFromAsync = async removeId => {
+      try {
+        console.log(removeId, 'id to be removed');
+        const getAsyncValue = await AsyncStorage.getItem('AssestData');
+        let format = JSON.parse(getAsyncValue);
+        let removeIdValue = format.filter(i => i !== removeId[1]);
+        console.log(removeIdValue, 'rmd id value');
+
+        await AsyncStorage.setItem('AssestData', JSON.stringify(removeIdValue));
+      } catch (error) {
+        console.log(error, 'error');
+      }
+    };
+    return (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {console.log(idData, 'id data')}
+        {console.log(idBodyData, 'post body')}
+        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+            <Row
+              data={headings}
+              style={{
+                height: 40,
+                backgroundColor: '#ff8a3d',
+                width: '100%',
+              }}
+              textStyle={{
+                color: 'white',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+              widthArr={cellWidths}
+            />
+            {idData.length <= 0 ? (
+              <Row
+                data={[`Please Scan to display the ID's`]}
+                style={{
+                  height: 35,
+                  justifyContent: 'space-evenly',
+                  color: 'gray',
+                }}
+                textStyle={{
+                  textAlign: 'center',
+                  color: 'gray',
+                }}
+              />
+            ) : (
+              data &&
+              data.map((rowData, rowIndex) => (
+                <Row
+                  key={rowIndex}
+                  data={[
+                    ...rowData, // Columns before "Add to Store"
+                    <TouchableOpacity
+                      onPress={() => handleAddToStorePress(rowData, rowIndex)} // Pass both id_inv_m and id_inv
+                      key={`plusIcon_${rowIndex}`}
+                      style={{alignItems: 'center'}}>
+                      <Icon name="delete" size={30} color="#ff8a3d" />
+                    </TouchableOpacity>,
+                  ]}
+                  style={{
+                    height: 35,
+                    justifyContent: 'space-evenly',
+                    color: 'black',
+                  }}
+                  textStyle={{
+                    textAlign: 'center',
+                    color: 'black',
+                  }}
+                  widthArr={[...cellWidths]}
+                />
+              ))
+            )}
+          </Table>
+        </View>
+      </ScrollView>
+    );
   };
 
   return (
@@ -292,11 +392,10 @@ const Scan = ({navigation}) => {
           animationType="slide"
           transparent={false}
           visible={modalVisible}
-          onRequestClose={hideModal}>
+          onRequestClose={() => setModalVisible(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalHeader}>Scanned Assets Ids:</Text>
-              {console.log(idData, 'ghghghhg')}
               {/* <Text
                 style={{
                   color: 'black',
@@ -307,23 +406,27 @@ const Scan = ({navigation}) => {
                 }}>
                 AssetID
               </Text> */}
-              <TextInput
+
+              {/* <TextInput
                 style={styles.textInput}
                 multiline
                 value={idData}
-                onChangeText={text => setMessage(text)}
-              />
+                onChangeText={text => (
+                  setIdData(...idData, text), setMessage(text)
+                )}
+              /> */}
+              <MyTable data={idData} headings={['S.NO', 'Asset ID']} />
 
               <TouchableHighlight
                 style={styles.modalButton}
                 onPress={saveMessage}>
-                <Text>Save</Text>
+                <Text style={{color: 'white', fontSize: 16}}>Save</Text>
               </TouchableHighlight>
 
               <TouchableHighlight
                 style={styles.modalButton}
                 onPress={hideModal}>
-                <Text>Cancel</Text>
+                <Text style={{color: 'white', fontSize: 16}}>Scan More...</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -443,7 +546,6 @@ const Scan = ({navigation}) => {
             allowClear
             onChange={handleYearChange}
           />
-          {console.log('kkloo', showYearpicker)}
           {showYearpicker && (
             <DateTimePicker
               value={year ? new Date(year) : new Date()}
@@ -651,10 +753,14 @@ const styles = StyleSheet.create({
     padding: 10,
     color: 'black',
   },
+
   modalButton: {
     padding: 10,
     backgroundColor: '#ff8a3d',
     margin: 5,
+    width: '50%',
+    borderRadius: 8,
+    fontSize: 10,
   },
   button: {
     padding: 10,

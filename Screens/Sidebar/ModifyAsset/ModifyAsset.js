@@ -1,22 +1,23 @@
-
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Table, Row } from 'react-native-table-component';
-import { encode } from 'base-64';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {Table, Row} from 'react-native-table-component';
+import {encode} from 'base-64';
+import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
-const ModifyAsset = ({ navigation }) => {
+import {useFocusEffect} from '@react-navigation/native';
+const ModifyAsset = ({navigation}) => {
   const [apiData, setApiData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={handleMenuIconPress}
-          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
           <Icon name="menu" color="white" size={25} />
         </TouchableOpacity>
       ),
@@ -40,19 +41,19 @@ const ModifyAsset = ({ navigation }) => {
     'Add to Store',
   ];
 
-  const MyTable = ({ data, headings }) => {
+  const MyTable = ({data, headings}) => {
     const cellWidths = [95, 110, 80, 150, 200, 80, 50];
     const startIdx = (currentPage - 1) * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
-  
+
     const handleAddToStorePress = (id_inv_m, id_inv) => {
-      navigation.navigate('ModifyAssetForm', { id_inv_m, id_inv });
+      navigation.navigate('ModifyAssetForm', {id_inv_m, id_inv});
     };
-  
+
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: '10%', marginBottom: '10%' }}>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
             <Row
               data={headings}
               style={{
@@ -74,10 +75,11 @@ const ModifyAsset = ({ navigation }) => {
                   data={[
                     ...rowData.slice(0, 6), // Columns before "Add to Store"
                     <TouchableOpacity
-                      onPress={() => handleAddToStorePress(rowData[6], rowData[7])} // Pass both id_inv_m and id_inv
+                      onPress={() =>
+                        handleAddToStorePress(rowData[6], rowData[7])
+                      } // Pass both id_inv_m and id_inv
                       key={`plusIcon_${rowIndex}`}
-                      style={{ alignItems: 'center' }}
-                    >
+                      style={{alignItems: 'center'}}>
                       <Icon name="add" size={30} color="#ff8a3d" />
                     </TouchableOpacity>,
                   ]}
@@ -95,12 +97,9 @@ const ModifyAsset = ({ navigation }) => {
               ))}
           </Table>
         </View>
-       
       </ScrollView>
     );
   };
-  
-
 
   const fetchData = async () => {
     try {
@@ -115,17 +114,17 @@ const ModifyAsset = ({ navigation }) => {
           headers: {
             Authorization: `Basic ${credentials}`,
           },
-        }
+        },
       );
 
       const responseData = await response.json();
 
       if (Array.isArray(responseData.data) && responseData.data.length > 0) {
-        const mappedData = responseData.data.map((item) => [
+        const mappedData = responseData.data.map(item => [
           item.InvoiceNo,
           item.InvoiceDate,
           item.RequestBy,
-          item["AssetName/Item"],
+          item['AssetName/Item'],
           item.Vendor,
           item.TotalQty,
           item.id_inv_m,
@@ -134,9 +133,7 @@ const ModifyAsset = ({ navigation }) => {
         ]);
         setApiData(mappedData);
       } else {
-        console.error(
-          'Error fetching data: Data is not an array or is empty'
-        );
+        console.error('Error fetching data: Data is not an array or is empty');
         setApiData([]);
       }
     } catch (error) {
@@ -148,8 +145,14 @@ const ModifyAsset = ({ navigation }) => {
   useEffect(() => {
     fetchData();
   }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Your effect code here
+      fetchData(); // Clean up function (if needed)
+    }, []),
+  );
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = newPage => {
     setCurrentPage(newPage);
   };
 
@@ -168,11 +171,11 @@ const ModifyAsset = ({ navigation }) => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage - 1)}>
-            <Text style={styles.paginationButtonText}>{"<"}</Text>
+            <Text style={styles.paginationButtonText}>{'<'}</Text>
           </TouchableOpacity>
         )}
 
-        {[...Array(endPage - startPage + 1).keys()].map((index) => (
+        {[...Array(endPage - startPage + 1).keys()].map(index => (
           <TouchableOpacity
             key={startPage + index}
             style={[
@@ -181,9 +184,7 @@ const ModifyAsset = ({ navigation }) => {
                 styles.activePaginationButton,
             ]}
             onPress={() => handlePageChange(startPage + index)}>
-            <Text style={styles.paginationButtonText}>
-              {startPage + index}
-            </Text>
+            <Text style={styles.paginationButtonText}>{startPage + index}</Text>
           </TouchableOpacity>
         ))}
 
@@ -191,10 +192,9 @@ const ModifyAsset = ({ navigation }) => {
           <TouchableOpacity
             style={styles.paginationButton}
             onPress={() => handlePageChange(currentPage + 1)}>
-            <Text style={styles.paginationButtonText}>{">"}</Text>
+            <Text style={styles.paginationButtonText}>{'>'}</Text>
           </TouchableOpacity>
         )}
-        
       </View>
     );
   };
@@ -238,18 +238,18 @@ const ModifyAsset = ({ navigation }) => {
       justifyContent: 'space-around',
       marginBottom: '3%',
     },
-      sidebar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#ccc',
-    padding: '5%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '80%',
-  },
+    sidebar: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      backgroundColor: '#ccc',
+      padding: '5%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '80%',
+    },
   });
 
   return (
@@ -261,14 +261,30 @@ const ModifyAsset = ({ navigation }) => {
             {renderPaginationButtons()}
           </>
         ) : (
-          <Text>Loading data...</Text>
+          <>
+            <MyTable data={[]} headings={tableHeadings} />
+            <Text
+              style={{
+                height: 35,
+                justifyContent: 'center',
+                color: 'gray',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+              textStyle={{
+                textAlign: 'center',
+                color: 'gray',
+              }}>
+              No Rejected Assets
+            </Text>
+          </>
         )}
       </View>
       {sidebarOpen && (
-         <View style={styles.sidebar}>
-           <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
-         </View>
-       )}
+        <View style={styles.sidebar}>
+          <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+        </View>
+      )}
     </ScrollView>
   );
 };
