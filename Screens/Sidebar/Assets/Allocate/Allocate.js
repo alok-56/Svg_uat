@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert } from 'react-native';
-import { Card, Title } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import {Card, Title} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
-import { Picker } from '@react-native-picker/picker';
+import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { ScrollView } from 'react-native-gesture-handler';
-import { encode as base64Encode } from 'base-64';
+import {ScrollView} from 'react-native-gesture-handler';
+import {encode as base64Encode} from 'base-64';
 
-const Allocate = ({ navigation }) => {
+const Allocate = ({navigation}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loginType, setLoginType] = useState('');
   const [assignType, setAssignType] = useState('');
@@ -18,7 +26,8 @@ const Allocate = ({ navigation }) => {
   const [showToDatepicker, setShowToDatepicker] = useState(false);
   const [employeeDropdownData, setEmployeeDropdownData] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [deviceStatus,setDeviceStatus] = useState('');
+  const [deviceStatus, setDeviceStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState({
     id_wh: '',
     nm_prod: '',
@@ -33,13 +42,16 @@ const Allocate = ({ navigation }) => {
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
 
     try {
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/emp_dropdown', {
-        method: 'GET',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/install/emp_dropdown',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -57,19 +69,22 @@ const Allocate = ({ navigation }) => {
   const [assetDropdownData, setAssetDropdownData] = useState([]);
 
   const fetchAssetDropdownData = async () => {
-    const Username = 'SVVG'; // Replace with your actual username
-    const Password = 'Pass@123'; // Replace with your actual password
+    const Username = 'SVVG';
+    const Password = 'Pass@123';
 
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
 
     try {
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/asset_dropdown', {
-        method: 'GET',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/install/asset_dropdown',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -103,14 +118,14 @@ const Allocate = ({ navigation }) => {
       headerRight: () => (
         <TouchableOpacity
           onPress={handleMenuIconPress}
-          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
           <Icon name="menu" color="white" size={25} />
         </TouchableOpacity>
       ),
     });
   }, []);
   const handleMenuIconPress = () => {
-    setSidebarOpen((prevState) => !prevState);
+    setSidebarOpen(prevState => !prevState);
   };
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
@@ -120,7 +135,7 @@ const Allocate = ({ navigation }) => {
       headerLeft: () => (
         <TouchableOpacity
           onPress={handleBackPress}
-          style={{ position: 'absolute', top: '30%', left: '20%', zIndex: 1 }}>
+          style={{position: 'absolute', top: '30%', left: '20%', zIndex: 1}}>
           <Icon name="arrow-back" color="white" size={25} />
         </TouchableOpacity>
       ),
@@ -128,25 +143,32 @@ const Allocate = ({ navigation }) => {
   });
   const handleBackPress = () => {
     if (showDropdownAndInput) {
-  setShowDropdownAndInput(false);
+      setShowDropdownAndInput(false);
     } else {
       navigation.navigate('Dashboard');
     }
   };
   const handleAllocate = () => {
     setShowDropdownAndInput(true);
-    
   };
   const handleAllocateAsset = async () => {
-    if (selectedAsset.id_wh === '' || assignType === '' || dateTo === '' || textValue === '' || deviceStatus === '') {
+    if (
+      selectedAsset.id_wh === '' ||
+      assignType === '' ||
+      dateTo === '' ||
+      textValue === '' ||
+      deviceStatus === ''
+    ) {
       Alert.alert('Validation Error', 'Please fill in all required fields.', [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
       ]);
       return;
     }
     try {
-      const Username = 'SVVG'; // Replace with your actual username
-      const Password = 'Pass@123'; // Replace with your actual password
+      setIsLoading(true); // Show loader
+
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
       const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
 
       const requestBody = {
@@ -160,46 +182,56 @@ const Allocate = ({ navigation }) => {
           },
         ],
       };
-      console.log(requestBody,"req")
 
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/allocate_emp', {
-        method: 'POST',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'http://13.235.186.102/SVVG-API/webapi/install/allocate_emp',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: basicAuth,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
         },
-        body: JSON.stringify([requestBody]),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }else{
+      } else {
         setShowDropdownAndInput(false);
       }
-      const responseData = await response.json();
-
-      // Handle success, e.g., show a success message or navigate to a different screen
-      console.log('Allocation successful!');
-      Alert.alert('Success', `Asset allocated successfully`, [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      const responseText = await response.text();
+      console.log('POST Response:', responseText);
+      Alert.alert('Response', responseText, [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+            // Handle refresh here (e.g., refetch data or navigate back to the list screen)
+            fetchAssetDropdownData();
+            fetchEmployeeDropdownData();
+          },
+        },
       ]);
-      // navigation.navigate('Dashboard');
     } catch (error) {
       console.error('Error allocating asset:', error);
-      // Handle error, e.g., show an error message
-      Alert.alert('Error', 'Failed to allocate asset. Please try again.', [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ]);
+    } finally {
+      setIsLoading(false); // Hide loader
     }
   };
-  const handleEmployeeChange = (itemValue) => {
-    const selectedEmp = employeeDropdownData.find((emp) => emp.id_emp_user === itemValue);
+
+  const handleEmployeeChange = itemValue => {
+    const selectedEmp = employeeDropdownData.find(
+      emp => emp.id_emp_user === itemValue,
+    );
     setSelectedEmployee(selectedEmp);
     setAssignType(itemValue);
   };
 
-  const handleAssetChange = (itemValue) => {
-    const selectedAssetData = assetDropdownData.find((asset) => asset.id_wh_dyn === itemValue);
+  const handleAssetChange = itemValue => {
+    const selectedAssetData = assetDropdownData.find(
+      asset => asset.id_wh_dyn === itemValue,
+    );
     setSelectedAsset({
       id_wh_dyn: selectedAssetData?.id_wh_dyn || '',
       nm_prod: selectedAssetData?.nm_prod || '',
@@ -207,11 +239,16 @@ const Allocate = ({ navigation }) => {
       id_wh: selectedAssetData?.id_wh || '',
       device_status: selectedAssetData?.device_status || '',
     });
-    setLoginType(itemValue); 
+    setLoginType(itemValue);
   };
 
   return (
     <ScrollView style={styles.container}>
+      {isLoading && (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#ff8a3d" />
+        </View>
+      )}
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -243,17 +280,21 @@ const Allocate = ({ navigation }) => {
                 borderRadius: 5,
                 marginBottom: '4%',
               }}>
-              <Text style={{ fontWeight: 'bold', color: 'white' }}>Assign To </Text>
+              <Text style={{fontWeight: 'bold', color: 'white'}}>
+                Assign To{' '}
+              </Text>
             </View>
             <Picker
               selectedValue={assignType}
-              onValueChange={(itemValue) => setAssignType(itemValue)}
               style={styles.picker}
               placeholder="Select Employee"
-              onValueChange={handleEmployeeChange}
-            >
-              {employeeDropdownData.map((item) => (
-                <Picker.Item key={item.id_emp_user} label={item.nm_emp} value={item.id_emp_user} />
+              onValueChange={handleEmployeeChange}>
+              {employeeDropdownData.map(item => (
+                <Picker.Item
+                  key={item.id_emp_user}
+                  label={item.nm_emp}
+                  value={item.id_emp_user}
+                />
               ))}
             </Picker>
             <View style={styles.filterContainer}>
@@ -272,22 +313,21 @@ const Allocate = ({ navigation }) => {
                   onChange={handleToDateChange}
                 />
               )}
-              <View style={{width:'50%'}}>
-              <Picker
-              selectedValue={deviceStatus}
-              onValueChange={(itemValue) => setDeviceStatus(itemValue)}
-              style={styles.picker}
-              placeholder='Select Asset'
-            >
-            <Picker.Item label="Select Status"/>
-              <Picker.Item label="Permanent" value="allct_to_emp" />
-              <Picker.Item label="Temporary" value="allct_to_emp_temp" />
-            </Picker>
-            </View>
+              <View style={{width: '50%'}}>
+                <Picker
+                  selectedValue={deviceStatus}
+                  onValueChange={itemValue => setDeviceStatus(itemValue)}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select Status" />
+                  <Picker.Item label="Permanent" value="allct_to_emp" />
+                  <Picker.Item label="Temporary" value="allct_to_emp_temp" />
+                </Picker>
+              </View>
             </View>
             <TextInput
               style={styles.remarks}
-              onChangeText={(value) => setTextValue(value)}
+              onChangeText={value => setTextValue(value)}
               value={textValue}
               placeholder="Enter Remarks"
               placeholderTextColor="gray"
@@ -301,17 +341,25 @@ const Allocate = ({ navigation }) => {
         ) : (
           <View style={styles.content}>
             <View
-              style={{ display: 'flex', alignSelf: 'center', padding: 10, margin: 10 }}>
+              style={{
+                display: 'flex',
+                alignSelf: 'center',
+                padding: 10,
+                margin: 10,
+              }}>
               <Icon name="add-shopping-cart" color="gray" size={60} />
             </View>
             <Picker
               selectedValue={loginType}
-              onValueChange={(itemValue) => setLoginType(itemValue)}
               style={styles.picker}
               placeholder="Select Asset"
               onValueChange={handleAssetChange}>
-              {assetDropdownData.map((item) => (
-                <Picker.Item key={item.id_wh_dyn} label={item.id_wh_dyn} value={item.id_wh_dyn} />
+              {assetDropdownData.map(item => (
+                <Picker.Item
+                  key={item.id_wh_dyn}
+                  label={item.id_wh_dyn}
+                  value={item.id_wh_dyn}
+                />
               ))}
             </Picker>
             <View style={styles.button}>
@@ -333,7 +381,7 @@ const Allocate = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: '100%'
+    height: '100%',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -345,7 +393,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     color: 'black',
     width: '47%',
-    height:'90%'
+    height: '90%',
   },
   card: {
     marginBottom: '5%',
@@ -358,7 +406,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: 'black',
     padding: '10px',
-    color: 'black'
+    color: 'black',
   },
   labelValueContainer: {
     width: '100%',
@@ -370,7 +418,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: '5%',
     paddingTop: '5%',
-    height: '100%'
+    height: '100%',
   },
   dropdownContainer: {
     marginVertical: 10,
@@ -382,7 +430,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '35%',
     alignSelf: 'center',
-    margin: '5%'
+    margin: '5%',
   },
   buttonText: {
     color: 'white',
@@ -391,11 +439,11 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     color: 'white',
-    width: '35%'
+    width: '35%',
   },
   value: {
     color: 'white',
-    width: '65%'
+    width: '65%',
   },
   remarks: {
     borderWidth: 1,
@@ -418,7 +466,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '80%',
   },
-
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 export default Allocate;
-

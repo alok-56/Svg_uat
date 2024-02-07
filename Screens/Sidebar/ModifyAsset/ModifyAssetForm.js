@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -86,6 +87,7 @@ const ModifyAssetForm = ({route, navigation}) => {
   const [idDept, setIdDept] = useState('');
   const [idVendor, setIdvendor] = useState('');
   const [idCostCenter, setIdCostCenter] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const id_inv_m = route.params?.id_inv_m;
@@ -97,6 +99,7 @@ const ModifyAssetForm = ({route, navigation}) => {
   }, [route.params?.id_inv_m, route.params?.id_inv]);
 
   const fetchData = async (id_inv_m, id_inv) => {
+    setLoading(true);
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
@@ -167,12 +170,14 @@ const ModifyAssetForm = ({route, navigation}) => {
         }
         // handleLocationSelection(itemDetails.Location, getIt.data);
       } else {
-        console.error('Error fetching data: Data is not an array or is empty');
         setApiData([]);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
       setApiData([]);
+    } finally {
+      // Hide the activity indicator when fetching data is complete
+      setLoading(false);
     }
   };
   // useEffect(() => {
@@ -662,539 +667,555 @@ const ModifyAssetForm = ({route, navigation}) => {
 
   return (
     <ScrollView>
-      {console.log(idDept, idVendor, 'oooooooo')}
-      <View style={styles.container}>
-        <View style={{backgroundColor: '#052d6e'}}>
-          <Text
+      <View style={{flex: 1}}>
+        {loading && (
+          <View
             style={{
-              color: 'white',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: 18,
-              padding: 10,
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: '80%',
             }}>
-            Item/Model Details
-          </Text>
-        </View>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+        {console.log(idDept, idVendor, 'oooooooo')}
+        {!loading && (
+          <View style={styles.container}>
+            <View style={{backgroundColor: '#052d6e'}}>
+              <Text
+                style={{
+                  color: 'white',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  padding: 10,
+                }}>
+                Item/Model Details
+              </Text>
+            </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Item/Model Name*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={modalName}
-              onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue, models), setModalName(itemValue);
-              }}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              {models.map(dept => (
-                <Picker.Item
-                  key={dept.nm_model}
-                  label={dept.nm_model}
-                  value={dept.nm_model}
-                />
-              ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Quantity*</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleQuantityNumber}
-            value={quantity}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Unit Price*</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleUnitPriceNumber}
-            value={unitPrice}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Taggable*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={taggable}
-              onValueChange={itemValue => setTaggable(itemValue)}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Yes" value="Yes" />
-              <Picker.Item label="No" value="No" />
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>AMC/Warranty*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={warranty}
-              onValueChange={value => {
-                handleWarrantyChange(value);
-                setShowDateInputs(value === 'A' || value === 'W');
-              }}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="NO" value="O" />
-              <Picker.Item label="AMC" value="A" />
-              <Picker.Item label="Warranty" value="W" />
-            </Picker>
-          </View>
-        </View>
-        {showDateInputs && (
-          <>
             <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Start Date*</Text>
-              <TextInput
-                style={styles.textinputs}
-                placeholder="Start Date"
-                placeholderTextColor="gray"
-                value={startDate}
-                onFocus={() => setShowStartDatepicker(true)}
-              />
-              {showStartDatepicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleStartDateChange}
-                />
-              )}
+              <Text style={styles.headings}>Item/Model Name*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={modalName}
+                  onValueChange={(itemValue, itemIndex) => {
+                    getModalDetails(itemValue, models), setModalName(itemValue);
+                  }}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select an option" value="" />
+                  {models.map(dept => (
+                    <Picker.Item
+                      key={dept.nm_model}
+                      label={dept.nm_model}
+                      value={dept.nm_model}
+                    />
+                  ))}
+                </Picker>
+              </View>
             </View>
             <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>End Date*</Text>
+              <Text style={styles.headings}>Quantity*</Text>
               <TextInput
                 style={styles.textinputs}
-                placeholder="End Date"
-                placeholderTextColor="gray"
-                value={endDate}
-                onFocus={() => setShowEndDatepicker(true)}
+                onChangeText={handleQuantityNumber}
+                value={quantity}
+                keyboardType="numeric"
               />
-              {showEndDatepicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleEndDateChange}
-                />
-              )}
-            </View>
-          </>
-        )}
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Lease Status*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={leaseStatus}
-              onValueChange={value => {
-                handleLeaseStatusChange(value);
-                setShowLeaseDateInputs(value === 'UL');
-              }}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Not Under Lease" value="NUL" />
-              <Picker.Item label="Under Lease" value="UL" />
-            </Picker>
-          </View>
-        </View>
-        {showLeaseDateInputs && (
-          <>
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Start Date*</Text>
-              <TextInput
-                style={styles.textinputs}
-                placeholder="Start Date"
-                placeholderTextColor="gray"
-                value={leaseStartDate}
-                onFocus={() => setShowLeaseStartDatepicker(true)}
-              />
-              {showLeaseStartDatepicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleLeaseStartDateChange}
-                />
-              )}
             </View>
             <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>End Date*</Text>
+              <Text style={styles.headings}>Unit Price*</Text>
               <TextInput
                 style={styles.textinputs}
-                placeholder="End Date"
-                placeholderTextColor="gray"
-                value={leaseEndDate}
-                onFocus={() => setShowLeaseEndDatepicker(true)}
+                onChangeText={handleUnitPriceNumber}
+                value={unitPrice}
+                keyboardType="numeric"
               />
-              {showLeaseEndDatepicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={handleLeaseEndDateChange}
-                />
-              )}
             </View>
-          </>
-        )}
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Type of Procurement*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={typeOfProcurement}
-              onValueChange={itemValue => setTypeOfProcurement(itemValue)}
-              style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              <Picker.Item label="Outright Purchase" value="OP" />
-              <Picker.Item label="Loan Basis" value="LB" />
-              <Picker.Item label="Add-On" value="FOC" />
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Location*</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={location}
-              onValueChange={e => (
-                handleLocationSelection(e, locations), setLocation(e)
-              )}
-              style={styles.picker}>
-              {locations &&
-                locations.map(dept => (
-                  <Picker.Item
-                    key={dept.id_loc}
-                    label={dept.nm_flr}
-                    value={dept.nm_flr.split(',')[0]}
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Taggable*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={taggable}
+                  onValueChange={itemValue => setTaggable(itemValue)}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select an option" value="" />
+                  <Picker.Item label="Yes" value="Yes" />
+                  <Picker.Item label="No" value="No" />
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>AMC/Warranty*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={warranty}
+                  onValueChange={value => {
+                    handleWarrantyChange(value);
+                    setShowDateInputs(value === 'A' || value === 'W');
+                  }}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select an option" value="" />
+                  <Picker.Item label="NO" value="O" />
+                  <Picker.Item label="AMC" value="A" />
+                  <Picker.Item label="Warranty" value="W" />
+                </Picker>
+              </View>
+            </View>
+            {showDateInputs && (
+              <>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>Start Date*</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    placeholder="Start Date"
+                    placeholderTextColor="gray"
+                    value={startDate}
+                    onFocus={() => setShowStartDatepicker(true)}
                   />
-                ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Department</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={department}
-              onValueChange={itemValue => (
-                handleIdDepSet(itemValue, departments), setDepartment(itemValue)
-              )}
-              style={styles.picker}
-              placeholder="Select Department">
-              <Picker.Item label="Select an option" value="" />
-              {departments.map(dept => (
-                <Picker.Item
-                  key={dept.id_dept}
-                  label={dept.nm_dept}
-                  value={dept.nm_dept}
+                  {showStartDatepicker && (
+                    <DateTimePicker
+                      value={new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleStartDateChange}
+                    />
+                  )}
+                </View>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>End Date*</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    placeholder="End Date"
+                    placeholderTextColor="gray"
+                    value={endDate}
+                    onFocus={() => setShowEndDatepicker(true)}
+                  />
+                  {showEndDatepicker && (
+                    <DateTimePicker
+                      value={new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleEndDateChange}
+                    />
+                  )}
+                </View>
+              </>
+            )}
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Lease Status*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={leaseStatus}
+                  onValueChange={value => {
+                    handleLeaseStatusChange(value);
+                    setShowLeaseDateInputs(value === 'UL');
+                  }}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select an option" value="" />
+                  <Picker.Item label="Not Under Lease" value="NUL" />
+                  <Picker.Item label="Under Lease" value="UL" />
+                </Picker>
+              </View>
+            </View>
+            {showLeaseDateInputs && (
+              <>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>Start Date*</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    placeholder="Start Date"
+                    placeholderTextColor="gray"
+                    value={leaseStartDate}
+                    onFocus={() => setShowLeaseStartDatepicker(true)}
+                  />
+                  {showLeaseStartDatepicker && (
+                    <DateTimePicker
+                      value={new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleLeaseStartDateChange}
+                    />
+                  )}
+                </View>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>End Date*</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    placeholder="End Date"
+                    placeholderTextColor="gray"
+                    value={leaseEndDate}
+                    onFocus={() => setShowLeaseEndDatepicker(true)}
+                  />
+                  {showLeaseEndDatepicker && (
+                    <DateTimePicker
+                      value={new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleLeaseEndDateChange}
+                    />
+                  )}
+                </View>
+              </>
+            )}
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Type of Procurement*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={typeOfProcurement}
+                  onValueChange={itemValue => setTypeOfProcurement(itemValue)}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  <Picker.Item label="Select an option" value="" />
+                  <Picker.Item label="Outright Purchase" value="OP" />
+                  <Picker.Item label="Loan Basis" value="LB" />
+                  <Picker.Item label="Add-On" value="FOC" />
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Location*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={location}
+                  onValueChange={e => (
+                    handleLocationSelection(e, locations), setLocation(e)
+                  )}
+                  style={styles.picker}>
+                  {locations &&
+                    locations.map(dept => (
+                      <Picker.Item
+                        key={dept.id_loc}
+                        label={dept.nm_flr}
+                        value={dept.nm_flr.split(',')[0]}
+                      />
+                    ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Department</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={department}
+                  onValueChange={itemValue => (
+                    handleIdDepSet(itemValue, departments),
+                    setDepartment(itemValue)
+                  )}
+                  style={styles.picker}
+                  placeholder="Select Department">
+                  <Picker.Item label="Select an option" value="" />
+                  {departments.map(dept => (
+                    <Picker.Item
+                      key={dept.id_dept}
+                      label={dept.nm_dept}
+                      value={dept.nm_dept}
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Cost Center/Project</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                {console.log(costCenter, 'cffffccfc')}
+
+                {console.log(centers, 'llllll')}
+                <Picker
+                  selectedValue={costCenter}
+                  onValueChange={itemValue => (
+                    handleIdCc(itemValue, centers), setCostCenter(itemValue)
+                  )}
+                  style={styles.picker}>
+                  {/* <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} /> */}
+                  {centers.map(dept => (
+                    <Picker.Item
+                      key={dept.id_cc}
+                      label={dept.nm_cc}
+                      value={dept.nm_cc}
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Item Description</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setDescription(value)}
+                value={description}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Remarks</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setRemarks(value)}
+                value={remarks}
+                editable={false}
+                multiline={true}
+              />
+            </View>
+            <View style={{backgroundColor: '#052d6e', marginTop: '3%'}}>
+              <Text
+                style={{
+                  color: 'white',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  padding: 10,
+                }}>
+                Invoice Details
+              </Text>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>PO Number*</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handlePoNumberChange}
+                value={poNumber}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>PO Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="PO Date"
+                placeholderTextColor="gray"
+                value={poDate}
+                onFocus={() => setShowPoDatepicker(true)}
+              />
+              {showPoDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handlePODateChange}
                 />
-              ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Cost Center/Project</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            {console.log(costCenter, 'cffffccfc')}
-
-            {console.log(centers, 'llllll')}
-            <Picker
-              selectedValue={costCenter}
-              onValueChange={itemValue => (
-                handleIdCc(itemValue, centers), setCostCenter(itemValue)
               )}
-              style={styles.picker}>
-              {/* <Picker.Item label="Select an option" value="" style={{ color: 'gray' }} /> */}
-              {centers.map(dept => (
-                <Picker.Item
-                  key={dept.id_cc}
-                  label={dept.nm_cc}
-                  value={dept.nm_cc}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Invoice Number*</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handleInvoiceNumberChange}
+                value={invoiceNumber}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Invoice Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="Invoice Date"
+                placeholderTextColor="gray"
+                value={invoiceDate}
+                onFocus={() => setShowInvoiceDatepicker(true)}
+              />
+              {showInvoiceDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleInvoiceDateChange}
                 />
-              ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Item Description</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setDescription(value)}
-            value={description}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Remarks</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setRemarks(value)}
-            value={remarks}
-            editable={false}
-            multiline={true}
-          />
-        </View>
-        <View style={{backgroundColor: '#052d6e', marginTop: '3%'}}>
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: 18,
-              padding: 10,
-            }}>
-            Invoice Details
-          </Text>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>PO Number*</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handlePoNumberChange}
-            value={poNumber}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>PO Date*</Text>
-          <TextInput
-            style={styles.textinputs}
-            placeholder="PO Date"
-            placeholderTextColor="gray"
-            value={poDate}
-            onFocus={() => setShowPoDatepicker(true)}
-          />
-          {showPoDatepicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="date"
-              display="default"
-              onChange={handlePODateChange}
-            />
-          )}
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Invoice Number*</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleInvoiceNumberChange}
-            value={invoiceNumber}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Invoice Date*</Text>
-          <TextInput
-            style={styles.textinputs}
-            placeholder="Invoice Date"
-            placeholderTextColor="gray"
-            value={invoiceDate}
-            onFocus={() => setShowInvoiceDatepicker(true)}
-          />
-          {showInvoiceDatepicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="date"
-              display="default"
-              onChange={handleInvoiceDateChange}
-            />
-          )}
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>GRN Number</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleGrnNumberChange}
-            value={grnNumber}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>GRN Date*</Text>
-          <TextInput
-            style={styles.textinputs}
-            placeholder="GRN Date"
-            placeholderTextColor="gray"
-            value={grnDate}
-            onFocus={() => setShowGrnDatepicker(true)}
-          />
-          {showGrnDatepicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="date"
-              display="default"
-              onChange={handleGrnDateChange}
-            />
-          )}
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>DC Number</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleDcNumberChange}
-            value={dcNumber}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>DC Date*</Text>
-          <TextInput
-            style={styles.textinputs}
-            placeholder="DC Date"
-            placeholderTextColor="gray"
-            value={dcDate}
-            onFocus={() => setShowDcDatepicker(true)}
-          />
-          {showDcDatepicker && (
-            <DateTimePicker
-              value={new Date()}
-              mode="date"
-              display="default"
-              onChange={handleDcDateChange}
-            />
-          )}
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Vendor</Text>
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
-            <Picker
-              selectedValue={vendor}
-              onValueChange={itemValue => (
-                handeIdVend(itemValue, vendors), setVendor(itemValue)
               )}
-              style={styles.picker}
-              placeholder="Select Asset">
-              {vendors.map(dept => (
-                <Picker.Item
-                  key={dept.id_ven}
-                  label={dept.nm_ven}
-                  value={dept.nm_ven}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>GRN Number</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handleGrnNumberChange}
+                value={grnNumber}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>GRN Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="GRN Date"
+                placeholderTextColor="gray"
+                value={grnDate}
+                onFocus={() => setShowGrnDatepicker(true)}
+              />
+              {showGrnDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleGrnDateChange}
                 />
-              ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Disk Space(GB)</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setDiskSpace(value)}
-            value={diskSpace}
-          />
-        </View>
+              )}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>DC Number</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handleDcNumberChange}
+                value={dcNumber}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>DC Date*</Text>
+              <TextInput
+                style={styles.textinputs}
+                placeholder="DC Date"
+                placeholderTextColor="gray"
+                value={dcDate}
+                onFocus={() => setShowDcDatepicker(true)}
+              />
+              {showDcDatepicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleDcDateChange}
+                />
+              )}
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Vendor*</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '95%',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  height: 58,
+                  borderRadius: 5,
+                }}>
+                <Picker
+                  selectedValue={vendor}
+                  onValueChange={itemValue => (
+                    handeIdVend(itemValue, vendors), setVendor(itemValue)
+                  )}
+                  style={styles.picker}
+                  placeholder="Select Asset">
+                  {vendors.map(dept => (
+                    <Picker.Item
+                      key={dept.id_ven}
+                      label={dept.nm_ven}
+                      value={dept.nm_ven}
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Disk Space(GB)</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setDiskSpace(value)}
+                value={diskSpace}
+              />
+            </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>RAM(MB)</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setRam(value)}
-            value={ram}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Operating System</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setOperatingSystem(value)}
-            value={operatingSystem}
-          />
-        </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>RAM(MB)</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setRam(value)}
+                value={ram}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Operating System</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setOperatingSystem(value)}
+                value={operatingSystem}
+              />
+            </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>OS Service Type</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleOsServiceTypeChange}
-            value={osServiceType}
-          />
-        </View>
-        <UploadFile from={'modifStore'} />
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>OS Service Type</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handleOsServiceTypeChange}
+                value={osServiceType}
+              />
+            </View>
+            <UploadFile from={'modifStore'} />
 
-        <TouchableOpacity onPress={handleSerialNo}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Next</Text>
-          </View>
-        </TouchableOpacity>
+            <TouchableOpacity onPress={handleSerialNo}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Next</Text>
+              </View>
+            </TouchableOpacity>
 
-        {sidebarOpen && (
-          <View style={styles.sidebar}>
-            <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+            {sidebarOpen && (
+              <View style={styles.sidebar}>
+                <Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+              </View>
+            )}
           </View>
         )}
       </View>

@@ -54,6 +54,40 @@ const Sidebar = ({isOpen, onClose, route}) => {
         <Text style={styles.sidebarItem}>Dashboard</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        onPress={() => handleItemClick('AddToStore')}
+        style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
+        <Icon
+          name="menu"
+          size={30}
+          color="gray"
+          style={{marginHorizontal: '10%'}}
+        />
+        <Text style={styles.dropdownItem}>Add New Asset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleItemClick('ApproveNewAsset')}
+        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
+        <Icon
+          name="add-card"
+          size={30}
+          color="gray"
+          style={{marginHorizontal: '5%'}}
+        />
+        <Text style={styles.sidebarItem}>Approve New Asset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleItemClick('ModifyAsset')}
+        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
+        <Icon
+          name="change-circle"
+          size={30}
+          color="gray"
+          style={{marginHorizontal: '5%'}}
+        />
+        <Text style={styles.sidebarItem}>Rejected Assets</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         onPress={() => handleItemClick('MyAssets', {userId})}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
         <Icon
@@ -138,41 +172,9 @@ const Sidebar = ({isOpen, onClose, route}) => {
             />
             <Text style={styles.dropdownItem}>DLink Accessories</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleItemClick('AddToStore')}
-            style={[styles.dropdownButton, styles.dropdownButtonLarge]}>
-            <Icon
-              name="menu"
-              size={30}
-              color="gray"
-              style={{marginHorizontal: '10%'}}
-            />
-            <Text style={styles.dropdownItem}>Add to Store</Text>
-          </TouchableOpacity>
         </View>
       )}
-      <TouchableOpacity
-        onPress={() => handleItemClick('ModifyAsset')}
-        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
-        <Icon
-          name="change-circle"
-          size={30}
-          color="gray"
-          style={{marginHorizontal: '5%'}}
-        />
-        <Text style={styles.sidebarItem}>Rejected Assets</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => handleItemClick('ApproveNewAsset')}
-        style={[styles.sidebarButton, styles.sidebarButtonLarge]}>
-        <Icon
-          name="add-card"
-          size={30}
-          color="gray"
-          style={{marginHorizontal: '5%'}}
-        />
-        <Text style={styles.sidebarItem}>Approve New Asset</Text>
-      </TouchableOpacity>
+
       <TouchableOpacity
         onPress={handleLogout}
         style={[styles.sidebarButton, styles.sidebarButtonLarge]}>

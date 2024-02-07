@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {Card, Checkbox} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -35,8 +36,8 @@ const DLink = ({navigation}) => {
   const [checkedBoxes, setCheckedBoxes] = useState([]);
   const [showToDatepickerForIndex, setShowToDatepickerForIndex] =
     useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleToDateChange = (event, selectedDate) => {};
   const handleDateInCheck = (event, selectedDate, asset) => {
     setShowToDatepicker(false);
     console.log(event, selectedDate, asset, 'ggg');
@@ -151,15 +152,11 @@ const DLink = ({navigation}) => {
       );
     }
   };
-  useFocusEffect(
-    React.useCallback(() => {
-      // Your effect code here
-      fetchAssetDropdownData(); // Clean up function (if needed)
-    }, []),
-  );
+
   useEffect(() => {
     fetchAssetDropdownData();
   }, []);
+
   useEffect(() => {
     const initialCheckboxes = {};
     assetDropdownData.forEach(item => {
@@ -179,6 +176,7 @@ const DLink = ({navigation}) => {
       asset_id: selectedAssetData?.asset_id || '',
       asset_nm: selectedAssetData?.asset_nm || '',
       accessory_id_wh: selectedAssetData?.accessory_id_wh || '',
+      asset_cd: selectedAssetData?.asset_cd || '',
     });
     const filteredData = assetDropdownData.filter(
       asset => asset.asset_id === itemValue,
@@ -200,7 +198,6 @@ const DLink = ({navigation}) => {
     });
     setSelectedCheckboxes(initialCheckboxes);
   };
-
   const [selectedAsset, setSelectedAsset] = useState({
     accessory_id: '',
     serial_num: '',
@@ -209,22 +206,12 @@ const DLink = ({navigation}) => {
     asset_id: '',
     asset_nm: '',
     accessory_id_wh: '',
+    asset_cd: '',
   });
 
   const handlePostDLinkAccessories = async () => {
     try {
-      // if (!dateTo) {
-      //   Alert.alert('Validation Error', 'Please fill in all required fields.', [
-      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-      //   ]);
-      //   return;
-      // }
-      // if (!textValue) {
-      //   Alert.alert('Validation Error', 'Please Enter Remarks', [
-      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-      //   ]);
-      //   return;
-      // }
+      setIsLoading(true);
 
       const isChecked = filteredAssetData.filter(i => i.checked);
 
@@ -240,7 +227,8 @@ const DLink = ({navigation}) => {
       }
 
       const missingValues = isChecked.filter(i => !i.date || !i.textValue);
-
+      const postData = isChecked.filter(i => i.date || i.textValue);
+      console.log(postData, 'pssss');
       if (missingValues.length > 0) {
         Alert.alert(
           'Validation Error',
@@ -257,7 +245,7 @@ const DLink = ({navigation}) => {
         'http://13.235.186.102/SVVG-API/webapi/De_linkAPI/SetDlinkStatus';
 
       const requestBody = {
-        data: filteredAssetData.map(asset => ({
+        data: postData.map(asset => ({
           uninstallAssetDate: asset.date,
           uninstallAssetID: asset.accessory_id_wh,
           uninstallRmk: asset.textValue,
@@ -278,6 +266,7 @@ const DLink = ({navigation}) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       } else {
         setShowDropdownAndInput(false);
+        navigation.navigate('Dashboard');
       }
 
       const responseText = await response.text();
@@ -287,28 +276,14 @@ const DLink = ({navigation}) => {
       ]);
     } catch (error) {
       console.error('Error posting data:', error);
+    } finally {
+      setIsLoading(false); // Hide loader
     }
   };
   const handleSearchInputChange = text => {
     setSearchText(text);
   };
   const handleCheckboxChange = asset => {
-    // setCheckedBoxes(prevCheckedBoxes => {
-    //   // Check if the asset is already in the checked list
-    //   const isAssetChecked = prevCheckedBoxes.some(
-    //     item => item.accessory_id === asset.accessory_id,
-    //   );
-
-    //   if (isAssetChecked) {
-    //     // If the asset is already checked, remove it from the list
-    //     return prevCheckedBoxes.filter(
-    //       item => item.accessory_id !== asset.accessory_id,
-    //     );
-    //   } else {
-    //     // If the asset is not checked, add it to the list
-    //     return [...prevCheckedBoxes, asset];
-    //   }
-    // });
     const filteredModified = filteredAssetData.map(i => {
       if (i.accessory_id_wh === asset.accessory_id_wh) {
         return {
@@ -322,10 +297,19 @@ const DLink = ({navigation}) => {
 
     setFilteredAssetData(filteredModified);
   };
-
+  const findValueByLabel = label => {
+    const matchingItem = assetDropdownData.find(
+      item => item.asset_cd === label,
+    );
+    return matchingItem ? matchingItem.asset_id : null;
+  };
   return (
     <ScrollView style={styles.container}>
-      {console.log(filteredAssetData, 'filllll box4')}
+      {isLoading && (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#ff8a3d" />
+        </View>
+      )}
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -472,20 +456,29 @@ const DLink = ({navigation}) => {
                 style={styles.picker}
                 placeholder="Select Asset"
                 onValueChange={handleAssetChange}>
-                {assetDropdownData.map(item => (
-                  <Picker.Item
-                    key={item.asset_id}
-                    label={item.asset_cd}
-                    value={item.asset_id}
-                  />
-                ))}
+                {[...new Set(assetDropdownData.map(item => item.asset_cd))].map(
+                  uniqueLabel => {
+                    const matchingItem = assetDropdownData.find(
+                      item => item.asset_cd === uniqueLabel,
+                    );
+                    return (
+                      <Picker.Item
+                        key={uniqueLabel}
+                        label={
+                          matchingItem ? matchingItem.asset_cd : uniqueLabel
+                        }
+                        value={findValueByLabel(uniqueLabel)}
+                      />
+                    );
+                  },
+                )}
               </Picker>
             </View>
-            <View style={styles.button}>
-              <TouchableOpacity onPress={handleLink}>
+            <TouchableOpacity onPress={handleLink}>
+              <View style={styles.button}>
                 <Text style={styles.buttonText}>DLink</Text>
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -604,6 +597,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     color: 'black',
+  },
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

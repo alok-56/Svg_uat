@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert,ActivityIndicator } from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
@@ -24,6 +24,8 @@ const DAllocate = ({ navigation }) => {
   const [employeeCode,setEmployeeCode] = useState('');
   const [allocatedDate,setAllocatedDate] = useState('');
   const [assetStatus,SetAssetStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   
 
   const handleToDateChange = (event, selectedDate) => {
@@ -72,64 +74,72 @@ const DAllocate = ({ navigation }) => {
     }
   };
   const handleDAllocate = async () => {
-    try {
-      // Validate required fields before making the API call
-      if (!dAllocateType || !dateTo || !textValue || !assetStatus) {
-        Alert.alert('Validation Error', 'Please fill in all required fields.', [
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ]);
-        return;
-      }
-  
-      const Username = 'SVVG'; // Replace with your actual username
-      const Password = 'Pass@123'; // Replace with your actual password
-      const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
-  
-      // Assuming dAllocateType is the selected dropdown value
-      const selectedData = empDropdownData.find((item) => item.id_wh_dyn === dAllocateType);
-  
-      const requestBody = {
-        data: [
-          {
-            UnInstallAssetID: selectedData.id_wh,
-            asset_status: assetStatus,
-            uninstallRmk: textValue,
-            asst_stat: '0',
-            uninstallAssetDate: dateTo,
-          },
-        ],
-      };
-      console.log(requestBody,"deallocate")
-  
-      const response = await fetch('http://13.235.186.102/SVVG-API/webapi/uninstall/deallocate_emp', {
-        method: 'POST',
-        headers: {
-          Authorization: basicAuth,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }else{
-        setShowDropdownAndInput(false);
-      }
-  
-      // Handle success, e.g., show a success message or navigate to a different screen
-      console.log('De-allocation successful!');
-      Alert.alert('Success', 'Asset de-allocated successfully!', [
+  try {
+    setIsLoading(true); // Show loader
+
+    // Validate required fields before making the API call
+    if (!dAllocateType || !dateTo || !textValue || !assetStatus) {
+      Alert.alert('Validation Error', 'Please fill in all required fields.', [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
-  
-    } catch (error) {
-      console.error('Error de-allocating asset:', error);
-      // Handle error, e.g., show an error message
-      Alert.alert('Error', 'Failed to de-allocate asset. Please try again.', [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ]);
+      return;
     }
-  };
+
+    const Username = 'SVVG'; // Replace with your actual username
+    const Password = 'Pass@123'; // Replace with your actual password
+    const basicAuth = 'Basic ' + encode(`${Username}:${Password}`);
+
+    // Assuming dAllocateType is the selected dropdown value
+    const selectedData = empDropdownData.find((item) => item.id_wh === dAllocateType);
+
+    const requestBody = {
+      data: [
+        {
+          UnInstallAssetID: dAllocateType,
+          asset_status: assetStatus,
+          uninstallRmk: textValue,
+          asst_stat: '0',
+          uninstallAssetDate: dateTo,
+        },
+      ],
+    };
+
+    const response = await fetch('http://13.235.186.102/SVVG-API/webapi/uninstall/deallocate_emp', {
+      method: 'POST',
+      headers: {
+        Authorization: basicAuth,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    } else {
+      // Trigger refresh after successful de-allocation
+      fetchEmpDropdownData();
+      // Additional actions if needed
+      setShowDropdownAndInput(false);
+    }
+
+    const responseText = await response.text();
+    console.log('POST Response:', responseText);
+    Alert.alert('Response', responseText, [
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+
+  } catch (error) {
+    console.error('Error de-allocating asset:', error);
+    // Handle error, e.g., show an error message
+    Alert.alert('Error', 'Failed to de-allocate asset. Please try again.', [
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+
+  } finally {
+    setIsLoading(false); // Hide loader
+  }
+};
+
  
   const fetchEmpDropdownData = async () => {
     try {
@@ -160,7 +170,7 @@ const DAllocate = ({ navigation }) => {
   }, []);
   const handleDAllocateAsset = () => {
     // Assuming dAllocateType is the selected dropdown value
-    const selectedData = empDropdownData.find(item => item.id_wh_dyn === dAllocateType);
+    const selectedData = empDropdownData.find(item => item.id_wh === dAllocateType);
 
     // Update the state variables with the selected data
     setAssetID(selectedData.id_wh_dyn || '');
@@ -174,6 +184,12 @@ const DAllocate = ({ navigation }) => {
   };
   return (
     <ScrollView style={styles.container}>
+    {isLoading && (
+  <View style={styles.loader}>
+    <ActivityIndicator size="large" color="#ff8a3d" />
+  </View>
+)}
+
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -280,7 +296,7 @@ const DAllocate = ({ navigation }) => {
               style={styles.picker}
               placeholder='Select Asset'>
               {empDropdownData.map((item) => (
-                <Picker.Item key={item.id_wh_dyn} label={item.id_wh_dyn} value={item.id_wh_dyn} />
+                <Picker.Item key={item.id_wh} label={item.id_wh_dyn} value={item.id_wh} />
               ))}
             </Picker>
             </View>
@@ -388,7 +404,18 @@ const styles = StyleSheet.create({
     padding: 10,
     minHeight: 100,
     textAlignVertical: 'top',
-  }
+  },
+  loader: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
 });
 
 export default DAllocate;

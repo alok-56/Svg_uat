@@ -152,7 +152,7 @@ const Routes = () => {
           name="AddToStore"
           component={AddToStore}
           options={{
-            headerTitle: 'Add To Store',
+            headerTitle: 'Add New Asset',
             headerStyle: {backgroundColor: '#052d6e'},
             headerTitleAlign: 'center',
             headerTintColor: 'white',
