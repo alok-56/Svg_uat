@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput, Alert, } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, Alert,ActivityIndicator } from 'react-native';
 import { Card, Checkbox } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
@@ -25,6 +25,7 @@ const [assetValue, setAssetValue] = useState('');
 const [linkAssetList, setLinkAssetList] = useState([]);
 const [additionalData, setAdditionalData] = useState([]);
 const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
+const [isLoading, setIsLoading] = useState(false);
 
 const handleToDateChange = (event, selectedDate) => {
   setShowToDatepicker(false);
@@ -260,6 +261,7 @@ const handleCheckboxSelect = (itemId) => {
   const handlePostLinkAccessories = async () => {
     
     try {
+      setIsLoading(true);
       if (!dateTo) {
         Alert.alert('Validation Error', 'Please fill in all required fields.', [
           { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -329,6 +331,8 @@ const handleCheckboxSelect = (itemId) => {
   
     } catch (error) {
       console.error('Error posting data:', error);
+    }finally {
+      setIsLoading(false); 
     }
   };
   const handleSearchInputChange = (text) => {
@@ -338,6 +342,11 @@ const handleCheckboxSelect = (itemId) => {
   
   return (
     <ScrollView style={styles.container}>
+     {isLoading && (
+  <View style={styles.loader}>
+    <ActivityIndicator size="large" color="#ff8a3d" />
+  </View>
+)}
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -406,13 +415,14 @@ const handleCheckboxSelect = (itemId) => {
               </Card></View>))}
     
 
-
-            <View style={styles.button}>
               <TouchableOpacity
                 onPress={handlePostLinkAccessories}>
+            <View style={styles.button}>
+              
                 <Text style={styles.buttonText}>Link</Text>
-              </TouchableOpacity>
+              
             </View>
+            </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.content}>
@@ -431,12 +441,12 @@ const handleCheckboxSelect = (itemId) => {
               ))}
             </Picker>
             </View>
-            <View style={styles.button}>
-              <TouchableOpacity
+            <TouchableOpacity
                 onPress={handleLinkAccessories}>
+            <View style={styles.button}>
                 <Text style={styles.buttonText}>Link</Text>
-              </TouchableOpacity>
             </View>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -562,6 +572,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     color:'black'
+  },
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

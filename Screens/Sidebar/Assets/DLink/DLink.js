@@ -126,6 +126,7 @@ const DLink = ({ navigation }) => {
       asset_id: selectedAssetData?.asset_id || '',
       asset_nm: selectedAssetData?.asset_nm || '',
       accessory_id_wh: selectedAssetData?.accessory_id_wh || '',
+      asset_cd: selectedAssetData?.asset_cd || '',
     });
     const filteredData = assetDropdownData.filter((asset) => asset.asset_id === itemValue);
     setFilteredAssetData(filteredData);
@@ -139,6 +140,7 @@ const DLink = ({ navigation }) => {
     setSelectedCheckboxes(initialCheckboxes);
   };
   
+  
   const [selectedAsset, setSelectedAsset] = useState({
     accessory_id: '',
     serial_num: '',
@@ -147,12 +149,14 @@ const DLink = ({ navigation }) => {
     asset_id: '',
     asset_nm: '',
     accessory_id_wh: '',
+    asset_cd: '',
    
   });
   
   const handlePostDLinkAccessories = async () => {
     
     try {
+      const selectedAssetsData = filteredAssetData.filter((asset) => selectedCheckboxes[asset.asset_id]);
       if ( !dateTo  ) {
         Alert.alert('Validation Error', 'Please fill in all required fields.', [
           { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -165,7 +169,6 @@ const DLink = ({ navigation }) => {
         ]);
         return;
       }
-      const isCheckboxSelected = Object.values(selectedCheckboxes).some((value) => value);
       if (!isCheckboxSelected) {
         Alert.alert('Validation Error', 'Please select at least one accessory.', [
           { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -181,13 +184,11 @@ const DLink = ({ navigation }) => {
       const apiUrl = 'http://13.235.186.102/SVVG-API/webapi/De_linkAPI/SetDlinkStatus';
   
       const requestBody = {
-        data: filteredAssetData
-          .filter((asset) => selectedCheckboxes[asset.asset_id])
-          .map((asset) => ({
-            uninstallAssetDate: dateTo,
-            uninstallAssetID: asset.accessory_id_wh,
-            uninstallRmk: textValue,
-          })),
+        data: selectedAssetsData.map((asset) => ({
+          uninstallAssetDate: dateTo,
+          uninstallAssetID: asset.accessory_id_wh,
+          uninstallRmk: textValue,
+        })),
       };
       console.log(requestBody,"postLink")
   
@@ -227,6 +228,10 @@ const DLink = ({ navigation }) => {
   const handleSearchInputChange = (text) => {
     setSearchText(text);
   };
+  const findValueByLabel = (label) => {
+    const matchingItem = assetDropdownData.find(item => item.asset_cd === label);
+    return matchingItem ? matchingItem.asset_id : null;
+  };
   
   return (
     <ScrollView style={styles.container}>
@@ -248,7 +253,7 @@ const DLink = ({ navigation }) => {
               <Card.Content >
                 <View style={styles.labelContainer}>
                   <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset ID :</Text>
-                  <Text style={styles.cardvalue}> {selectedAsset.asset_id}</Text>
+                  <Text style={styles.cardvalue}> {selectedAsset.asset_cd}</Text>
                 </View>
                 <View style={styles.labelContainer}>
                   <Text style={{ ...styles.label, color: '#ff8a3d' }}>Asset Name :</Text>
@@ -263,16 +268,17 @@ const DLink = ({ navigation }) => {
     <Card key={asset.asset_id} style={styles.card}>
       <Card.Content>
       <Checkbox
-            status={selectedCheckboxes[asset.asset_id] ? 'checked' : 'unchecked'}
-            onPress={() => {
-              setSelectedCheckboxes((prevCheckboxes) => {
-                return {
-                  ...prevCheckboxes,
-                  [asset.asset_id]: !prevCheckboxes[asset.asset_id],
-                };
-              });
-            }}
-          />
+  status={selectedCheckboxes[asset.asset_id] ? 'checked' : 'unchecked'}
+  onPress={() => {
+    setSelectedCheckboxes((prevCheckboxes) => {
+      return {
+        ...prevCheckboxes,
+        [asset.asset_id]: !prevCheckboxes[asset.asset_id],
+      };
+    });
+  }}
+/>
+
         <View style={styles.labelContainer}>
           <Text style={{ ...styles.label, color: '#ff8a3d' }}>Accessories Id :</Text>
           <Text style={styles.cardvalue}>{asset.accessory_id}</Text>
@@ -337,23 +343,29 @@ const DLink = ({ navigation }) => {
                 <Icon name="add-shopping-cart" color='gray' size={60} />
               </View>
               <Picker
-              selectedValue={loginType}
-              onValueChange={(itemValue) => setLoginType(itemValue)}
-              style={styles.picker}
-              placeholder='Select Asset'
-              onValueChange={handleAssetChange}
-            >
-              {assetDropdownData.map((item) => (
-                <Picker.Item key={item.asset_id} label={item.asset_cd} value={item.asset_id} />
-              ))}
-            </Picker>
+  selectedValue={loginType}
+  onValueChange={(itemValue) => setLoginType(itemValue)}
+  style={styles.picker}
+  placeholder='Select Asset'
+  onValueChange={handleAssetChange}
+>
+  {[...new Set(assetDropdownData.map((item) => item.asset_cd))].map((uniqueLabel) => {
+    const matchingItem = assetDropdownData.find(item => item.asset_cd === uniqueLabel);
+    return (
+      <Picker.Item key={uniqueLabel} label={matchingItem ? matchingItem.asset_cd : uniqueLabel} value={findValueByLabel(uniqueLabel)} />
+    );
+  })}
+</Picker>
+
             </View>
-            <View style={styles.button}>
-              <TouchableOpacity
+            <TouchableOpacity
                 onPress={handleLink}>
+            <View style={styles.button}>
+              
                 <Text style={styles.buttonText}>DLink</Text>
-              </TouchableOpacity>
+              
             </View>
+            </TouchableOpacity>
           </View>
         )}
       </View>

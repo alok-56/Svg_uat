@@ -931,7 +931,7 @@ const AddToStore = ({navigation}) => {
           />
         </View>
         <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>GRN Date*</Text>
+          <Text style={styles.headings}>GRN Date</Text>
           <TextInput
             style={styles.textinputs}
             placeholder="GRN Date"
@@ -957,7 +957,7 @@ const AddToStore = ({navigation}) => {
           />
         </View>
         <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>DC Date*</Text>
+          <Text style={styles.headings}>DC Date</Text>
           <TextInput
             style={styles.textinputs}
             placeholder="DC Date"

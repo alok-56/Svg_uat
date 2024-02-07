@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  Alert,
+  Alert,ActivityIndicator
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -85,6 +85,7 @@ const ModifyAssetForm = ({route, navigation}) => {
   const [idDept, setIdDept] = useState('');
   const [idVendor, setIdvendor] = useState('');
   const [idCostCenter, setIdCostCenter] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const id_inv_m = route.params?.id_inv_m;
@@ -96,6 +97,7 @@ const ModifyAssetForm = ({route, navigation}) => {
   }, [route.params?.id_inv_m, route.params?.id_inv]);
 
   const fetchData = async (id_inv_m, id_inv) => {
+    setLoading(true);
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
@@ -172,6 +174,9 @@ const ModifyAssetForm = ({route, navigation}) => {
     } catch (error) {
       console.error('Error fetching data:', error);
       setApiData([]);
+    }finally {
+      // Hide the activity indicator when fetching data is complete
+      setLoading(false);
     }
   };
   // useEffect(() => {
@@ -661,7 +666,14 @@ const ModifyAssetForm = ({route, navigation}) => {
 
   return (
     <ScrollView>
+    <View style={{flex:1}}>
+    {loading && (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',marginTop:'80%' }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
       {console.log(idDept, idVendor, 'oooooooo')}
+      {!loading && (
       <View style={styles.container}>
         <View style={{backgroundColor: '#052d6e'}}>
           <Text
@@ -1197,6 +1209,9 @@ const ModifyAssetForm = ({route, navigation}) => {
           </View>
         )}
       </View>
+      )}
+      </View>
+      
     </ScrollView>
   );
 };

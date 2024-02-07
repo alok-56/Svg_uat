@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput,Alert,ActivityIndicator } from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../../Sidebar';
@@ -19,6 +19,7 @@ const Allocate = ({ navigation }) => {
   const [employeeDropdownData, setEmployeeDropdownData] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [deviceStatus,setDeviceStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState({
     id_wh: '',
     nm_prod: '',
@@ -57,8 +58,8 @@ const Allocate = ({ navigation }) => {
   const [assetDropdownData, setAssetDropdownData] = useState([]);
 
   const fetchAssetDropdownData = async () => {
-    const Username = 'SVVG'; // Replace with your actual username
-    const Password = 'Pass@123'; // Replace with your actual password
+    const Username = 'SVVG';
+    const Password = 'Pass@123'; 
 
     const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
 
@@ -145,10 +146,12 @@ const Allocate = ({ navigation }) => {
       return;
     }
     try {
-      const Username = 'SVVG'; // Replace with your actual username
-      const Password = 'Pass@123'; // Replace with your actual password
+      setIsLoading(true); // Show loader
+  
+      const Username = 'SVVG';
+      const Password = 'Pass@123';
       const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
-
+  
       const requestBody = {
         data: [
           {
@@ -160,38 +163,41 @@ const Allocate = ({ navigation }) => {
           },
         ],
       };
-      console.log(requestBody,"req")
-
+  
       const response = await fetch('http://13.235.186.102/SVVG-API/webapi/install/allocate_emp', {
         method: 'POST',
         headers: {
           Authorization: basicAuth,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify([requestBody]),
+        body: JSON.stringify(requestBody),
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }else{
+      } else {
         setShowDropdownAndInput(false);
       }
-      const responseData = await response.json();
-
-      // Handle success, e.g., show a success message or navigate to a different screen
-      console.log('Allocation successful!');
-      Alert.alert('Success', `Asset allocated successfully`, [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      const responseText = await response.text();
+      console.log('POST Response:', responseText);
+      Alert.alert('Response', responseText, [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+            // Handle refresh here (e.g., refetch data or navigate back to the list screen)
+            fetchAssetDropdownData();
+            fetchEmployeeDropdownData();
+          },
+        },
       ]);
-      // navigation.navigate('Dashboard');
     } catch (error) {
       console.error('Error allocating asset:', error);
-      // Handle error, e.g., show an error message
-      Alert.alert('Error', 'Failed to allocate asset. Please try again.', [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ]);
+    } finally {
+      setIsLoading(false); // Hide loader
     }
   };
+  
   const handleEmployeeChange = (itemValue) => {
     const selectedEmp = employeeDropdownData.find((emp) => emp.id_emp_user === itemValue);
     setSelectedEmployee(selectedEmp);
@@ -212,6 +218,11 @@ const Allocate = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
+    {isLoading && (
+  <View style={styles.loader}>
+    <ActivityIndicator size="large" color="#ff8a3d" />
+  </View>
+)}
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -417,6 +428,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '80%',
+  },
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
 });

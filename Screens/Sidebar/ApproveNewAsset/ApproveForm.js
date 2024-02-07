@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  Alert,
+  Alert,ActivityIndicator
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -37,6 +37,7 @@ const ApproveForm = ({route}) => {
   const [remarks, setRemarks] = useState('');
   const [idInv, setIdInv] = useState(0);
   const [idInvM, setIdInvM] = useState(0);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const id_inv_m = route.params?.id_inv_m;
     const id_inv = route.params?.id_inv;
@@ -47,6 +48,7 @@ const ApproveForm = ({route}) => {
 
   const fetchData = async (id_inv_m, id_inv) => {
     console.log(id_inv_m, id_inv, 'oooooooo');
+    setLoading(true);
     try {
       const Username = 'SVVG';
       const Password = 'Pass@123';
@@ -93,6 +95,9 @@ const ApproveForm = ({route}) => {
     } catch (error) {
       console.error('Error fetching data:', error);
       setApiData([]);
+    }finally {
+      // Hide the activity indicator when fetching data is complete
+      setLoading(false);
     }
   };
 
@@ -237,7 +242,15 @@ const ApproveForm = ({route}) => {
   });
   return (
     <ScrollView>
+    <View style={{flex:1}}>
+    {loading && (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',marginTop:'80%' }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+        {!loading && (
       <View>
+      
         <View style={{backgroundColor: '#ff8a3d'}}>
           <Text
             style={{
@@ -476,6 +489,8 @@ const ApproveForm = ({route}) => {
             </View>
           </TouchableOpacity>
         </View>
+      </View>
+        )}
       </View>
     </ScrollView>
   );
