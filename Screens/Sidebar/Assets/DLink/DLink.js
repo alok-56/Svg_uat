@@ -14,6 +14,7 @@ import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {ScrollView} from 'react-native-gesture-handler';
 import {encode as base64Encode} from 'base-64';
+import {useFocusEffect} from '@react-navigation/native';
 
 const DLink = ({navigation}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,18 +30,53 @@ const DLink = ({navigation}) => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
   const [filteredAssetData, setFilteredAssetData] = useState([]);
   const [cardStates, setCardStates] = useState([]);
+  const [overAllDatam, overAllData] = useState([]);
+  const [selectedDataAsset, setSelectedDataAsset] = useState([]);
+  const [checkedBoxes, setCheckedBoxes] = useState([]);
+  const [showToDatepickerForIndex, setShowToDatepickerForIndex] =
+    useState(null);
 
-  const handleToDateChange = (event, selectedDate) => {
+  const handleToDateChange = (event, selectedDate) => {};
+  const handleDateInCheck = (event, selectedDate, asset) => {
     setShowToDatepicker(false);
+    console.log(event, selectedDate, asset, 'ggg');
+
     if (selectedDate) {
       const year = selectedDate.getFullYear();
       const month = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
       const day = `${selectedDate.getDate()}`.padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
+
       setToDate(formattedDate);
+
+      const filteredModified = filteredAssetData.map(i => {
+        if (i.accessory_id_wh === asset.accessory_id_wh) {
+          return {
+            ...i,
+            date: formattedDate,
+          };
+        } else {
+          return i;
+        }
+      });
+
+      setFilteredAssetData(filteredModified);
     }
   };
+  const handleAssetRemark = (itemValue, asset) => {
+    const filteredModified = filteredAssetData.map(i => {
+      if (i.accessory_id_wh === asset.accessory_id_wh) {
+        return {
+          ...i,
+          textValue: itemValue,
+        };
+      } else {
+        return i;
+      }
+    });
 
+    setFilteredAssetData(filteredModified);
+  };
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -115,6 +151,12 @@ const DLink = ({navigation}) => {
       );
     }
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      // Your effect code here
+      fetchAssetDropdownData(); // Clean up function (if needed)
+    }, []),
+  );
   useEffect(() => {
     fetchAssetDropdownData();
   }, []);
@@ -141,7 +183,14 @@ const DLink = ({navigation}) => {
     const filteredData = assetDropdownData.filter(
       asset => asset.asset_id === itemValue,
     );
-    setFilteredAssetData(filteredData);
+    const includeDatenText = filteredData.map(i => ({
+      ...i,
+      date: '',
+      textValue: '',
+      checked: false,
+    }));
+    console.log(includeDatenText, 'idc');
+    setFilteredAssetData(includeDatenText);
     setLoginType(itemValue);
 
     // Initialize checkboxes state individually
@@ -164,22 +213,24 @@ const DLink = ({navigation}) => {
 
   const handlePostDLinkAccessories = async () => {
     try {
-      if (!dateTo) {
-        Alert.alert('Validation Error', 'Please fill in all required fields.', [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
-        return;
-      }
-      if (!textValue) {
-        Alert.alert('Validation Error', 'Please Enter Remarks', [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
-        return;
-      }
-      const isCheckboxSelected = Object.values(selectedCheckboxes).some(
-        value => value,
-      );
-      if (!isCheckboxSelected) {
+      // if (!dateTo) {
+      //   Alert.alert('Validation Error', 'Please fill in all required fields.', [
+      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
+      //   ]);
+      //   return;
+      // }
+      // if (!textValue) {
+      //   Alert.alert('Validation Error', 'Please Enter Remarks', [
+      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
+      //   ]);
+      //   return;
+      // }
+
+      const isChecked = filteredAssetData.filter(i => i.checked);
+
+      console.log(isChecked.length, 'icsc');
+
+      if (isChecked.length === 0) {
         Alert.alert(
           'Validation Error',
           'Please select at least one accessory.',
@@ -188,6 +239,16 @@ const DLink = ({navigation}) => {
         return;
       }
 
+      const missingValues = isChecked.filter(i => !i.date || !i.textValue);
+
+      if (missingValues.length > 0) {
+        Alert.alert(
+          'Validation Error',
+          'Please fill in all required fields for the selected accessories.',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        );
+        return;
+      }
       const Username = 'SVVG';
       const Password = 'Pass@123';
       const basicAuth = 'Basic ' + base64Encode(Username + ':' + Password);
@@ -196,13 +257,11 @@ const DLink = ({navigation}) => {
         'http://13.235.186.102/SVVG-API/webapi/De_linkAPI/SetDlinkStatus';
 
       const requestBody = {
-        data: filteredAssetData
-          .filter(asset => selectedCheckboxes[asset.asset_id])
-          .map(asset => ({
-            uninstallAssetDate: dateTo,
-            uninstallAssetID: asset.accessory_id_wh,
-            uninstallRmk: textValue,
-          })),
+        data: filteredAssetData.map(asset => ({
+          uninstallAssetDate: asset.date,
+          uninstallAssetID: asset.accessory_id_wh,
+          uninstallRmk: asset.textValue,
+        })),
       };
       console.log(requestBody, 'postLink');
 
@@ -226,13 +285,6 @@ const DLink = ({navigation}) => {
       Alert.alert('Response', responseText, [
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ]);
-
-      try {
-        const data = JSON.parse(responseText);
-        console.log('Parsed JSON Response:', data);
-      } catch (jsonError) {
-        console.error('Error parsing JSON:');
-      }
     } catch (error) {
       console.error('Error posting data:', error);
     }
@@ -240,9 +292,40 @@ const DLink = ({navigation}) => {
   const handleSearchInputChange = text => {
     setSearchText(text);
   };
+  const handleCheckboxChange = asset => {
+    // setCheckedBoxes(prevCheckedBoxes => {
+    //   // Check if the asset is already in the checked list
+    //   const isAssetChecked = prevCheckedBoxes.some(
+    //     item => item.accessory_id === asset.accessory_id,
+    //   );
+
+    //   if (isAssetChecked) {
+    //     // If the asset is already checked, remove it from the list
+    //     return prevCheckedBoxes.filter(
+    //       item => item.accessory_id !== asset.accessory_id,
+    //     );
+    //   } else {
+    //     // If the asset is not checked, add it to the list
+    //     return [...prevCheckedBoxes, asset];
+    //   }
+    // });
+    const filteredModified = filteredAssetData.map(i => {
+      if (i.accessory_id_wh === asset.accessory_id_wh) {
+        return {
+          ...i,
+          checked: !i.checked,
+        };
+      } else {
+        return i;
+      }
+    });
+
+    setFilteredAssetData(filteredModified);
+  };
 
   return (
     <ScrollView style={styles.container}>
+      {console.log(filteredAssetData, 'filllll box4')}
       <View style={styles.content}>
         {showDropdownAndInput ? (
           <View style={styles.dropdownContainer}>
@@ -280,87 +363,90 @@ const DLink = ({navigation}) => {
             </Card>
 
             <View>
-              {filteredAssetData
-                .filter(item => item.accessory_id.includes(searchText))
-                .map(asset => (
-                  <Card key={asset.asset_id} style={styles.card}>
-                    <Card.Content>
-                      <Checkbox
-                        status={
-                          selectedCheckboxes[asset.asset_id]
-                            ? 'checked'
-                            : 'unchecked'
-                        }
-                        onPress={() => {
-                          setSelectedCheckboxes(prevCheckboxes => {
-                            return {
-                              ...prevCheckboxes,
-                              [asset.asset_id]: !prevCheckboxes[asset.asset_id],
-                            };
-                          });
-                        }}
-                      />
-                      <View style={styles.labelContainer}>
-                        <Text style={{...styles.label, color: '#ff8a3d'}}>
-                          Accessories Id :
-                        </Text>
-                        <Text style={styles.cardvalue}>
-                          {asset.accessory_id}
-                        </Text>
-                      </View>
-                      <View style={styles.labelContainer}>
-                        <Text style={{...styles.label, color: '#ff8a3d'}}>
-                          Accessories Name :
-                        </Text>
-                        <Text style={styles.cardvalue}>
-                          {asset.nm_accessory}
-                        </Text>
-                      </View>
-                      <View style={styles.labelContainer}>
-                        <Text style={{...styles.label, color: '#ff8a3d'}}>
-                          Serial No:
-                        </Text>
-                        <Text style={styles.cardvalue}>{asset.serial_num}</Text>
-                      </View>
-                      <View style={styles.labelContainer}>
-                        <Text style={{...styles.label, color: '#ff8a3d'}}>
-                          Linked Date :
-                        </Text>
-                        <Text style={styles.value}>{asset.Link_date}</Text>
-                      </View>
-                      <View style={styles.labelContainer}>
-                        <Text style={{...styles.label, color: '#ff8a3d'}}>
-                          Acc ID :
-                        </Text>
-                        <Text style={styles.value}>
-                          {asset.accessory_id_wh}
-                        </Text>
-                      </View>
-                      <TextInput
-                        style={styles.dateInput}
-                        placeholder="Dlink Date"
-                        placeholderTextColor="gray"
-                        value={dateTo}
-                        onFocus={() => setShowToDatepicker(true)}
-                      />
-                      {showToDatepicker && (
-                        <DateTimePicker
-                          value={new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={handleToDateChange}
+              {filteredAssetData &&
+                filteredAssetData
+                  .filter(item => item.accessory_id.includes(searchText))
+                  .map((asset, idx) => (
+                    <Card key={idx} style={styles.card}>
+                      <Card.Content>
+                        <Checkbox
+                          status={asset.checked ? 'checked' : 'unchecked'}
+                          onPress={() => handleCheckboxChange(asset)}
                         />
-                      )}
-                      <TextInput
-                        style={styles.remarks}
-                        onChangeText={value => setTextValue(value)}
-                        value={textValue}
-                        placeholder="Enter Remarks"
-                        placeholderTextColor="gray"
-                      />
-                    </Card.Content>
-                  </Card>
-                ))}
+
+                        <View style={styles.labelContainer}>
+                          <Text style={{...styles.label, color: '#ff8a3d'}}>
+                            Accessories Id :
+                          </Text>
+                          <Text style={styles.cardvalue}>
+                            {asset.accessory_id}
+                          </Text>
+                        </View>
+                        <View style={styles.labelContainer}>
+                          <Text style={{...styles.label, color: '#ff8a3d'}}>
+                            Accessories Name :
+                          </Text>
+                          <Text style={styles.cardvalue}>
+                            {asset.nm_accessory}
+                          </Text>
+                        </View>
+                        <View style={styles.labelContainer}>
+                          <Text style={{...styles.label, color: '#ff8a3d'}}>
+                            Serial No:
+                          </Text>
+                          <Text style={styles.cardvalue}>
+                            {asset.serial_num}
+                          </Text>
+                        </View>
+                        <View style={styles.labelContainer}>
+                          <Text style={{...styles.label, color: '#ff8a3d'}}>
+                            Linked Date :
+                          </Text>
+                          <Text style={styles.value}>{asset.Link_date}</Text>
+                        </View>
+                        <View style={styles.labelContainer}>
+                          <Text style={{...styles.label, color: '#ff8a3d'}}>
+                            Acc ID :
+                          </Text>
+                          <Text style={styles.value}>
+                            {asset.accessory_id_wh}
+                          </Text>
+                        </View>
+                        <TextInput
+                          style={styles.dateInput}
+                          placeholder="Dlink Date"
+                          placeholderTextColor="gray"
+                          value={asset.date}
+                          editable={asset.checked ? true : false}
+                          onFocus={() => (
+                            setShowToDatepickerForIndex(idx),
+                            setShowToDatepicker(true)
+                          )}
+                        />
+                        {showToDatepickerForIndex === idx &&
+                          showToDatepicker && ( // Only show date picker for the selected index
+                            <DateTimePicker
+                              value={new Date()}
+                              mode="date"
+                              display="default"
+                              onChange={(e, selectedDate) =>
+                                handleDateInCheck(e, selectedDate, asset)
+                              }
+                            />
+                          )}
+                        <TextInput
+                          style={styles.remarks}
+                          onChangeText={value =>
+                            handleAssetRemark(value, asset)
+                          }
+                          value={asset.textValue}
+                          placeholder="Enter Remarks"
+                          placeholderTextColor="gray"
+                          editable={asset.checked ? true : false}
+                        />
+                      </Card.Content>
+                    </Card>
+                  ))}
             </View>
 
             <View style={styles.button}>
@@ -383,7 +469,6 @@ const DLink = ({navigation}) => {
               </View>
               <Picker
                 selectedValue={loginType}
-                onValueChange={itemValue => setLoginType(itemValue)}
                 style={styles.picker}
                 placeholder="Select Asset"
                 onValueChange={handleAssetChange}>
