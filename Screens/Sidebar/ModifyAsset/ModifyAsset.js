@@ -133,7 +133,6 @@ const ModifyAsset = ({navigation}) => {
         ]);
         setApiData(mappedData);
       } else {
-        console.error('Error fetching data: Data is not an array or is empty');
         setApiData([]);
       }
     } catch (error) {
