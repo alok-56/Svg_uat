@@ -77,6 +77,7 @@ const AddToStore = ({navigation}) => {
   const [subLocationId, setSubLocationId] = useState('');
   const [buildingId, setBuildingId] = useState('');
   const [dsAsset, setDsAsset] = useState('');
+  const [showConfig, setShowConfig] = useState(true);
 
   useEffect(() => {
     navigation.setOptions({
@@ -435,7 +436,8 @@ const AddToStore = ({navigation}) => {
       }
 
       const data = await response.json();
-      setModels(data.data);
+      const filteredData = data && data.data.filter(i => i.nm_model !== '');
+      setModels(filteredData);
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -449,7 +451,7 @@ const AddToStore = ({navigation}) => {
     setRefreshData(false);
   }, [refreshData]);
 
-  const getModalDetails = e => {
+  const getModalDetails = (e, idx) => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
     if (selectedModel) {
@@ -470,6 +472,11 @@ const AddToStore = ({navigation}) => {
       setDsAsset(ds_asst);
       setItemDescription(ds_asst);
 
+      if (typ_asst === 'NON-IT' || typ_asst === 'SOFTWARE') {
+        setShowConfig(false);
+      } else {
+        setShowConfig(true);
+      }
       console.log('Selected Model Details:');
       console.log('modal name:', nm_model);
       console.log('model id:', id_model);
@@ -527,6 +534,7 @@ const AddToStore = ({navigation}) => {
 
   return (
     <ScrollView>
+      {console.log(showConfig, 'tryeye')}
       <View style={styles.container}>
         <View style={{backgroundColor: '#052d6e'}}>
           <Text
@@ -543,6 +551,7 @@ const AddToStore = ({navigation}) => {
 
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Item/Model Name*</Text>
+          {console.log(models, 'modalll')}
           <View
             style={{
               borderWidth: 1,
@@ -555,9 +564,9 @@ const AddToStore = ({navigation}) => {
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue),
+                getModalDetails(itemValue, itemIndex),
                   setModalName(itemValue),
-                  getModalDetails(itemValue);
+                  getModalDetails(itemValue, itemIndex);
               }}
               style={styles.picker}
               placeholder="Select Asset">
@@ -1001,42 +1010,47 @@ const AddToStore = ({navigation}) => {
             </Picker>
           </View>
         </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Disk Space(GB)</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setDiskSpace(value)}
-            value={diskSpace}
-          />
-        </View>
+        {showConfig ? (
+          <>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Disk Space(GB)</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setDiskSpace(value)}
+                value={diskSpace}
+              />
+            </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>RAM(MB)</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setRam(value)}
-            value={ram}
-          />
-        </View>
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Operating System</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={value => setOperatingSystem(value)}
-            value={operatingSystem}
-          />
-        </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>RAM(MB)</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setRam(value)}
+                value={ram}
+              />
+            </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>Operating System</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={value => setOperatingSystem(value)}
+                value={operatingSystem}
+              />
+            </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>OS Service Type</Text>
-          <TextInput
-            style={styles.textinputs}
-            onChangeText={handleOsServiceTypeChange}
-            value={osServiceType}
-          />
-        </View>
+            <View style={{marginTop: '3%'}}>
+              <Text style={styles.headings}>OS Service Type</Text>
+              <TextInput
+                style={styles.textinputs}
+                onChangeText={handleOsServiceTypeChange}
+                value={osServiceType}
+              />
+            </View>
+          </>
+        ) : (
+          <></>
+        )}
         <UploadFile from={'addToStore'} />
-
         <TouchableOpacity onPress={handleSerialNo}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>

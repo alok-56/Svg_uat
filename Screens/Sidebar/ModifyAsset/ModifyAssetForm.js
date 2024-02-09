@@ -88,6 +88,7 @@ const ModifyAssetForm = ({route, navigation}) => {
   const [idVendor, setIdvendor] = useState('');
   const [idCostCenter, setIdCostCenter] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showConfig, setShowConfig] = useState(true);
 
   useEffect(() => {
     const id_inv_m = route.params?.id_inv_m;
@@ -549,7 +550,9 @@ const ModifyAssetForm = ({route, navigation}) => {
       }
 
       const data = await response.json();
-      setModels(data.data);
+      const formatedData = data && data.data.filter(i => i?.nm_model !== '');
+      console.log(formatedData, 'fdfgttd');
+      setModels(formatedData);
       return data;
     } catch (error) {
       console.error('Error fetching departments:', error);
@@ -593,6 +596,11 @@ const ModifyAssetForm = ({route, navigation}) => {
       console.log('SAsset', id_s_assetdiv);
       console.log('type asset:', typ_asst);
       console.log('item description:', ds_asst);
+      if (typ_asst === 'NON-IT' || typ_asst === 'SOFTWARE') {
+        setShowConfig(false);
+      } else {
+        setShowConfig(true);
+      }
     }
   };
   const handleLeaseStatusChange = itemValue => {
@@ -667,6 +675,7 @@ const ModifyAssetForm = ({route, navigation}) => {
 
   return (
     <ScrollView>
+      {console.log(showConfig, 'moduf')}
       <View style={{flex: 1}}>
         {loading && (
           <View
@@ -1169,40 +1178,44 @@ const ModifyAssetForm = ({route, navigation}) => {
                 </Picker>
               </View>
             </View>
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Disk Space(GB)</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setDiskSpace(value)}
-                value={diskSpace}
-              />
-            </View>
-
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>RAM(MB)</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setRam(value)}
-                value={ram}
-              />
-            </View>
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Operating System</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setOperatingSystem(value)}
-                value={operatingSystem}
-              />
-            </View>
-
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>OS Service Type</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={handleOsServiceTypeChange}
-                value={osServiceType}
-              />
-            </View>
+            {showConfig ? (
+              <>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>Disk Space(GB)</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    onChangeText={value => setDiskSpace(value)}
+                    value={diskSpace}
+                  />
+                </View>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>RAM(MB)</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    onChangeText={value => setRam(value)}
+                    value={ram}
+                  />
+                </View>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>Operating System</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    onChangeText={value => setOperatingSystem(value)}
+                    value={operatingSystem}
+                  />
+                </View>
+                <View style={{marginTop: '3%'}}>
+                  <Text style={styles.headings}>OS Service Type</Text>
+                  <TextInput
+                    style={styles.textinputs}
+                    onChangeText={handleOsServiceTypeChange}
+                    value={osServiceType}
+                  />
+                </View>
+              </>
+            ) : (
+              <></>
+            )}
             <UploadFile from={'modifStore'} />
 
             <TouchableOpacity onPress={handleSerialNo}>

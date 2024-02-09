@@ -91,6 +91,15 @@ const SerialNo = ({route, navigation}) => {
       return null;
     }
   };
+  const clearImage = async () => {
+    try {
+      // Retrieve upload_inv from AsyncStorage
+      await AsyncStorage.removeItem('upload_inv');
+      setUploadInv('');
+    } catch (error) {
+      console.error('Error removing upload_inv from AsyncStorage:', error);
+    }
+  };
 
   const handleSaveData = async () => {
     try {
@@ -179,6 +188,9 @@ const SerialNo = ({route, navigation}) => {
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
+      if (responseText) {
+        await clearImage();
+      }
       Alert.alert('Response', responseText, [
         {
           text: 'OK',
@@ -192,6 +204,7 @@ const SerialNo = ({route, navigation}) => {
             );
             setSerialVal('');
             setSapno('');
+
             navigation.navigate('Dashboard');
           },
         },

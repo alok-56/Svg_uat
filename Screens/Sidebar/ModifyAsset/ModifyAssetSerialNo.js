@@ -91,7 +91,6 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
     try {
       // Retrieve upload_inv from AsyncStorage
       await AsyncStorage.removeItem('modifStore');
-      setUploadInv('');
     } catch (error) {
       console.error('Error removing upload_inv from AsyncStorage:', error);
     }
@@ -245,7 +244,9 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
 
       const responseText = await response.text();
       console.log('Server Response:', responseText);
-
+      if (responseText) {
+        await clearImage();
+      }
       Alert.alert('Success', 'Update Successfully', [
         {
           text: 'OK',
@@ -261,7 +262,6 @@ const UpdateRejectedSerialNo = ({route, navigation}) => {
             setSapno('');
             navigation.navigate('ModifyAsset');
             setUploadInv('');
-            clearImage();
           },
         },
       ]);
