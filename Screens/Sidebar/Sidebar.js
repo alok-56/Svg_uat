@@ -60,7 +60,7 @@ const Sidebar = ({isOpen, onClose, route}) => {
           name="menu"
           size={30}
           color="gray"
-          style={{marginHorizontal: '10%'}}
+          style={{marginHorizontal: '5%'}}
         />
         <Text style={styles.dropdownItem}>Add New Asset</Text>
       </TouchableOpacity>
@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
     marginBottom: '1%',
     paddingVertical: '2%',
     paddingHorizontal: '10%',
-    backgroundColor: '#f0f0f0',
     flexDirection: 'row',
     width: '100%',
   },
