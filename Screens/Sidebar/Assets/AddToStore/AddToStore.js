@@ -77,7 +77,8 @@ const AddToStore = ({navigation}) => {
   const [subLocationId, setSubLocationId] = useState('');
   const [buildingId, setBuildingId] = useState('');
   const [dsAsset, setDsAsset] = useState('');
-  const [showConfig, setShowConfig] = useState(true);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     navigation.setOptions({
@@ -436,8 +437,7 @@ const AddToStore = ({navigation}) => {
       }
 
       const data = await response.json();
-      const filteredData = data && data.data.filter(i => i.nm_model !== '');
-      setModels(filteredData);
+      setModels(data.data);
     } catch (error) {
       console.error('Error fetching departments:', error);
     }
@@ -451,7 +451,7 @@ const AddToStore = ({navigation}) => {
     setRefreshData(false);
   }, [refreshData]);
 
-  const getModalDetails = (e, idx) => {
+  const getModalDetails = e => {
     const selectedModel = models.find(item => item?.nm_model === e);
 
     if (selectedModel) {
@@ -472,11 +472,6 @@ const AddToStore = ({navigation}) => {
       setDsAsset(ds_asst);
       setItemDescription(ds_asst);
 
-      if (typ_asst === 'NON-IT' || typ_asst === 'SOFTWARE') {
-        setShowConfig(false);
-      } else {
-        setShowConfig(true);
-      }
       console.log('Selected Model Details:');
       console.log('modal name:', nm_model);
       console.log('model id:', id_model);
@@ -531,10 +526,13 @@ const AddToStore = ({navigation}) => {
       setOsServiceType(value);
     }
   };
+  
+  const filteredModels = models.filter((model) =>
+    model?.nm_model.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <ScrollView>
-      {console.log(showConfig, 'tryeye')}
       <View style={styles.container}>
         <View style={{backgroundColor: '#052d6e'}}>
           <Text
@@ -549,38 +547,40 @@ const AddToStore = ({navigation}) => {
           </Text>
         </View>
 
-        <View style={{marginTop: '3%'}}>
-          <Text style={styles.headings}>Item/Model Name*</Text>
-          {console.log(models, 'modalll')}
-          <View
-            style={{
-              borderWidth: 1,
-              width: '95%',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              height: 58,
-              borderRadius: 5,
-            }}>
+        <View style={{ marginTop: '3%' }}>
+        <Text style={styles.headings}>Item/Model Name*</Text>
+        <View style={styles.dropdownContainer}>
+        <TextInput
+            style={styles.textInputStyle}
+            placeholder="Search category"
+            placeholderTextColor={'gray'}
+            value={searchText}
+            onChangeText={(text) => setSearchText(text)}
+          />
+          <ScrollView style={styles.scrollView}>
+          
             <Picker
               selectedValue={modalName}
               onValueChange={(itemValue, itemIndex) => {
-                getModalDetails(itemValue, itemIndex),
-                  setModalName(itemValue),
-                  getModalDetails(itemValue, itemIndex);
+                setSelectedModel(filteredModels[itemIndex]);
+                setModalName(itemValue);
+                getModalDetails(filteredModels[itemIndex]);
               }}
               style={styles.picker}
-              placeholder="Select Asset">
-              <Picker.Item label="Select an option" value="" />
-              {models.map(dept => (
+            >
+              <Picker.Item label="Select Item/Model" value="" color="gray"/>
+              {filteredModels.map((dept) => (
                 <Picker.Item
                   key={dept.nm_model}
                   label={dept.nm_model}
                   value={dept.nm_model}
+                  color="white"
                 />
               ))}
             </Picker>
-          </View>
+          </ScrollView>
         </View>
+      </View>
         <View style={{marginTop: '3%'}}>
           <Text style={styles.headings}>Quantity*</Text>
           <TextInput
@@ -1010,47 +1010,42 @@ const AddToStore = ({navigation}) => {
             </Picker>
           </View>
         </View>
-        {showConfig ? (
-          <>
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Disk Space(GB)</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setDiskSpace(value)}
-                value={diskSpace}
-              />
-            </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Disk Space(GB)</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setDiskSpace(value)}
+            value={diskSpace}
+          />
+        </View>
 
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>RAM(MB)</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setRam(value)}
-                value={ram}
-              />
-            </View>
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>Operating System</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={value => setOperatingSystem(value)}
-                value={operatingSystem}
-              />
-            </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>RAM(MB)</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setRam(value)}
+            value={ram}
+          />
+        </View>
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>Operating System</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={value => setOperatingSystem(value)}
+            value={operatingSystem}
+          />
+        </View>
 
-            <View style={{marginTop: '3%'}}>
-              <Text style={styles.headings}>OS Service Type</Text>
-              <TextInput
-                style={styles.textinputs}
-                onChangeText={handleOsServiceTypeChange}
-                value={osServiceType}
-              />
-            </View>
-          </>
-        ) : (
-          <></>
-        )}
+        <View style={{marginTop: '3%'}}>
+          <Text style={styles.headings}>OS Service Type</Text>
+          <TextInput
+            style={styles.textinputs}
+            onChangeText={handleOsServiceTypeChange}
+            value={osServiceType}
+          />
+        </View>
         <UploadFile from={'addToStore'} />
+
         <TouchableOpacity onPress={handleSerialNo}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
@@ -1147,6 +1142,27 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
+  },
+  dropdownContainer: {
+    borderWidth: 1,
+    width: '95%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 120,
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginTop: 10,
+    color:'black'
+  },
+  textInputStyle: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: 'black',
+    color:'black',
+    
+  },
+  scrollView: {
+    maxHeight: 50,
   },
 });
 export default AddToStore;
