@@ -52,7 +52,7 @@ const ModifyAsset = ({navigation}) => {
 
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{marginTop: '10%', marginBottom: '10%'}}>
+        <View style={{marginTop: '10%', marginBottom: '50%'}}>
           <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
             <Row
               data={headings}

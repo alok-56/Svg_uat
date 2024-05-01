@@ -7,7 +7,8 @@ import FIcon from 'react-native-vector-icons/FontAwesome6';
 import ReportIcon from 'react-native-vector-icons/Octicons';
 import {encode} from 'base-64';
 
-const Dashboard = ({navigation}) => {
+const Dashboard = ({navigation, config}) => {
+  console.log(config,"config")
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [inStoreCount, setInStoreCount] = useState('Loading...');
   const [allocatedAssetCount, setAllocatedAssetCount] = useState('Loading...');

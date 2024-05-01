@@ -146,7 +146,7 @@ const Link = ({navigation}) => {
   const handleLinkAccessories = async () => {
     // Check if an asset is selected
     if (!selectedAssetId) {
-      alert('Please select an asset');
+      Alert.alert('Please select an asset');
       return;
     }
 
@@ -308,7 +308,7 @@ const Link = ({navigation}) => {
       const selectedAccessories = Object.keys(selectedCheckboxes)
         .filter(id_wh => selectedCheckboxes[id_wh])
         .map(id_wh => ({
-          to_assign: assetIdFromDropdown,
+          to_assign: selectedAssetId,
           dt_allocate: dateTo,
           installRmk: 'remark',
           InstallAssetID: id_wh,
@@ -447,37 +447,40 @@ const Link = ({navigation}) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={styles.content}>
-            <View style={styles.dropdownContainer}>
-              <View
-                style={{
-                  display: 'flex',
-                  alignSelf: 'center',
-                  padding: 10,
-                  margin: 10,
-                }}>
-                <Icon name="add-shopping-cart" color="gray" size={60} />
-              </View>
-              <Picker
-                selectedValue={selectedAssetId}
-                onValueChange={itemValue => setSelectedAssetId(itemValue)}
-                style={styles.picker}
-                placeholder="Select Asset">
-                {assetDropdownData.map(item => (
-                  <Picker.Item
-                    key={item.id_wh}
-                    label={item.Asset_Name_serial}
-                    value={item.id_wh}
-                  />
-                ))}
-              </Picker>
+          <View style={{ flex: 1, marginBottom:'100%' }}>
+          <View style={{ paddingTop: 20 }}>
+            <View
+              style={{
+                display: 'flex',
+                alignSelf: 'center',
+                padding: 10,
+                margin: 10,
+              }}>
+              <Icon name="add-shopping-cart" color="gray" size={60} />
             </View>
-            <TouchableOpacity onPress={handleLinkAccessories}>
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>Link</Text>
-              </View>
-            </TouchableOpacity>
+            <Picker
+              selectedValue={selectedAssetId}
+              onValueChange={itemValue => setSelectedAssetId(itemValue)}
+              style={styles.picker}
+              placeholder="Select Asset">
+                {console.log(assetDropdownData,"add")}
+              {assetDropdownData.map(item => (
+                <Picker.Item
+                  key={item.id_wh}
+                  label={item.Asset_Name_serial}
+                  value={item.id_wh}
+                  onValueChange={(e)=>setAssetIdFromDropdown(e)}
+                />
+              ))}
+            </Picker>
           </View>
+          <TouchableOpacity onPress={handleLinkAccessories}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Link</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        
         )}
       </View>
       {sidebarOpen && (
@@ -532,10 +535,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: '5%',
     paddingTop: '5%',
-    height: '100%',
+  
   },
   dropdownContainer: {
     marginVertical: 10,
+  
   },
   button: {
     backgroundColor: '#ff8a3d',
@@ -573,15 +577,14 @@ const styles = StyleSheet.create({
   sidebar: {
     position: 'absolute',
     top: 0,
-    left: 0,
     bottom: 0,
-    right: 0,
+    left: 0,
     backgroundColor: '#ccc',
     padding: '5%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '80%',
+    width: '80%', 
+    
   },
+  
   remarks: {
     borderWidth: 1,
     borderColor: 'gray',

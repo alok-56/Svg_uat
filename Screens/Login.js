@@ -98,7 +98,7 @@ const Login = ({navigation}) => {
         const jsonResponse = JSON.parse(responseMatch[0]);
 
         console.log('Response JSON:', jsonResponse);
-
+        await AsyncStorage.setItem('userAccess', JSON.stringify(jsonResponse));
         if (jsonResponse.data && jsonResponse.data.length > 0) {
           const user = jsonResponse.data[0];
 

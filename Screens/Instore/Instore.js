@@ -273,7 +273,7 @@ const Instore = () => {
             {renderPaginationButtons()}
           </>
         ) : (
-          <Text>Loading data...</Text>
+          <Text style={{color:'black'}}>Loading data...</Text>
         )}
 
         <View style={styles.exportButtonsContainer}>

@@ -1,21 +1,51 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {Table, Row} from 'react-native-table-component';
-import {encode} from 'base-64';
-import {ScrollView} from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Table, Row } from 'react-native-table-component';
+import { encode } from 'base-64';
+import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Sidebar from '../Sidebar';
-import {useFocusEffect} from '@react-navigation/native';
-const ApproveNewAsset = ({navigation}) => {
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
+const ApproveNewAsset = ({ navigation }) => {
   const [apiData, setApiData] = useState([]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [uDetails, setUDetail] = useState({ id: '', type: '' })
+
+  const getData = async () => {
+    try {
+    
+      const Idempuser = await AsyncStorage.getItem('userId');
+      if (Idempuser) {
+        setUDetail({ ...uDetails, id: JSON.parse(Idempuser) })
+      }
+      const detail = await AsyncStorage.getItem('userAccess');
+
+      const formatedData = await JSON.parse(detail);
+
+      if (formatedData) {
+        setUDetail({ ...uDetails, type: formatedData?.data[0]?.type_user })
+
+      }
+
+
+
+    } catch (error) {
+      console.error('Error retrieving data:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           onPress={handleMenuIconPress}
-          style={{position: 'absolute', top: '30%', left: '65%', zIndex: 1}}>
+          style={{ position: 'absolute', top: '30%', left: '65%', zIndex: 1 }}>
           <Icon name="menu" color="white" size={25} />
         </TouchableOpacity>
       ),
@@ -40,7 +70,7 @@ const ApproveNewAsset = ({navigation}) => {
     'Add to Store',
   ];
 
-  const MyTable = ({data, headings}) => {
+  const MyTable = ({ data, headings }) => {
     console.log(data, 'llllllllooooo');
     const cellWidths = [50, 95, 110, 80, 150, 200, 80, 50];
     const startIdx = (currentPage - 1) * itemsPerPage;
@@ -48,13 +78,13 @@ const ApproveNewAsset = ({navigation}) => {
 
     const handleAddToStorePress = (id_inv_m, id_inv) => {
       console.log(id_inv_m, id_inv, '6,7');
-      navigation.navigate('ApproveForm', {id_inv_m, id_inv});
+      navigation.navigate('ApproveForm', { id_inv_m, id_inv });
     };
 
     return (
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{marginTop: '10%', marginBottom: '10%'}}>
-          <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+        <View style={{ marginTop: '10%', marginBottom: '10%' }}>
+          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
             <Row
               data={headings}
               style={{
@@ -69,38 +99,56 @@ const ApproveNewAsset = ({navigation}) => {
               }}
               widthArr={cellWidths}
             />
+            {
+              data.length <= 0 ?
+              ( <Row
+                data={[`No Assets to Approve`]}
+                style={{
+                  height: 35,
+                  justifyContent: 'space-evenly',
+                  color: 'gray',
+                }}
+                textStyle={{
+                  textAlign: 'center',
+                  color: 'gray',
+                }}
+              />)
+              :(
+                data &&
+                data.slice(startIdx, endIdx).map((rowData, rowIndex) => (
+                  <>
+                    {console.log(rowData[6], rowData[7], '6,7777777777')}
+                    <Row
+                      key={rowIndex}
+                      data={[
+                        rowIndex + 1,
+                        ...rowData.slice(0, 6), // Columns before "Add to Store"
+                        <TouchableOpacity
+                          onPress={() =>
+                            handleAddToStorePress(rowData[6], rowData[7])
+                          } // Pass both id_inv_m and id_inv
+                          key={`plusIcon_${rowIndex}`}
+                          style={{ alignItems: 'center' }}>
+                          <Icon name="add" size={30} color="#ff8a3d" />
+                        </TouchableOpacity>,
+                      ]}
+                      style={{
+                        height: 35,
+                        justifyContent: 'space-evenly',
+                        color: 'black',
+                      }}
+                      textStyle={{
+                        textAlign: 'center',
+                        color: 'black',
+                      }}
+                      widthArr={[...cellWidths]}
+                    />
+                  </>
+                ))
+              )
+            }
 
-            {data &&
-              data.slice(startIdx, endIdx).map((rowData, rowIndex) => (
-                <>
-                  {console.log(rowData[6], rowData[7], '6,7777777777')}
-                  <Row
-                    key={rowIndex}
-                    data={[
-                      rowIndex + 1,
-                      ...rowData.slice(0, 6), // Columns before "Add to Store"
-                      <TouchableOpacity
-                        onPress={() =>
-                          handleAddToStorePress(rowData[6], rowData[7])
-                        } // Pass both id_inv_m and id_inv
-                        key={`plusIcon_${rowIndex}`}
-                        style={{alignItems: 'center'}}>
-                        <Icon name="add" size={30} color="#ff8a3d" />
-                      </TouchableOpacity>,
-                    ]}
-                    style={{
-                      height: 35,
-                      justifyContent: 'space-evenly',
-                      color: 'black',
-                    }}
-                    textStyle={{
-                      textAlign: 'center',
-                      color: 'black',
-                    }}
-                    widthArr={[...cellWidths]}
-                  />
-                </>
-              ))}
+          
           </Table>
         </View>
       </ScrollView>
@@ -114,11 +162,20 @@ const ApproveNewAsset = ({navigation}) => {
   );
   const fetchData = async () => {
     try {
+      const detail = await AsyncStorage.getItem('userAccess');
+    
+      const Idempuser = await AsyncStorage.getItem('userId');
+    const formatedId = await JSON.parse(Idempuser);
+    const formatedUserType = await JSON.parse(detail);
+    
+
+     
       const Username = 'SVVG';
       const Password = 'Pass@123';
-      const idEmpUser = 1;
-      const userType = 'Super';
+      const idEmpUser = formatedId;
+      const userType =   formatedUserType?.data[0]?.type_user;
       const credentials = encode(`${Username}:${Password}`);
+      console.log(idEmpUser, userType,"jjjjjj")
       const response = await fetch(
         `http://13.235.186.102/SVVG-API/webapi/Store_Approver/dropdownlist?id_emp_user=${idEmpUser}&userType=${userType}&searchWord`,
         {
@@ -144,7 +201,7 @@ const ApproveNewAsset = ({navigation}) => {
         ]);
         setApiData(mappedData);
       } else {
-        console.error('Error fetching data: Data is not an array or is empty');
+      
         setApiData([]);
       }
     } catch (error) {
@@ -185,7 +242,7 @@ const ApproveNewAsset = ({navigation}) => {
             style={[
               styles.paginationButton,
               currentPage === startPage + index &&
-                styles.activePaginationButton,
+              styles.activePaginationButton,
             ]}
             onPress={() => handlePageChange(startPage + index)}>
             <Text style={styles.paginationButtonText}>{startPage + index}</Text>
@@ -259,14 +316,12 @@ const ApproveNewAsset = ({navigation}) => {
   return (
     <ScrollView>
       <View>
-        {apiData && apiData.length > 0 ? (
+        {apiData && 
           <>
             <MyTable data={apiData} headings={tableHeadings} />
             {renderPaginationButtons()}
           </>
-        ) : (
-          <Text>Loading data...</Text>
-        )}
+      }
       </View>
       {sidebarOpen && (
         <View style={styles.sidebar}>

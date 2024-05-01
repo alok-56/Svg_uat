@@ -75,9 +75,7 @@ const DAllocate = ({ navigation }) => {
   };
   const handleDAllocate = async () => {
   try {
-    setIsLoading(true); // Show loader
-
-    // Validate required fields before making the API call
+    setIsLoading(true);
     if (!dAllocateType || !dateTo || !textValue || !assetStatus) {
       Alert.alert('Validation Error', 'Please fill in all required fields.', [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
@@ -116,9 +114,7 @@ const DAllocate = ({ navigation }) => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     } else {
-      // Trigger refresh after successful de-allocation
       fetchEmpDropdownData();
-      // Additional actions if needed
       setShowDropdownAndInput(false);
     }
 
@@ -130,13 +126,12 @@ const DAllocate = ({ navigation }) => {
 
   } catch (error) {
     console.error('Error de-allocating asset:', error);
-    // Handle error, e.g., show an error message
     Alert.alert('Error', 'Failed to de-allocate asset. Please try again.', [
       { text: 'OK', onPress: () => console.log('OK Pressed') },
     ]);
 
   } finally {
-    setIsLoading(false); // Hide loader
+    setIsLoading(false);
   }
 };
 
@@ -169,19 +164,27 @@ const DAllocate = ({ navigation }) => {
     fetchEmpDropdownData();
   }, []);
   const handleDAllocateAsset = () => {
-    // Assuming dAllocateType is the selected dropdown value
+    if (!dAllocateType) {
+      Alert.alert('Selected Assets is empty')
+      return;
+    }
+  
     const selectedData = empDropdownData.find(item => item.id_wh === dAllocateType);
-
-    // Update the state variables with the selected data
-    setAssetID(selectedData.id_wh_dyn || '');
-    setModelNo(selectedData.nm_model || '');
-    setAssetName(selectedData.ds_asst || '');
-    setSerialNumber(selectedData.serial_no || '');
-    setEmployeeName(selectedData.nm_emp || '');
-    setEmployeeCode(selectedData.cd_emp || '');
-    setAllocatedDate(selectedData.dt_allocate || '');
-    setShowDropdownAndInput(true);
+  
+    if (selectedData) {
+      setAssetID(selectedData.id_wh_dyn || '');
+      setModelNo(selectedData.nm_model || '');
+      setAssetName(selectedData.ds_asst || '');
+      setSerialNumber(selectedData.serial_no || '');
+      setEmployeeName(selectedData.nm_emp || '');
+      setEmployeeCode(selectedData.cd_emp || '');
+      setAllocatedDate(selectedData.dt_allocate || '');
+      setShowDropdownAndInput(true);
+    } else {
+      console.error('Selected data not found.');
+    }
   };
+  
   return (
     <ScrollView style={styles.container}>
     {isLoading && (
@@ -261,7 +264,7 @@ const DAllocate = ({ navigation }) => {
               style={styles.picker}
               placeholder='Select Asset'
             >
-            <Picker.Item label="Select Status" />
+            <Picker.Item label="Select Status" key="" value=""/>
               <Picker.Item label="Working" key="Working" value="working"/>
               <Picker.Item label="Physical Damage Major" key="Physical Damage Major" value="physical_dmg_mjr"/>
               <Picker.Item label="Physical Damage Minor" key="Physical Damage Minor" value="physical_dmg_mnr"/>
@@ -295,7 +298,9 @@ const DAllocate = ({ navigation }) => {
               onValueChange={(itemValue) => setDAllocateType(itemValue)}
               style={styles.picker}
               placeholder='Select Asset'>
+              <Picker.Item label="Select assets" value="" />
               {empDropdownData.map((item) => (
+                
                 <Picker.Item key={item.id_wh} label={item.id_wh_dyn} value={item.id_wh} />
               ))}
             </Picker>
@@ -357,7 +362,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: '5%',
     paddingTop: '5%',
-    height:'100%'
+    height:700
   },
   dropdownContainer: {
     marginVertical: 10,

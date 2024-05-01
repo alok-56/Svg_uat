@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {ScrollView} from 'react-native-gesture-handler';
-import {encode} from 'base-64';
+import React, { useEffect, useState } from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+import { encode } from 'base-64';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SerialNo = ({route, navigation}) => {
+const SerialNo = ({ route, navigation }) => {
   const [refreshData, setRefreshData] = useState(false);
   const {
     handleIdLoc,
@@ -55,7 +55,7 @@ const SerialNo = ({route, navigation}) => {
     Idempuser,
   } = route.params;
   const [serialNumbers, setSerialNumbers] = useState(
-    Array.from({length: quantity}, (_, index) => ({
+    Array.from({ length: quantity }, (_, index) => ({
       serialNo: '',
       assetRef: '',
       id: index + 1,
@@ -100,12 +100,68 @@ const SerialNo = ({route, navigation}) => {
       console.error('Error removing upload_inv from AsyncStorage:', error);
     }
   };
-
-  const handleSaveData = async () => {
+  const validSerialNo = async () => {
     try {
       const Idempuser = await getData();
       const apiUrl =
-        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/SavingData';
+        'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/CheckExitsVal ';
+      const username = 'SVVG';
+      const password = 'Pass@123';
+      const headers = new Headers();
+      headers.set(
+        'Authorization',
+        `Basic ${encode(`${username}:${password}`)}`,
+      );
+      headers.set('Content-Type', 'application/json');
+
+      const requestData = {
+        data: [
+          {
+            SerialVal: serialVal,
+            sapno: serialVal,
+          },
+        ],
+      };
+      console.log('Request Payload:', JSON.stringify(requestData));
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(requestData),
+      });
+
+      const responseText = await response.text();
+      console.log('Server Response:', responseText);
+      const match = responseText.match(/\(([^)]+)\)/);
+
+      if (match && match[1]) {
+        const errorText = match[1];
+        Alert.alert(
+          'Error',
+          'Serial Number Already Exist. Please use different One',
+        );
+        // Use the errorText for validation or other purposes
+        return false
+      } else {
+        return true
+      }
+
+
+    } catch (error) {
+      console.log(error, "error response")
+
+    }
+  }
+
+  const handleSaveData = async () => {
+    try {
+
+      const isDuplicateVal = await validSerialNo();
+      if (!isDuplicateVal) {
+       
+        return
+      }
+      const Idempuser = await getData();
+      const apiUrl = 'http://13.235.186.102/SVVG-API/webapi/Add_To_Store/SavingData'
       const username = 'SVVG';
       const password = 'Pass@123';
       const headers = new Headers();
@@ -173,7 +229,7 @@ const SerialNo = ({route, navigation}) => {
             no_model: modalName,
             cst_asst: '',
             tt_un_prc: '',
-            invoice_file: uploadInv,
+            invoice_file: uploadInv !== null ? uploadInv : '',
             SerialVal: serialVal,
             sapno: serialVal,
           },
@@ -196,7 +252,7 @@ const SerialNo = ({route, navigation}) => {
           text: 'OK',
           onPress: () => {
             setSerialNumbers(
-              Array.from({length: quantity}, (_, index) => ({
+              Array.from({ length: quantity }, (_, index) => ({
                 serialNo: '',
                 assetRef: '',
                 id: index + 1,
@@ -220,7 +276,7 @@ const SerialNo = ({route, navigation}) => {
 
         // Reset the state values
         setSerialNumbers(
-          Array.from({length: quantity}, (_, index) => ({
+          Array.from({ length: quantity }, (_, index) => ({
             serialNo: '',
             assetRef: '',
             id: index + 1,
@@ -266,17 +322,16 @@ const SerialNo = ({route, navigation}) => {
       const currentMaxValue = parseInt(responseData.data[0].maxvalue);
 
       const generatedSerialNumbers = Array.from(
-        {length: quantity},
+        { length: quantity },
         (_, index) => ({
-          serialNo: `NA${currentSerialNumber + index}${
-            currentMaxValue + index
-          }`,
-          assetRef: `NA${currentSerialNumber + index}${
-            currentMaxValue + index
-          }`,
+          serialNo: `NA${currentSerialNumber + index}${currentMaxValue + index
+            }`,
+          assetRef: `NA${currentSerialNumber + index}${currentMaxValue + index
+            }`,
           id: index + 1,
         }),
       );
+
 
       setSerialNumbers(generatedSerialNumbers);
 
@@ -319,7 +374,12 @@ const SerialNo = ({route, navigation}) => {
     if (!/\s/.test(value) || value === '') {
       const updatedSerialNumbers = [...serialNumbers];
       updatedSerialNumbers[index].serialNo = value;
+      console.log(updatedSerialNumbers, "hello")
+      const serialValStr = updatedSerialNumbers
+        .map(sn => sn.serialNo)
+        .join(',,');
       setSerialNumbers(updatedSerialNumbers);
+      setSerialVal(serialValStr)
     }
   };
   const handleInputChange = (value, index, field) => {
@@ -340,8 +400,8 @@ const SerialNo = ({route, navigation}) => {
         </TouchableOpacity>
 
         {serialNumbers.map((serialNumber, index) => (
-          <View key={index} style={{flexDirection: 'row'}}>
-            <View style={{marginTop: '5%'}}>
+          <View key={index} style={{ flexDirection: 'row' }}>
+            <View style={{ marginTop: '5%' }}>
               <Text
                 style={styles.headings}>{`Serial No ${serialNumber.id}`}</Text>
               <TextInput
@@ -352,7 +412,7 @@ const SerialNo = ({route, navigation}) => {
                 placeholderTextColor="gray"
               />
             </View>
-            <View style={{marginTop: '5%'}}>
+            <View style={{ marginTop: '5%' }}>
               <Text
                 style={
                   styles.headings
